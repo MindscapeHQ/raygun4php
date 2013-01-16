@@ -1,0 +1,17 @@
+﻿{
+	"name": "mindscape/raygun4php",
+	"type": "library",
+	"description": "Raygun client for PHP - send errors and exceptions to raygun.io.",
+	"keywords": ["raygun", "errors", "exceptions"],
+	"homepage": "http://raygun.io",
+	"require":
+	{
+		"php": ">=5.3.0"
+	}
+	"repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/mindscapehq/raygun4php"
+        }
+    ],
+}
