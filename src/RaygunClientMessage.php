@@ -1,0 +1,17 @@
+<?php
+namespace Raygun4php
+{
+    class RaygunClientMessage
+    {
+        public $name;
+        public $version;
+        public $clientUrl;
+
+        public function __construct()
+        {
+            $this->name = "Raygun4Php";
+            $this->version = "1.0.0";
+            $this->clientUrl = "https://github.com/MindscapeHQ/raygun4php";
+        }
+    }
+}
