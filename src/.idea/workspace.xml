@@ -23,7 +23,7 @@
       <file leaf-file-name="RaygunClient.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/RaygunClient.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="43" column="0" selection-start="1355" selection-end="1355" vertical-scroll-proportion="0.32839507">
+            <state line="31" column="48" selection-start="810" selection-end="810" vertical-scroll-proportion="0.08108108">
               <folding />
             </state>
           </provider>
@@ -32,7 +32,7 @@
       <file leaf-file-name="RaygunMessage.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/RaygunMessage.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="20" column="9" selection-start="596" selection-end="596" vertical-scroll-proportion="-13.076923">
+            <state line="20" column="9" selection-start="596" selection-end="596" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -41,7 +41,7 @@
       <file leaf-file-name="RaygunMessageDetails.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/RaygunMessageDetails.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="19" column="0" selection-start="238" selection-end="238" vertical-scroll-proportion="-12.423077">
+            <state line="19" column="0" selection-start="238" selection-end="238" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -50,7 +50,7 @@
       <file leaf-file-name="RaygunExceptionMessage.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/RaygunExceptionMessage.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="21" column="0" selection-start="527" selection-end="527" vertical-scroll-proportion="-13.730769">
+            <state line="21" column="0" selection-start="527" selection-end="527" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -59,7 +59,7 @@
       <file leaf-file-name="RaygunClientMessage.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/RaygunClientMessage.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="75" selection-start="341" selection-end="341" vertical-scroll-proportion="-8.5">
+            <state line="13" column="75" selection-start="341" selection-end="341" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -68,7 +68,7 @@
       <file leaf-file-name="RaygunRequestMessage.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/RaygunRequestMessage.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="0" selection-start="252" selection-end="252" vertical-scroll-proportion="-9.153846">
+            <state line="14" column="0" selection-start="252" selection-end="252" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -97,8 +97,8 @@
   </component>
   <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
   <component name="ProjectFrameBounds">
-    <option name="x" value="574" />
-    <option name="width" value="1349" />
+    <option name="x" value="889" />
+    <option name="width" value="1034" />
     <option name="height" value="1022" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
@@ -191,15 +191,14 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="574" y="0" width="1349" height="1022" extended-state="0" />
+    <frame x="889" y="0" width="1034" height="1022" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329849" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17637917" sideWeight="0.670151" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24279836" sideWeight="0.670151" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -208,6 +207,7 @@
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329849" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -338,42 +338,42 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/RaygunMessage.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="9" selection-start="596" selection-end="596" vertical-scroll-proportion="-13.076923">
+        <state line="20" column="9" selection-start="596" selection-end="596" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/RaygunMessageDetails.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="0" selection-start="238" selection-end="238" vertical-scroll-proportion="-12.423077">
+        <state line="19" column="0" selection-start="238" selection-end="238" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/RaygunExceptionMessage.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="0" selection-start="527" selection-end="527" vertical-scroll-proportion="-13.730769">
+        <state line="21" column="0" selection-start="527" selection-end="527" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/RaygunClientMessage.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="75" selection-start="341" selection-end="341" vertical-scroll-proportion="-8.5">
+        <state line="13" column="75" selection-start="341" selection-end="341" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/RaygunRequestMessage.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="0" selection-start="252" selection-end="252" vertical-scroll-proportion="-9.153846">
+        <state line="14" column="0" selection-start="252" selection-end="252" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/RaygunClient.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="43" column="0" selection-start="1355" selection-end="1355" vertical-scroll-proportion="0.32839507">
+        <state line="31" column="48" selection-start="810" selection-end="810" vertical-scroll-proportion="0.08108108">
           <folding />
         </state>
       </provider>
