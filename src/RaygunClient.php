@@ -23,8 +23,6 @@ namespace Raygun4php
         $message->Build($exception);
         $json = json_encode($message);
 
-        echo $json, "</br>";
-
         $httpData = curl_init('https://api.raygun.io/entries');
         curl_setopt($httpData, CURLOPT_POSTFIELDS, $json);
         curl_setopt($httpData, CURLOPT_RETURNTRANSFER, true);
@@ -37,8 +35,6 @@ namespace Raygun4php
         if(curl_errno($httpData)){
             echo 'Curl error: ' . curl_error($httpData);
         }
-
-        echo "</br>Http code returned: ", curl_getinfo($httpData, CURLINFO_HTTP_CODE);
         curl_close($httpData);
     }
   }

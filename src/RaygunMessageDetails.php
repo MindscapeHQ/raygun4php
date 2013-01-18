@@ -3,13 +3,10 @@ namespace Raygun4php
 {
     class RaygunMessageDetails
     {
-        public $error;
-
-        public $machineName;
-
-        public $request;
-
-        public $client;
+        public $Error;
+        public $MachineName;
+        public $Request;
+        public $Client;
 
         public function __construct()
         {

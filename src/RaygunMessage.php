@@ -8,21 +8,21 @@ namespace Raygun4php
 
     class RaygunMessage
     {
-        public $occurredOn;
-        public $details;
+        public $OccurredOn;
+        public $Details;
 
         public function __construct()
         {
-            $this->occurredOn = gmdate("Y-m-d\TH:i\Z");
-            $this->details = new RaygunMessageDetails();
+            $this->OccurredOn = gmdate("Y-m-d\TH:i");
+            $this->Details = new RaygunMessageDetails();
         }
 
         public function Build($exception)
         {
-            $this->details->machineName = gethostname();
-            $this->details->exception = new RaygunExceptionMessage($exception);
-            $this->details->request = new RaygunRequestMessage();
-            $this->details->client = new RaygunClientMessage();
+            $this->Details->MachineName = gethostname();
+            $this->Details->Error = new RaygunExceptionMessage($exception);
+            $this->Details->Request = new RaygunRequestMessage();
+            $this->Details->Client = new RaygunClientMessage();
         }
     }
 }
