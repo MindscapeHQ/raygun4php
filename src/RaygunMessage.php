@@ -8,12 +8,12 @@ namespace Raygun4php
 
     class RaygunMessage
     {
-        protected $occurredOn;
+        public $occurredOn;
         public $details;
 
         public function __construct()
         {
-            $this->occurredOn = gmdate("M d Y H:i:s");
+            $this->occurredOn = gmdate("Y-m-d\TH:i\Z");
             $this->details = new RaygunMessageDetails();
         }
 
