@@ -14,7 +14,15 @@ namespace Raygun4php
 
         public function __construct($exception)
         {
-            $this->Message = get_class($exception).": ".$exception->getMessage();
+            $exceptionClass = get_class($exception);
+            if ($exceptionClass != "ErrorException")
+            {
+                $this->Message = $exceptionClass.": ".$exception->getMessage();
+            }
+            else
+            {
+                $this->Message = "Error: ".$exception->getMessage();
+            }
             $this->FileName = baseName($exception->getFile());
             $this->BuildStackTrace($exception);
             //$this->ClassName = $this->GetClassName();
