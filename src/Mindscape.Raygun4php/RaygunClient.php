@@ -12,7 +12,7 @@ namespace Raygun4php
       $this->apiKey = $key;
     }
 
-    public function Send($exception)
+    public function Send($errorException)
     {
         if (empty($this->apiKey))
         {
@@ -20,7 +20,7 @@ namespace Raygun4php
         }
 
         $message = new RaygunMessage();
-        $message->Build($exception);
+        $message->Build($errorException);
         $json = json_encode($message);
 
         $httpData = curl_init('https://api.raygun.io/entries');
@@ -33,9 +33,19 @@ namespace Raygun4php
 
         $result = curl_exec($httpData);
         if(curl_errno($httpData)){
-            echo 'Curl error: ' . curl_error($httpData);
+            echo 'Cannot send Raygun message; curl error: ' . curl_error($httpData);
         }
         curl_close($httpData);
+    }
+
+    public function SendError($errno, $errstr, $errfile, $errline)
+    {
+        $this->Send(new \ErrorException($errstr, $errno, 0, $errfile, $errline));
+    }
+
+    public function SendException($exception)
+    {
+        $this->Send($exception);
     }
   }
 }
