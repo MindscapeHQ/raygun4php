@@ -32,6 +32,9 @@ and the library will be imported ready for use.
 
 Clone this repository and copy src/Raygun4php into an appropriate subdirectory in your project, such as /vendor/Raygun4php. Add `requires` definitions for RaygunClient.php where you want to make a call to Send().
 
+```php
+require (dirname(dirname(__FILE__)).'/vendor/Raygun4php/RaygunClient.php');
+```
 ## Usage
 
 You can send both PHP errors and object-oriented exceptions to Raygun. An easy way to accomplish this is to create a file containing exception and error handlers which make calls to the appropriate Raygun4Php functions. As above, import Raygun4Php - if you're using Composer, just add `require_once 'vendor/autoload.php'`, or if not manually import RaygunClient.php.
