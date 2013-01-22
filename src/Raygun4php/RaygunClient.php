@@ -51,12 +51,7 @@ namespace Raygun4php
      */
     public function SendError($errno, $errstr, $errfile, $errline)
     {
-        try
-        {
-            $this->Send(new \ErrorException($errstr, $errno, 0, $errfile, $errline));
-        }
-        catch (\Exception $e)
-        {}
+        $this->Send(new \ErrorException($errstr, $errno, 0, $errfile, $errline));
     }
 
     /*
@@ -65,12 +60,7 @@ namespace Raygun4php
      */
     public function SendException($exception)
     {
-        try
-        {
-            $this->Send($exception);
-        }
-        catch (\Exception $e)
-        {}
+        $this->Send($exception);
     }
   }
 }
