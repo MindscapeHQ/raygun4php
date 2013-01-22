@@ -7,9 +7,5 @@ namespace Raygun4php
         public $MachineName;
         public $Request;
         public $Client;
-
-        public function __construct()
-        {
-        }
     }
 }
