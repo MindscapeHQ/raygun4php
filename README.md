@@ -4,15 +4,41 @@ Raygun4php
 Raygun.io client for PHP 5.3
 Beta
 
-##Installation & Usage
+## Installation
 
-Place the Mindscape.Raygun4php folder into your site, in an appropriate subdirectory such as /vendor. You can send both errors and exceptions to Raygun; an easy way to accomplish this is to place calls to the sending functions in the error/exception handlers.
+### With Composer
 
-Begin by including RaygunClient.php, then implementing the above:
+Composer is a package management tool for PHP which automatically fetches dependencies and also supports autoloading - this is a low-impact way to get Raygun4php into your site.
+
+1. If you use a *nix environment, [follow the instructions](http://getcomposer.org/doc/01-basic-usage.md#installation) to install Composer. Windows users can run [this installer](https://github.com/johnstevenson/composer-setup) to automatically add it to the path etc.
+
+2. Inside your project's root directory create a composer.json file, containing:
+```json
+{
+    "require": {
+        "mindscape/raygun4php": "dev-master"
+    }
+}
+```
+3. From your shell run `php composer.phar install` (*nix) or `composer install` (Windows). This will download Raygun4Php and create the appropriate autoload data.
+
+4. Then in a PHP file just add:
+```php
+require_once 'vendor/autoload.php';
+```
+and the library will be imported ready for use.
+
+### Manually with Git
+
+Clone this repository and copy src/Raygun4php into an appropriate subdirectory in your project, such as /vendor/Raygun4php. Add `requires` definitions for RaygunClient.php where you want to make a call to Send().
+
+## Usage
+
+You can send both PHP errors and object-oriented exceptions to Raygun. An easy way to accomplish this is to create a file containing exception and error handlers which make calls to the appropriate Raygun4Php functions. As above, import Raygun4Php - if you're using Composer, just add `require_once 'vendor/autoload.php'`, or if not manually import RaygunClient.php.
+
+Then, create handlers that look something like this:
 
 ```php
-require_once realpath(__DIR__.'/vendor/Mindscape.Raygun4php/RaygunClient.php');
-
 $client = new \Raygun4php\RaygunClient("{{apikey for your application}}");
 
 function error_handler($errno, $errstr, $errfile, $errline ) {
@@ -20,14 +46,6 @@ function error_handler($errno, $errstr, $errfile, $errline ) {
     $client->SendError($errno, $errstr, $errfile, $errline);
 }
 
-set_error_handler("error_handler");
-```
-
-Copy your application's API key from the Raygun.io dashboard, and place it in the constructor call as above (do not include the curly brackets).
-
-The above code will send PHP errors to Raygun.io. To also transmit exceptions, use an exception handler like the following:
-
-```php
 function exception_handler($exception)
 {
 	global $client;
@@ -35,4 +53,9 @@ function exception_handler($exception)
 }
 
 set_exception_handler('exception_handler');
+set_error_handler("error_handler");
 ```
+
+Copy your application's API key from the Raygun.io dashboard, and place it in the constructor call as above (do not include the curly brackets).
+
+If the handlers reside in their own file, just import it in every file where you'd like exceptions and errors to be sent, and they will be delivered to Raygun.io.
