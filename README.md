@@ -15,7 +15,8 @@ Composer is a package management tool for PHP which automatically fetches depend
 2. Inside your project's root directory create a composer.json file, containing:
 ```json
 {
-    "require": {
+    "require":
+    {
         "mindscape/raygun4php": "dev-master"
     }
 }
