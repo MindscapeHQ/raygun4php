@@ -7,5 +7,13 @@ namespace Raygun4php
         public $ClassName;
         public $FileName;
         public $MethodName;
+
+        public function __construct()
+        {
+            $this->FileName = "";
+            $this->ClassName = "";
+            $this->LineNumber = "-1";
+            $this->MethodName = "";
+        }
     }
 }

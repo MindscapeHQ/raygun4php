@@ -32,23 +32,27 @@ namespace Raygun4php
         {
             $traces = $exception->getTrace();
             $lines = array();
-
             foreach ($traces as $trace)
             {
-                foreach ($trace as $key => $value)
+                $line = new RaygunExceptionTraceLineMessage();
+                if (array_key_exists("file", $trace))
                 {
-                    if (array_key_exists("file", $trace) && array_key_exists("class", $trace) &&
-                        array_key_exists("function", $trace) &&  array_key_exists("line", $trace))
-                    {
-                        $line = new RaygunExceptionTraceLineMessage();
-                        $line->FileName = $trace["file"];
-                        $line->ClassName = $trace["class"];
-                        $line->MethodName = $trace["function"];
-                        $line->LineNumber = $trace["line"];
-                        $lines[] = $line;
-                    }
+                $line->FileName = $trace["file"];
                 }
-            }
+                if (array_key_exists("class", $trace))
+                {
+                $line->ClassName = $trace["class"];
+                }
+                if (array_key_exists("function", $trace))
+                {
+                $line->MethodName = $trace["function"];
+                }
+                if (array_key_exists("line", $trace))
+                {
+                $line->LineNumber = $trace["line"];
+                }
+                $lines[] = $line;
+             }
             $this->StackTrace = $lines;
         }
 
