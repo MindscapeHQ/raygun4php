@@ -27,7 +27,6 @@ namespace Raygun4php
 
         public function __construct()
         {
-
         }
     }
 }
