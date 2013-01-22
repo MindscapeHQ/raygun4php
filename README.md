@@ -13,8 +13,10 @@ Begin by including RaygunClient.php, then implementing the above:
 ```php
 require_once realpath(__DIR__.'/vendor/Mindscape.Raygun4php/RaygunClient.php');
 
+$client = new \Raygun4php\RaygunClient("{{apikey for your application}}");
+
 function error_handler($errno, $errstr, $errfile, $errline ) {
-    $client = new \Raygun4php\RaygunClient("{{apikey for your application}}");
+    global $client;
     $client->SendError($errno, $errstr, $errfile, $errline);
 }
 
@@ -28,8 +30,8 @@ The above code will send PHP errors to Raygun.io. To also transmit exceptions, u
 ```php
 function exception_handler($exception)
 {
-	$client = new \Raygun4php\RaygunClient("{{apikey for your application}}");
-    $this->client->SendException($exception);
+	global $client;
+    $client->SendException($exception);
 }
 
 set_exception_handler('exception_handler');
