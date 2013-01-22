@@ -15,10 +15,9 @@ Composer is a package management tool for PHP which automatically fetches depend
 2. Inside your project's root directory create a composer.json file, containing:
 ```json
 {
-	"require":
-	{
-		"mindscape/raygun4php": "dev-master"
-	}
+        "require": {
+            "mindscape/raygun4php": "dev-master"
+        }
 }
 ```
 3. From your shell run `php composer.phar install` (*nix) or `composer install` (Windows). This will download Raygun4Php and create the appropriate autoload data.
