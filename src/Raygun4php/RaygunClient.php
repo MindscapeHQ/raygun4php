@@ -9,18 +9,19 @@ namespace Raygun4php
 
     public function __construct($key)
     {
-      $this->apiKey = $key;
+        $this->apiKey = $key;
     }
 
     /*
      * Transmits an exception or ErrorException to the Raygun.io API
+     * @throws Raygun4php\Raygun4PhpException
      * @param \ErrorException $errorException
      */
     public function Send($errorException)
     {
         if (empty($this->apiKey))
         {
-            throw new \Raygun4PhpException("Api key has not been provided, cannot send message");
+            throw new \Raygun4PhpException("API not valid, cannot send message to Raygun");
         }
 
         $message = new RaygunMessage();
