@@ -12,6 +12,10 @@ namespace Raygun4php
       $this->apiKey = $key;
     }
 
+    /*
+     * Transmits an exception or ErrorException to the Raygun.io API
+     * @param \ErrorException $errorException
+     */
     public function Send($errorException)
     {
         if (empty($this->apiKey))
@@ -38,14 +42,35 @@ namespace Raygun4php
         curl_close($httpData);
     }
 
+    /*
+     * Transmits an error to the Raygun.io API
+     * @param int $errorno
+     * @param string $errstr
+     * @param string $errfile
+     * @param int $errline
+     */
     public function SendError($errno, $errstr, $errfile, $errline)
     {
-        $this->Send(new \ErrorException($errstr, $errno, 0, $errfile, $errline));
+        try
+        {
+            $this->Send(new \ErrorException($errstr, $errno, 0, $errfile, $errline));
+        }
+        catch (\Exception $e)
+        {}
     }
 
+    /*
+     * Transmits an exception to the Raygun.io API
+     * @param \Exception $exception
+     */
     public function SendException($exception)
     {
-        $this->Send($exception);
+        try
+        {
+            $this->Send($exception);
+        }
+        catch (\Exception $e)
+        {}
     }
   }
 }
