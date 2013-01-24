@@ -32,6 +32,7 @@ namespace Raygun4php
         curl_setopt($httpData, CURLOPT_POSTFIELDS, $json);
         curl_setopt($httpData, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($httpData, CURLINFO_HEADER_OUT, true);
+        curl_setopt($httpData, CURLOPT_CAINFO, realpath(__DIR__.'/cacert.crt'));
         curl_setopt($httpData, CURLOPT_HTTPHEADER, array(
             'X-ApiKey: '.$this->apiKey
         ));

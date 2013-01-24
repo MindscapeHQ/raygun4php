@@ -12,7 +12,7 @@ namespace Raygun4php
         {
             $this->FileName = "";
             $this->ClassName = "";
-            $this->LineNumber = "-1";
+            $this->LineNumber = "0";
             $this->MethodName = "";
         }
     }
