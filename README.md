@@ -6,6 +6,8 @@ Beta
 
 ## Installation
 
+Firstly, ensure that **curl** is installed and enabled in your server's php.ini file.
+
 ### With Composer
 
 Composer is a package management tool for PHP which automatically fetches dependencies and also supports autoloading - this is a low-impact way to get Raygun4php into your site.
