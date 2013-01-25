@@ -39,7 +39,7 @@ require (dirname(dirname(__FILE__)).'/vendor/Raygun4php/RaygunClient.php');
 ```
 ## Usage
 
-You can send both PHP errors and object-oriented exceptions to Raygun. An easy way to accomplish this is to create a file containing exception and error handlers which make calls to the appropriate Raygun4Php functions. As above, import Raygun4Php - if you're using Composer, just add `require_once 'vendor/autoload.php'`, or if not manually import RaygunClient.php.
+You can send both PHP errors and object-oriented exceptions to Raygun. An easy way to accomplish this is to create a file containing exception and error handlers which make calls to the appropriate Raygun4php functions. As above, import Raygun4php - if you're using Composer, just add `require_once 'vendor/autoload.php'`, or if not manually import RaygunClient.php.
 
 Then, create handlers that look something like this:
 
@@ -71,3 +71,7 @@ Note that if you are placing in inside a file with a namespace of your choosing,
 Copy your application's API key from the Raygun.io dashboard, and place it in the constructor call as above (do not include the curly brackets).
 
 If the handlers reside in their own file, just import it in every file where you'd like exceptions and errors to be sent, and they will be delivered to Raygun.io.
+
+#### Troubleshooting
+
+SendError and SendException return the HTTP status code of the transaction - `echo`ing this will give you a 403 if your API key is incorrect or a 200 if everything was a success.
