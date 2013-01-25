@@ -44,24 +44,29 @@ You can send both PHP errors and object-oriented exceptions to Raygun. An easy w
 Then, create handlers that look something like this:
 
 ```php
-$client = new \Raygun4php\RaygunClient("{{apikey for your application}}");
-
-function error_handler($errno, $errstr, $errfile, $errline ) {
-    global $client;
-    $client->SendError($errno, $errstr, $errfile, $errline);
-}
-
-function exception_handler($exception)
+namespace
 {
-	global $client;
-    $client->SendException($exception);
-}
+	// your 'requires' statement
+	
+	$client = new \Raygun4php\RaygunClient("{{apikey for your application}}");
 
-set_exception_handler('exception_handler');
-set_error_handler("error_handler");
+	function error_handler($errno, $errstr, $errfile, $errline ) {
+		global $client;
+  		$client->SendError($errno, $errstr, $errfile, $errline);
+	}
+
+	function exception_handler($exception)
+	{
+		global $client;
+		$client->SendException($exception);
+	}
+
+	set_exception_handler('exception_handler');
+	set_error_handler("error_handler");
+}
 ```
 
-Note this may need to be placed outside a namespace, or alternatively adding `global $client` above the first line.
+Note that if you are placing in inside a file with a namespace of your choosing, the above code should be declared to be within the global namespace (thus the `namespace { }` is required). You will also need whichever `requires` statement as above (autoload or manual) before the `$client` instantiation.
 
 Copy your application's API key from the Raygun.io dashboard, and place it in the constructor call as above (do not include the curly brackets).
 
