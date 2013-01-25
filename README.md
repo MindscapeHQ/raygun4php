@@ -61,6 +61,8 @@ set_exception_handler('exception_handler');
 set_error_handler("error_handler");
 ```
 
+Note this may need to be placed outside a namespace, or alternatively adding `global $client` above the first line.
+
 Copy your application's API key from the Raygun.io dashboard, and place it in the constructor call as above (do not include the curly brackets).
 
 If the handlers reside in their own file, just import it in every file where you'd like exceptions and errors to be sent, and they will be delivered to Raygun.io.
