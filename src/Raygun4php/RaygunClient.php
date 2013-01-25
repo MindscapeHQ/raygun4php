@@ -16,6 +16,7 @@ namespace Raygun4php
      * Transmits an exception or ErrorException to the Raygun.io API
      * @throws Raygun4php\Raygun4PhpException
      * @param \ErrorException $errorException
+     * @return The HTTP status code of the result when transmitting the message to Raygun.io
      */
     public function Send($errorException)
     {
@@ -50,6 +51,7 @@ namespace Raygun4php
      * @param string $errstr
      * @param string $errfile
      * @param int $errline
+     * @return The HTTP status code of the result when transmitting the message to Raygun.io
      */
     public function SendError($errno, $errstr, $errfile, $errline)
     {
@@ -59,6 +61,7 @@ namespace Raygun4php
     /*
      * Transmits an exception to the Raygun.io API
      * @param \Exception $exception
+     * @return The HTTP status code of the result when transmitting the message to Raygun.io
      */
     public function SendException($exception)
     {
