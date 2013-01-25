@@ -37,11 +37,11 @@ namespace Raygun4php
             'X-ApiKey: '.$this->apiKey
         ));
 
-        $result = curl_exec($httpData);
-        if(curl_errno($httpData)){
-            echo 'Cannot send Raygun message; curl error: ' . curl_error($httpData);
-        }
+        curl_exec($httpData);
+        $info = curl_getinfo($httpData);
+
         curl_close($httpData);
+        return $info['http_code'];
     }
 
     /*
@@ -53,7 +53,7 @@ namespace Raygun4php
      */
     public function SendError($errno, $errstr, $errfile, $errline)
     {
-        $this->Send(new \ErrorException($errstr, $errno, 0, $errfile, $errline));
+        return $this->Send(new \ErrorException($errstr, $errno, 0, $errfile, $errline));
     }
 
     /*
@@ -62,7 +62,7 @@ namespace Raygun4php
      */
     public function SendException($exception)
     {
-        $this->Send($exception);
+        return $this->Send($exception);
     }
   }
 }
