@@ -6,10 +6,23 @@ namespace Raygun4php
   class RaygunClient
   {
     protected $apiKey;
+    protected $version;
 
     public function __construct($key)
     {
         $this->apiKey = $key;
+    }
+
+    /*
+     * Sets the version number of your project that will be transmitted
+     * to Raygun.io.
+     * @param string $version The version number in the form of x.x.x.x,
+     * where x is a positive integer.
+     *
+     */
+    public function SetVersion($version)
+    {
+        $this->version = $version;
     }
 
     /*
@@ -27,6 +40,7 @@ namespace Raygun4php
 
         $message = new RaygunMessage();
         $message->Build($errorException);
+        $message->Details->Version = $this->version;
         $json = json_encode($message);
 
         $httpData = curl_init('https://api.raygun.io/entries');
