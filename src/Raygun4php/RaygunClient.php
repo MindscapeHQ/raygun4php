@@ -26,9 +26,22 @@ namespace Raygun4php
         $this->version = $version;
     }
 
+    /*
+     * Sets a string array of tags relating to the version of your project,
+     * used for identification. These will be transmitted along with messages that
+     * are sent.
+     * @param array $tags The tags relating to your project's version
+    */
     public function SetTags($tags)
     {
-        $this->tags = $tags;
+        if (is_array($tags))
+        {
+            $this->tags = $tags;
+        }
+        else
+        {
+            throw new \Raygun4php\Raygun4PhpException("Tags must be an array");
+        }
     }
 
     /*
@@ -41,7 +54,7 @@ namespace Raygun4php
     {
         if (empty($this->apiKey))
         {
-            throw new \Raygun4PhpException("API not valid, cannot send message to Raygun");
+            throw new \Raygun4php\Raygun4PhpException("API not valid, cannot send message to Raygun");
         }
 
         $message = new RaygunMessage();
