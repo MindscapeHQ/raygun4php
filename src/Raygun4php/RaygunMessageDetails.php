@@ -8,5 +8,6 @@ namespace Raygun4php
         public $Request;
         public $Client;
         public $Version;
+        public $Tags;
     }
 }

@@ -7,6 +7,7 @@ namespace Raygun4php
   {
     protected $apiKey;
     protected $version;
+    protected $tags;
 
     public function __construct($key)
     {
@@ -25,6 +26,11 @@ namespace Raygun4php
         $this->version = $version;
     }
 
+    public function SetTags($tags)
+    {
+        $this->tags = $tags;
+    }
+
     /*
      * Transmits an exception or ErrorException to the Raygun.io API
      * @throws Raygun4php\Raygun4PhpException
@@ -41,6 +47,7 @@ namespace Raygun4php
         $message = new RaygunMessage();
         $message->Build($errorException);
         $message->Details->Version = $this->version;
+        $message->Details->Tags = $this->tags;
         $json = json_encode($message);
 
         $httpData = curl_init('https://api.raygun.io/entries');
