@@ -101,8 +101,7 @@ namespace Raygun4php
     private function AddUserCustomData(&$message, $userCustomData)
     {
         if (is_array($userCustomData))
-        {
-            print_r($userCustomData);
+        {            
             $message->Details->UserCustomData = $userCustomData;
         }
         else
