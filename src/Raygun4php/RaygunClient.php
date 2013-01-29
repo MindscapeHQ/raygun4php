@@ -34,7 +34,6 @@ namespace Raygun4php
       {
           $this->AddUserCustomData($message, $userCustomData);
       }
-
       return $this->Send($message);
     }
 
@@ -56,7 +55,8 @@ namespace Raygun4php
           $this->AddUserCustomData($message, $userCustomData);
       }
 
-      return $this->Send($message);
+      $result = $this->Send($message);
+      return $result;
     }
 
     /*
@@ -101,7 +101,7 @@ namespace Raygun4php
     private function AddUserCustomData(&$message, $userCustomData)
     {
         if (is_array($userCustomData))
-        {            
+        {
             $message->Details->UserCustomData = $userCustomData;
         }
         else
