@@ -1,8 +1,7 @@
 Raygun4php
 ==========
 
-[Raygun.io](http://raygun.io) client for PHP 5.3
-Beta
+[Raygun.io](http://raygun.io) provider for PHP 5.3
 
 ## Installation
 
