@@ -118,6 +118,7 @@ namespace Raygun4php
      */
     public function Send($message)
     {
+        print_r($message);
         if (empty($this->apiKey))
         {
             throw new \Raygun4php\Raygun4PhpException("API not valid, cannot send message to Raygun");

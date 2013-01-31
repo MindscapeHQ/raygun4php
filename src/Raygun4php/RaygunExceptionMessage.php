@@ -52,6 +52,7 @@ namespace Raygun4php
                 $line->LineNumber = $trace["line"];
                 }
                 $lines[] = $line;
+                $line->SetCode();
              }
             $this->StackTrace = $lines;
         }
