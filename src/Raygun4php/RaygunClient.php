@@ -117,8 +117,7 @@ namespace Raygun4php
      * @return The HTTP status code of the result when transmitting the message to Raygun.io
      */
     public function Send($message)
-    {
-        print_r($message);
+    {        
         if (empty($this->apiKey))
         {
             throw new \Raygun4php\Raygun4PhpException("API not valid, cannot send message to Raygun");
