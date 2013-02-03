@@ -22,29 +22,14 @@ namespace Raygun4php
             if (!empty($this->FileName) && $this->LineNumber != 0)
             {
                 $file = new \SplFileObject($this->FileName);
-                $start = max($this->LineNumber - 3, 1);
-                $end = min($this->LineNumber + 3, $this->GetLineCount());
+                $start = max($this->LineNumber - 3, 0);
 
-                $iterator = new \LimitIterator($file, $start, $end);
+                $iterator = new \LimitIterator($file, $start, 5);
                 foreach ($iterator as $line)
                 {
                     $this->Code[] = $line.PHP_EOL;
                 }
             }
-        }
-
-        private function GetLineCount()
-        {
-            $file = $this->FileName;
-            $lineCount = 0;
-            $handle = fopen($file, "r");
-            while(!feof($handle)){
-                $line = fgets($handle, 4096);
-                $lineCount = $lineCount + substr_count($line, PHP_EOL);
-            }
-
-            fclose($handle);
-            return $lineCount;
         }
     }
 }
