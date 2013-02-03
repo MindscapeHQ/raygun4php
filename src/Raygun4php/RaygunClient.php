@@ -100,14 +100,18 @@ namespace Raygun4php
 
     private function AddUserCustomData(&$message, $userCustomData)
     {
-        if (is_array($userCustomData))
+        if ($this->is_assoc($userCustomData))
         {
             $message->Details->UserCustomData = $userCustomData;
         }
         else
         {
-            throw new \Raygun4php\Raygun4PhpException("UserCustomData must be an array");
+            throw new \Raygun4php\Raygun4PhpException("UserCustomData must be an associative array");
         }
+    }
+
+    private function is_assoc($array) {
+      return (bool)count(array_filter(array_keys($array), 'is_string'));
     }
 
     /*
