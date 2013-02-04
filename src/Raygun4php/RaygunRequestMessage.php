@@ -21,7 +21,12 @@ namespace Raygun4php
             $this->url = $_SERVER['REQUEST_URI'];
             $this->ipAddress = $_SERVER['REMOTE_ADDR'];
 
-            $this->queryString = $_SERVER['QUERY_STRING'];
+            parse_str($_SERVER['QUERY_STRING'], $this->queryString);
+            if (empty($this->queryString))
+            {
+                $this->queryString = null;
+            }
+
             $this->headers = getallheaders();
             $this->data = $_SERVER;
             $this->form = $_POST;
