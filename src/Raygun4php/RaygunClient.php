@@ -20,6 +20,9 @@ namespace Raygun4php
     * @param string $errstr The error string
     * @param string $errfile The file the error occurred in
     * @param int $errline The line the error occurred on
+    * @param array $tags An optional array of string tags used to provide metadata for the message
+    * @param array $userCustomData An optional associative array that can be used to place custom key-value
+    * data in the message payload
     * @return The HTTP status code of the result when transmitting the message to Raygun.io
     */
     public function SendError($errno, $errstr, $errfile, $errline, $tags = null, $userCustomData = null)
@@ -39,7 +42,10 @@ namespace Raygun4php
 
     /*
     * Transmits an exception to the Raygun.io API
-    * @param \Exception $exception
+    * @param \Exception $exception An exception object to transmit
+    * @param array $tags An optional array of string tags used to provide metadata for the message
+    * @param array $userCustomData An optional associative array that can be used to place custom key-value
+    * data in the message payload
     * @return The HTTP status code of the result when transmitting the message to Raygun.io
     */
     public function SendException($exception, $tags = null, $userCustomData = null)
@@ -77,7 +83,6 @@ namespace Raygun4php
      * are sent.
      * @param array $tags The tags relating to your project's version
     */
-
     private function BuildMessage($errorException)
     {
         $message = new RaygunMessage();
@@ -118,7 +123,8 @@ namespace Raygun4php
      * Transmits an exception or ErrorException to the Raygun.io API
      * @throws Raygun4php\Raygun4PhpException
      * @param \ErrorException $errorException
-     * @return The HTTP status code of the result when transmitting the message to Raygun.io
+     * @return The HTTP status code of the result after transmitting the message to Raygun.io
+     * 200 if accepted, 403 if invalid JSON payload
      */
     public function Send($message)
     {
