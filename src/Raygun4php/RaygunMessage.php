@@ -13,7 +13,7 @@ namespace Raygun4php
 
         public function __construct()
         {
-            $this->OccurredOn = gmdate("Y-m-d\TH:i");
+            $this->OccurredOn = gmdate("Y-m-d\TH:i:s");
             $this->Details = new RaygunMessageDetails();
         }
 
