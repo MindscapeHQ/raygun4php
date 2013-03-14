@@ -32,9 +32,10 @@ namespace Raygun4php
             $this->form = $_POST;
 
             if ($_SERVER['REQUEST_METHOD'] != 'GET' && $_SERVER['CONTENT_TYPE'] != 'application/x-www-form-urlencoded' &&
+                $_SERVER['CONTENT_TYPE'] != 'multipart/form-data' &&
                 $_SERVER['CONTENT_TYPE'] != 'text/html')
-            {
-                $this->rawData = http_get_request_body();
+            {                
+                $this->rawData = file_get_contents('php://input');
             }
         }
 
