@@ -4,6 +4,7 @@ namespace Raygun4php
     require_once realpath(__DIR__.'/RaygunMessageDetails.php');
     require_once realpath(__DIR__.'/RaygunExceptionMessage.php');
     require_once realpath(__DIR__.'/RaygunRequestMessage.php');
+    require_once realpath(__DIR__.'/RaygunEnvironmentMessage.php');
     require_once realpath(__DIR__.'/RaygunClientMessage.php');
 
     class RaygunMessage
@@ -22,6 +23,7 @@ namespace Raygun4php
             $this->Details->MachineName = gethostname();
             $this->Details->Error = new RaygunExceptionMessage($exception);
             $this->Details->Request = new RaygunRequestMessage();
+            $this->Details->Environment = new RaygunEnvironmentMessage();
             $this->Details->Client = new RaygunClientMessage();
         }
     }
