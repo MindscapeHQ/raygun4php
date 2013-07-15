@@ -2,6 +2,7 @@
 namespace Raygun4php
 {
   require_once realpath(__DIR__.'/RaygunMessage.php');
+  require_once realpath(__DIR__.'/Raygun4PhpException.php');
 
   class RaygunClient
   {
@@ -117,7 +118,7 @@ namespace Raygun4php
 
     private function is_assoc($array) {
       return (bool)count(array_filter(array_keys($array), 'is_string'));
-    }
+    }    
 
     /*
      * Transmits an exception or ErrorException to the Raygun.io API
@@ -127,26 +128,32 @@ namespace Raygun4php
      * 200 if accepted, 403 if invalid JSON payload
      */
     public function Send($message)
-    {
-        if (empty($this->apiKey))
+    {        
+        if (!function_exists('curl_version'))
+        {
+          throw new \Raygun4php\Raygun4PhpException("cURL is not available, thus Raygun4php cannot send. Please install and enable cURL in your PHP server.");
+        }
+        else if (empty($this->apiKey))
         {
             throw new \Raygun4php\Raygun4PhpException("API not valid, cannot send message to Raygun");
         }
+        else
+        {
+          $httpData = curl_init('https://api.raygun.io/entries');
+          curl_setopt($httpData, CURLOPT_POSTFIELDS, json_encode($message));
+          curl_setopt($httpData, CURLOPT_RETURNTRANSFER, true);
+          curl_setopt($httpData, CURLINFO_HEADER_OUT, true);
+          curl_setopt($httpData, CURLOPT_CAINFO, realpath(__DIR__.'/cacert.crt'));
+          curl_setopt($httpData, CURLOPT_HTTPHEADER, array(
+              'X-ApiKey: '.$this->apiKey
+          ));
 
-        $httpData = curl_init('https://api.raygun.io/entries');
-        curl_setopt($httpData, CURLOPT_POSTFIELDS, json_encode($message));
-        curl_setopt($httpData, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($httpData, CURLINFO_HEADER_OUT, true);
-        curl_setopt($httpData, CURLOPT_CAINFO, realpath(__DIR__.'/cacert.crt'));
-        curl_setopt($httpData, CURLOPT_HTTPHEADER, array(
-            'X-ApiKey: '.$this->apiKey
-        ));
+          curl_exec($httpData);
+          $info = curl_getinfo($httpData);
 
-        curl_exec($httpData);
-        $info = curl_getinfo($httpData);
-
-        curl_close($httpData);
-        return $info['http_code'];
+          curl_close($httpData);
+          return $info['http_code'];
+      }
     }
   }
 }
