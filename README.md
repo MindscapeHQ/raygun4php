@@ -77,4 +77,4 @@ You can transmit the version number of your PHP project along with the message b
 
 ## Troubleshooting
 
-SendError and SendException return the HTTP status code of the transaction - `echo`ing this will give you a 403 if your API key is incorrect or a 200 if everything was a success.
+SendError and SendException return the HTTP status code of the transaction - `echo`ing this will give you a 403 if your API key is incorrect or a 202 if everything was a success.
