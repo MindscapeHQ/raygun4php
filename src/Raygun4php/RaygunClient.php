@@ -196,7 +196,7 @@ namespace Raygun4php
         else
         {         
           if (!$this->httpData) {
-              $this->httpData = curl_init('http://api.raygun.dev/entries');
+              $this->httpData = curl_init('https://api.raygun.io/entries');
           }
           curl_setopt($this->httpData, CURLOPT_POSTFIELDS, json_encode($message));
           curl_setopt($this->httpData, CURLOPT_RETURNTRANSFER, true);
