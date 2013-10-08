@@ -75,6 +75,10 @@ If the handlers reside in their own file, just import it in every file where you
 
 You can transmit the version number of your PHP project along with the message by calling `SetVersion()` on your RaygunClient after it is instantiated - this is optional but recommended as the version number is considered to be first-class data for a message.
 
+#### User tracking
+
+You can call $client->Identify(), passing in a string representing a username or email address which will be attached to the message and visible in the dashboard.
+
 ## Troubleshooting
 
-SendError and SendException return the HTTP status code of the transaction - `echo`ing this will give you a 403 if your API key is incorrect or a 202 if everything was a success.
+SendError and SendException return the HTTP status code of the transaction - `echo`ing this will give you a 403 if your API key is incorrect or a 200 if everything was a success.

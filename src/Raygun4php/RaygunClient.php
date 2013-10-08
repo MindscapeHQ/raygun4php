@@ -9,6 +9,7 @@ namespace Raygun4php
     protected $apiKey;
     protected $version;
     protected $tags;
+    protected $user;
 
     public function __construct($key)
     {
@@ -28,6 +29,11 @@ namespace Raygun4php
     */
     public function SendError($errno, $errstr, $errfile, $errline, $tags = null, $userCustomData = null)
     {
+      if ($this->user == null)
+      {
+        $this->Identify();
+      }
+
       $message = $this->BuildMessage(new \ErrorException($errstr, $errno, 0, $errfile, $errline));
 
       if ($tags != null)
@@ -37,7 +43,7 @@ namespace Raygun4php
       if ($userCustomData != null)
       {
           $this->AddUserCustomData($message, $userCustomData);
-      }
+      }      
       return $this->Send($message);
     }
 
@@ -78,6 +84,26 @@ namespace Raygun4php
         $this->version = $version;
     }
 
+    public function Identify($user = null)
+    {
+        if (is_string($user))
+        {
+            $this->user = $user;
+        }     
+        else
+        {
+          if (session_id() == "")
+          {
+            session_start();            
+          }          
+          if (empty($_SESSION['rguserid']))
+          {
+            $_SESSION['rguserid'] = uniqid(gethostname(), true);
+          }
+            $this->user = $_SESSION['rguserid'];
+        }
+    }
+
     /*
      * Sets a string array of tags relating to the message,
      * used for identification. These will be transmitted along with messages that
@@ -89,6 +115,16 @@ namespace Raygun4php
         $message = new RaygunMessage();
         $message->Build($errorException);
         $message->Details->Version = $this->version;
+        $message->Details->Context = new RaygunIdentifier(uniqid(gethostname(), true));        
+        if ($this->user != null)
+        {
+          $message->Details->User = new RaygunIdentifier($this->user);
+        }
+        else 
+        {          
+          $message->Details->User = new RaygunIdentifier($_SESSION['rguserid']);          
+        }
+
         return $message;
     }
 
@@ -139,7 +175,7 @@ namespace Raygun4php
         }
         else
         {
-          $httpData = curl_init('https://api.raygun.io/entries');
+          $httpData = curl_init('http://api.raygun.dev/entries');
           curl_setopt($httpData, CURLOPT_POSTFIELDS, json_encode($message));
           curl_setopt($httpData, CURLOPT_RETURNTRANSFER, true);
           curl_setopt($httpData, CURLINFO_HEADER_OUT, true);
