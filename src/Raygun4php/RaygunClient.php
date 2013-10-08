@@ -99,7 +99,7 @@ namespace Raygun4php
           }          
           if (empty($_SESSION['rguserid']))
           {
-            $_SESSION['rguserid'] = uniqid(gethostname(), true);
+            $_SESSION['rguserid'] = uniqid("", true);
           }
             $this->user = $_SESSION['rguserid'];
         }
@@ -116,7 +116,7 @@ namespace Raygun4php
         $message = new RaygunMessage($timestamp);
         $message->Build($errorException);
         $message->Details->Version = $this->version;
-        $message->Details->Context = new RaygunIdentifier(uniqid(gethostname(), true));        
+        $message->Details->Context = new RaygunIdentifier(uniqid("", true));        
         if ($this->user != null)
         {
           $message->Details->User = new RaygunIdentifier($this->user);
