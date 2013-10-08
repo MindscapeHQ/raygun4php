@@ -134,8 +134,8 @@ namespace Raygun4php
         $message = new RaygunMessage($timestamp);
         $message->Build($errorException);
         $message->Details->Version = $this->version;        
-
         $message->Details->Context = new RaygunIdentifier(session_id());
+        
         if ($this->user != null)
         {
           $message->Details->User = new RaygunIdentifier($this->user);
@@ -196,7 +196,7 @@ namespace Raygun4php
         else
         {         
           if (!$this->httpData) {
-              $this->httpData = curl_init('https://api.raygun.io/entries');
+              $this->httpData = curl_init('http://api.raygun.dev/entries');
           }
           curl_setopt($this->httpData, CURLOPT_POSTFIELDS, json_encode($message));
           curl_setopt($this->httpData, CURLOPT_RETURNTRANSFER, true);
