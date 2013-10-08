@@ -9,6 +9,7 @@ namespace Raygun4php
     protected $apiKey;
     protected $version;
     protected $tags;
+    protected $httpData;
 
     public function __construct($key)
     {
@@ -139,21 +140,27 @@ namespace Raygun4php
         }
         else
         {
-          $httpData = curl_init('https://api.raygun.io/entries');
-          curl_setopt($httpData, CURLOPT_POSTFIELDS, json_encode($message));
-          curl_setopt($httpData, CURLOPT_RETURNTRANSFER, true);
-          curl_setopt($httpData, CURLINFO_HEADER_OUT, true);
-          curl_setopt($httpData, CURLOPT_CAINFO, realpath(__DIR__.'/cacert.crt'));
-          curl_setopt($httpData, CURLOPT_HTTPHEADER, array(
+            if (!$this->httpData) {
+                $this->httpData = curl_init('https://api.raygun.io/entries');
+            }
+          curl_setopt($this->httpData, CURLOPT_POSTFIELDS, json_encode($message));
+          curl_setopt($this->httpData, CURLOPT_RETURNTRANSFER, true);
+          curl_setopt($this->httpData, CURLINFO_HEADER_OUT, true);
+          curl_setopt($this->httpData, CURLOPT_CAINFO, realpath(__DIR__.'/cacert.crt'));
+          curl_setopt($this->httpData, CURLOPT_HTTPHEADER, array(
               'X-ApiKey: '.$this->apiKey
           ));
 
-          curl_exec($httpData);
-          $info = curl_getinfo($httpData);
+          curl_exec($this->httpData);
+          $info = curl_getinfo($this->httpData);
 
-          curl_close($httpData);
           return $info['http_code'];
       }
     }
+
+      public function __destruct()
+      {
+          curl_close($this->httpData);
+      }
   }
 }
