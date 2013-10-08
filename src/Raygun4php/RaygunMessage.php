@@ -12,9 +12,12 @@ namespace Raygun4php
         public $OccurredOn;
         public $Details;
 
-        public function __construct()
+        public function __construct($timestamp = null)
         {
-            $this->OccurredOn = gmdate("Y-m-d\TH:i:s");
+            if ($timestamp === null) {
+                $timestamp = time();
+            }
+            $this->OccurredOn = gmdate("Y-m-d\TH:i:s", $timestamp);
             $this->Details = new RaygunMessageDetails();
         }
 
