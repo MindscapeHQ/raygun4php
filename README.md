@@ -82,3 +82,9 @@ You can call $client->Identify(), passing in a string representing a username or
 ## Troubleshooting
 
 SendError and SendException return the HTTP status code of the transaction - `echo`ing this will give you a 403 if your API key is incorrect or a 200 if everything was a success.
+
+## Changelog
+
+* Version 1.1: Added user tracking support; improved experience in CLI mode; add user-specified timestamp support
+
+* Version 1.0: Initial commit
