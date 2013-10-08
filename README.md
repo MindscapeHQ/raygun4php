@@ -77,7 +77,7 @@ You can transmit the version number of your PHP project along with the message b
 
 #### User tracking
 
-You can call $client->Identify(), passing in a string representing a username or email address which will be attached to the message and visible in the dashboard.
+You can call $client->SetUser($user), passing in a string representing the username or email address of the current user of the calling application. This will be attached to the message and visible in the dashboard. This method is optional - if it is not called, a random identifier will be used. If you use this, and the user changes (log in/out), be sure to call it again passing in the new user (or just call $client->SetUser() to assign a new random identifier).
 
 ## Troubleshooting
 
