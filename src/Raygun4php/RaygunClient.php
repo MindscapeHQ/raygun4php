@@ -12,12 +12,21 @@ namespace Raygun4php
     protected $apiKey;
     protected $version;
     protected $tags;
-    protected $user;
+    protected $user;    
     protected $httpData;
 
     public function __construct($key)
     {
         $this->apiKey = $key;
+
+        if (session_id() == "")
+        {
+          session_start();            
+        }                  
+        if (empty($_SESSION['rgcontext']))
+        {
+          $_SESSION['rgcontext'] = (string) Uuid::uuid4();
+        } 
     }
 
     /*
@@ -35,7 +44,7 @@ namespace Raygun4php
     {
       if ($this->user == null)
       {
-        $this->Identify();
+        $this->SetUser();
       }
       $message = $this->BuildMessage(new \ErrorException($errstr, $errno, 0, $errfile, $errline), $timestamp);
 
@@ -62,7 +71,7 @@ namespace Raygun4php
     {
       if ($this->user == null)
       {
-        $this->Identify();
+        $this->SetUser();
       }
       $message = $this->BuildMessage($exception, $timestamp);
 
@@ -105,13 +114,10 @@ namespace Raygun4php
         if (is_string($user))
         {
             $this->user = $user;
+            $_SESSION['rguserid'] = $user;
         }     
         else
-        {
-          if (session_id() == "")
-          {
-            session_start();            
-          }          
+        {          
           if (empty($_SESSION['rguserid']))
           {
             $_SESSION['rguserid'] = (string) Uuid::uuid4();
@@ -133,15 +139,13 @@ namespace Raygun4php
         $message->Build($errorException);
         $message->Details->Version = $this->version;        
 
-        $message->Details->Context = new RaygunIdentifier( (string) Uuid::uuid4());       
-        echo "User ".$this->user; 
+        $message->Details->Context = new RaygunIdentifier($_SESSION['rgcontext']);
         if ($this->user != null)
         {
           $message->Details->User = new RaygunIdentifier($this->user);
         }
         else 
-        {          
-          echo "Session ".$_SESSION['rguserid'];
+        {                    
           $message->Details->User = new RaygunIdentifier($_SESSION['rguserid']);          
         }
 
