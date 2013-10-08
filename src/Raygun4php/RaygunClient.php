@@ -27,9 +27,9 @@ namespace Raygun4php
     * data in the message payload
     * @return The HTTP status code of the result when transmitting the message to Raygun.io
     */
-    public function SendError($errno, $errstr, $errfile, $errline, $tags = null, $userCustomData = null)
+    public function SendError($errno, $errstr, $errfile, $errline, $tags = null, $userCustomData = null, $timestamp = null)
     {
-      $message = $this->BuildMessage(new \ErrorException($errstr, $errno, 0, $errfile, $errline));
+      $message = $this->BuildMessage(new \ErrorException($errstr, $errno, 0, $errfile, $errline), $timestamp);
 
       if ($tags != null)
       {
@@ -50,9 +50,9 @@ namespace Raygun4php
     * data in the message payload
     * @return The HTTP status code of the result when transmitting the message to Raygun.io
     */
-    public function SendException($exception, $tags = null, $userCustomData = null)
+    public function SendException($exception, $tags = null, $userCustomData = null, $timestamp = null)
     {
-      $message = $this->BuildMessage($exception);
+      $message = $this->BuildMessage($exception, $timestamp);
 
       if ($tags != null)
       {
@@ -85,9 +85,9 @@ namespace Raygun4php
      * are sent.
      * @param array $tags The tags relating to your project's version
     */
-    private function BuildMessage($errorException)
+    private function BuildMessage($errorException, $timestamp = null)
     {
-        $message = new RaygunMessage();
+        $message = new RaygunMessage($timestamp);
         $message->Build($errorException);
         $message->Details->Version = $this->version;
         return $message;
