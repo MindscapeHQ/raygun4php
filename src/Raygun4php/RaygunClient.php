@@ -3,6 +3,9 @@ namespace Raygun4php
 {
   require_once realpath(__DIR__.'/RaygunMessage.php');
   require_once realpath(__DIR__.'/Raygun4PhpException.php');
+  require_once realpath(__DIR__.'/Uuid.php');  
+
+  use Rhumsaa\Uuid\Uuid;  
 
   class RaygunClient
   {
@@ -34,7 +37,6 @@ namespace Raygun4php
       {
         $this->Identify();
       }
-
       $message = $this->BuildMessage(new \ErrorException($errstr, $errno, 0, $errfile, $errline), $timestamp);
 
       if ($tags != null)
@@ -58,6 +60,10 @@ namespace Raygun4php
     */
     public function SendException($exception, $tags = null, $userCustomData = null, $timestamp = null)
     {
+      if ($this->user == null)
+      {
+        $this->Identify();
+      }
       $message = $this->BuildMessage($exception, $timestamp);
 
       if ($tags != null)
@@ -85,8 +91,17 @@ namespace Raygun4php
         $this->version = $version;
     }
 
-    public function Identify($user = null)
-    {
+    /*
+    *  Stores the current user of the calling application. This will be added to any messages sent
+    *  by this provider. It is used in the dashboard to provide unique user tracking.
+    *  If it is an email address, the user's Gravatar can be displayed. This method is optional,
+    *  if it is not used a random identifier will be assigned to the current user.
+    *  @param string $user A username, email address or other identifier for the current user
+    *  of the calling application.
+    *
+    */
+    public function SetUser($user = null)
+    {        
         if (is_string($user))
         {
             $this->user = $user;
@@ -99,9 +114,10 @@ namespace Raygun4php
           }          
           if (empty($_SESSION['rguserid']))
           {
-            $_SESSION['rguserid'] = uniqid("", true);
+            $_SESSION['rguserid'] = (string) Uuid::uuid4();
           }
-            $this->user = $_SESSION['rguserid'];
+          
+          $this->user = $_SESSION['rguserid'];
         }
     }
 
@@ -115,14 +131,17 @@ namespace Raygun4php
     {
         $message = new RaygunMessage($timestamp);
         $message->Build($errorException);
-        $message->Details->Version = $this->version;
-        $message->Details->Context = new RaygunIdentifier(uniqid("", true));        
+        $message->Details->Version = $this->version;        
+
+        $message->Details->Context = new RaygunIdentifier( (string) Uuid::uuid4());       
+        echo "User ".$this->user; 
         if ($this->user != null)
         {
           $message->Details->User = new RaygunIdentifier($this->user);
         }
         else 
         {          
+          echo "Session ".$_SESSION['rguserid'];
           $message->Details->User = new RaygunIdentifier($_SESSION['rguserid']);          
         }
 
@@ -177,7 +196,7 @@ namespace Raygun4php
         else
         {         
           if (!$this->httpData) {
-              $this->httpData = curl_init('https://api.raygun.io/entries');
+              $this->httpData = curl_init('http://api.raygun.dev/entries');
           }
           curl_setopt($this->httpData, CURLOPT_POSTFIELDS, json_encode($message));
           curl_setopt($this->httpData, CURLOPT_RETURNTRANSFER, true);
