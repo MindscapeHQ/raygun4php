@@ -22,11 +22,7 @@ namespace Raygun4php
         if (session_id() == "")
         {
           session_start();            
-        }                  
-        if (empty($_SESSION['rgcontext']))
-        {
-          $_SESSION['rgcontext'] = (string) Uuid::uuid4();
-        } 
+        }
     }
 
     /*
@@ -139,7 +135,7 @@ namespace Raygun4php
         $message->Build($errorException);
         $message->Details->Version = $this->version;        
 
-        $message->Details->Context = new RaygunIdentifier($_SESSION['rgcontext']);
+        $message->Details->Context = new RaygunIdentifier(session_id());
         if ($this->user != null)
         {
           $message->Details->User = new RaygunIdentifier($this->user);
