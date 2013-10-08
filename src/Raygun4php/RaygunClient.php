@@ -10,6 +10,7 @@ namespace Raygun4php
     protected $version;
     protected $tags;
     protected $user;
+    protected $httpData;
 
     public function __construct($key)
     {
@@ -27,14 +28,14 @@ namespace Raygun4php
     * data in the message payload
     * @return The HTTP status code of the result when transmitting the message to Raygun.io
     */
-    public function SendError($errno, $errstr, $errfile, $errline, $tags = null, $userCustomData = null)
+    public function SendError($errno, $errstr, $errfile, $errline, $tags = null, $userCustomData = null, $timestamp = null)
     {
       if ($this->user == null)
       {
         $this->Identify();
       }
 
-      $message = $this->BuildMessage(new \ErrorException($errstr, $errno, 0, $errfile, $errline));
+      $message = $this->BuildMessage(new \ErrorException($errstr, $errno, 0, $errfile, $errline), $timestamp);
 
       if ($tags != null)
       {
@@ -55,9 +56,9 @@ namespace Raygun4php
     * data in the message payload
     * @return The HTTP status code of the result when transmitting the message to Raygun.io
     */
-    public function SendException($exception, $tags = null, $userCustomData = null)
+    public function SendException($exception, $tags = null, $userCustomData = null, $timestamp = null)
     {
-      $message = $this->BuildMessage($exception);
+      $message = $this->BuildMessage($exception, $timestamp);
 
       if ($tags != null)
       {
@@ -110,9 +111,9 @@ namespace Raygun4php
      * are sent.
      * @param array $tags The tags relating to your project's version
     */
-    private function BuildMessage($errorException)
+    private function BuildMessage($errorException, $timestamp = null)
     {
-        $message = new RaygunMessage();
+        $message = new RaygunMessage($timestamp);
         $message->Build($errorException);
         $message->Details->Version = $this->version;
         $message->Details->Context = new RaygunIdentifier(uniqid(gethostname(), true));        
@@ -174,22 +175,28 @@ namespace Raygun4php
             throw new \Raygun4php\Raygun4PhpException("API not valid, cannot send message to Raygun");
         }
         else
-        {
-          $httpData = curl_init('http://api.raygun.dev/entries');
-          curl_setopt($httpData, CURLOPT_POSTFIELDS, json_encode($message));
-          curl_setopt($httpData, CURLOPT_RETURNTRANSFER, true);
-          curl_setopt($httpData, CURLINFO_HEADER_OUT, true);
-          curl_setopt($httpData, CURLOPT_CAINFO, realpath(__DIR__.'/cacert.crt'));
-          curl_setopt($httpData, CURLOPT_HTTPHEADER, array(
+        {         
+          if (!$this->httpData) {
+              $this->httpData = curl_init('https://api.raygun.io/entries');
+          }
+          curl_setopt($this->httpData, CURLOPT_POSTFIELDS, json_encode($message));
+          curl_setopt($this->httpData, CURLOPT_RETURNTRANSFER, true);
+          curl_setopt($this->httpData, CURLINFO_HEADER_OUT, true);
+          curl_setopt($this->httpData, CURLOPT_CAINFO, realpath(__DIR__.'/cacert.crt'));
+          curl_setopt($this->httpData, CURLOPT_HTTPHEADER, array(
               'X-ApiKey: '.$this->apiKey
           ));
 
-          curl_exec($httpData);
-          $info = curl_getinfo($httpData);
+          curl_exec($this->httpData);
+          $info = curl_getinfo($this->httpData);
 
-          curl_close($httpData);
           return $info['http_code'];
       }
     }
+
+      public function __destruct()
+      {
+          curl_close($this->httpData);
+      }
   }
 }

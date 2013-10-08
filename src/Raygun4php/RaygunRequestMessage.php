@@ -16,22 +16,26 @@ namespace Raygun4php
 
         public function __construct()
         {
-            $this->hostName = $_SERVER['HTTP_HOST'];
-            $this->httpMethod = $_SERVER['REQUEST_METHOD'];
-            $this->url = $_SERVER['REQUEST_URI'];
-            $this->ipAddress = $_SERVER['REMOTE_ADDR'];
+            if (php_sapi_name() !== 'cli') {
+                $this->hostName = $_SERVER['HTTP_HOST'];
+                $this->httpMethod = $_SERVER['REQUEST_METHOD'];
+                $this->url = $_SERVER['REQUEST_URI'];
+                $this->ipAddress = $_SERVER['REMOTE_ADDR'];
 
-            parse_str($_SERVER['QUERY_STRING'], $this->queryString);
-            if (empty($this->queryString))
-            {
-                $this->queryString = null;
+                parse_str($_SERVER['QUERY_STRING'], $this->queryString);
+                if (empty($this->queryString))
+                {
+                    $this->queryString = null;
+                }
             }
 
             $this->headers = $this->emu_getAllHeaders();
             $this->data = $_SERVER;
             $this->form = $_POST;
 
-            if ($_SERVER['REQUEST_METHOD'] != 'GET' && $_SERVER['CONTENT_TYPE'] != 'application/x-www-form-urlencoded' &&
+            if (php_sapi_name() !== 'cli' &&
+                $_SERVER['REQUEST_METHOD'] != 'GET' &&
+                $_SERVER['CONTENT_TYPE'] != 'application/x-www-form-urlencoded' &&
                 $_SERVER['CONTENT_TYPE'] != 'multipart/form-data' &&
                 $_SERVER['CONTENT_TYPE'] != 'text/html')
             {                
