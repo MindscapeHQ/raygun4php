@@ -3,17 +3,26 @@ namespace Raygun4php
 {
   require_once realpath(__DIR__.'/RaygunMessage.php');
   require_once realpath(__DIR__.'/Raygun4PhpException.php');
+  require_once realpath(__DIR__.'/Uuid.php');
+
+  use Rhumsaa\Uuid\Uuid;
 
   class RaygunClient
   {
     protected $apiKey;
     protected $version;
     protected $tags;
+    protected $user;
     protected $httpData;
 
     public function __construct($key)
     {
         $this->apiKey = $key;
+
+        if (session_id() == "")
+        {
+          session_start();
+        }
     }
 
     /*
@@ -29,6 +38,10 @@ namespace Raygun4php
     */
     public function SendError($errno, $errstr, $errfile, $errline, $tags = null, $userCustomData = null, $timestamp = null)
     {
+      if ($this->user == null)
+      {
+        $this->SetUser();
+      }
       $message = $this->BuildMessage(new \ErrorException($errstr, $errno, 0, $errfile, $errline), $timestamp);
 
       if ($tags != null)
@@ -52,6 +65,10 @@ namespace Raygun4php
     */
     public function SendException($exception, $tags = null, $userCustomData = null, $timestamp = null)
     {
+      if ($this->user == null)
+      {
+        $this->SetUser();
+      }
       $message = $this->BuildMessage($exception, $timestamp);
 
       if ($tags != null)
@@ -80,6 +97,33 @@ namespace Raygun4php
     }
 
     /*
+    *  Stores the current user of the calling application. This will be added to any messages sent
+    *  by this provider. It is used in the dashboard to provide unique user tracking.
+    *  If it is an email address, the user's Gravatar can be displayed. This method is optional,
+    *  if it is not used a random identifier will be assigned to the current user.
+    *  @param string $user A username, email address or other identifier for the current user
+    *  of the calling application.
+    *
+    */
+    public function SetUser($user = null)
+    {
+        if (is_string($user))
+        {
+            $this->user = $user;
+            $_SESSION['rguserid'] = $user;
+        }
+        else
+        {
+          if (empty($_SESSION['rguserid']))
+          {
+            $_SESSION['rguserid'] = (string) Uuid::uuid4();
+          }
+
+          $this->user = $_SESSION['rguserid'];
+        }
+    }
+
+    /*
      * Sets a string array of tags relating to the message,
      * used for identification. These will be transmitted along with messages that
      * are sent.
@@ -90,6 +134,17 @@ namespace Raygun4php
         $message = new RaygunMessage($timestamp);
         $message->Build($errorException);
         $message->Details->Version = $this->version;
+        $message->Details->Context = new RaygunIdentifier(session_id());
+
+        if ($this->user != null)
+        {
+          $message->Details->User = new RaygunIdentifier($this->user);
+        }
+        else
+        {
+          $message->Details->User = new RaygunIdentifier($_SESSION['rguserid']);
+        }
+
         return $message;
     }
 
@@ -119,7 +174,7 @@ namespace Raygun4php
 
     private function is_assoc($array) {
       return (bool)count(array_filter(array_keys($array), 'is_string'));
-    }    
+    }
 
     /*
      * Transmits an exception or ErrorException to the Raygun.io API
@@ -129,7 +184,7 @@ namespace Raygun4php
      * 200 if accepted, 403 if invalid JSON payload
      */
     public function Send($message)
-    {        
+    {
         if (!function_exists('curl_version'))
         {
           throw new \Raygun4php\Raygun4PhpException("cURL is not available, thus Raygun4php cannot send. Please install and enable cURL in your PHP server.");
@@ -140,9 +195,9 @@ namespace Raygun4php
         }
         else
         {
-            if (!$this->httpData) {
-                $this->httpData = curl_init('https://api.raygun.io/entries');
-            }
+          if (!$this->httpData) {
+              $this->httpData = curl_init('https://api.raygun.io/entries');
+          }
           curl_setopt($this->httpData, CURLOPT_POSTFIELDS, json_encode($message));
           curl_setopt($this->httpData, CURLOPT_RETURNTRANSFER, true);
           curl_setopt($this->httpData, CURLINFO_HEADER_OUT, true);
@@ -160,7 +215,8 @@ namespace Raygun4php
 
       public function __destruct()
       {
-          curl_close($this->httpData);
+          if ($this->httpData)
+            curl_close($this->httpData);
       }
   }
 }
