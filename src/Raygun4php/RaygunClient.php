@@ -3,16 +3,16 @@ namespace Raygun4php
 {
   require_once realpath(__DIR__.'/RaygunMessage.php');
   require_once realpath(__DIR__.'/Raygun4PhpException.php');
-  require_once realpath(__DIR__.'/Uuid.php');  
+  require_once realpath(__DIR__.'/Uuid.php');
 
-  use Rhumsaa\Uuid\Uuid;  
+  use Rhumsaa\Uuid\Uuid;
 
   class RaygunClient
   {
     protected $apiKey;
     protected $version;
     protected $tags;
-    protected $user;    
+    protected $user;
     protected $httpData;
 
     public function __construct($key)
@@ -21,7 +21,7 @@ namespace Raygun4php
 
         if (session_id() == "")
         {
-          session_start();            
+          session_start();
         }
     }
 
@@ -51,7 +51,7 @@ namespace Raygun4php
       if ($userCustomData != null)
       {
           $this->AddUserCustomData($message, $userCustomData);
-      }      
+      }
       return $this->Send($message);
     }
 
@@ -106,19 +106,19 @@ namespace Raygun4php
     *
     */
     public function SetUser($user = null)
-    {        
+    {
         if (is_string($user))
         {
             $this->user = $user;
             $_SESSION['rguserid'] = $user;
-        }     
+        }
         else
-        {          
+        {
           if (empty($_SESSION['rguserid']))
           {
             $_SESSION['rguserid'] = (string) Uuid::uuid4();
           }
-          
+
           $this->user = $_SESSION['rguserid'];
         }
     }
@@ -133,16 +133,16 @@ namespace Raygun4php
     {
         $message = new RaygunMessage($timestamp);
         $message->Build($errorException);
-        $message->Details->Version = $this->version;        
+        $message->Details->Version = $this->version;
         $message->Details->Context = new RaygunIdentifier(session_id());
-        
+
         if ($this->user != null)
         {
           $message->Details->User = new RaygunIdentifier($this->user);
         }
-        else 
-        {                    
-          $message->Details->User = new RaygunIdentifier($_SESSION['rguserid']);          
+        else
+        {
+          $message->Details->User = new RaygunIdentifier($_SESSION['rguserid']);
         }
 
         return $message;
@@ -174,7 +174,7 @@ namespace Raygun4php
 
     private function is_assoc($array) {
       return (bool)count(array_filter(array_keys($array), 'is_string'));
-    }    
+    }
 
     /*
      * Transmits an exception or ErrorException to the Raygun.io API
@@ -184,7 +184,7 @@ namespace Raygun4php
      * 200 if accepted, 403 if invalid JSON payload
      */
     public function Send($message)
-    {        
+    {
         if (!function_exists('curl_version'))
         {
           throw new \Raygun4php\Raygun4PhpException("cURL is not available, thus Raygun4php cannot send. Please install and enable cURL in your PHP server.");
@@ -194,7 +194,7 @@ namespace Raygun4php
             throw new \Raygun4php\Raygun4PhpException("API not valid, cannot send message to Raygun");
         }
         else
-        {         
+        {
           if (!$this->httpData) {
               $this->httpData = curl_init('https://api.raygun.io/entries');
           }
@@ -215,7 +215,8 @@ namespace Raygun4php
 
       public function __destruct()
       {
-          curl_close($this->httpData);
+          if ($this->httpData)
+            curl_close($this->httpData);
       }
   }
 }
