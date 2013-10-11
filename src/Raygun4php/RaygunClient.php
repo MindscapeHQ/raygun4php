@@ -119,7 +119,7 @@ namespace Raygun4php
 
     private function is_assoc($array) {
       return (bool)count(array_filter(array_keys($array), 'is_string'));
-    }    
+    }
 
     /*
      * Transmits an exception or ErrorException to the Raygun.io API
@@ -129,7 +129,7 @@ namespace Raygun4php
      * 200 if accepted, 403 if invalid JSON payload
      */
     public function Send($message)
-    {        
+    {
         if (!function_exists('curl_version'))
         {
           throw new \Raygun4php\Raygun4PhpException("cURL is not available, thus Raygun4php cannot send. Please install and enable cURL in your PHP server.");
@@ -160,7 +160,8 @@ namespace Raygun4php
 
       public function __destruct()
       {
-          curl_close($this->httpData);
+          if ($this->httpData)
+              curl_close($this->httpData);
       }
   }
 }
