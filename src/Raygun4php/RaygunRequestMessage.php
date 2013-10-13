@@ -31,7 +31,12 @@ namespace Raygun4php
 
             $this->headers = $this->emu_getAllHeaders();
             $this->data = $_SERVER;
-            $this->form = $_POST;
+            $this->form = array_map(
+                function($str) {
+                    return iconv('UTF-8', 'UTF-8//IGNORE', $str);
+                }, 
+                $_POST
+            );
 
             if (php_sapi_name() !== 'cli' &&
                 $_SERVER['REQUEST_METHOD'] != 'GET' &&
@@ -39,7 +44,7 @@ namespace Raygun4php
                 $_SERVER['CONTENT_TYPE'] != 'multipart/form-data' &&
                 $_SERVER['CONTENT_TYPE'] != 'text/html')
             {                
-                $this->rawData = file_get_contents('php://input');
+                $this->rawData = iconv('UTF-8', 'UTF-8//IGNORE', file_get_contents('php://input'));
             }
         }
 
