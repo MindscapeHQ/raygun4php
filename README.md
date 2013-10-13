@@ -85,6 +85,6 @@ SendError and SendException return the HTTP status code of the transaction - `ec
 
 ## Changelog
 
-* Version 1.1: Added user tracking support; improved experience in CLI mode; add user-specified timestamp support
+* Version 1.1: Added user tracking support; improved experience in CLI mode; add user-specified timestamp support; fixed user data encoding error
 
 * Version 1.0: Initial commit
