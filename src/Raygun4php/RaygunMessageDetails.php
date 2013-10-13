@@ -11,5 +11,7 @@ namespace Raygun4php
         public $Version;
         public $Tags;
         public $UserCustomData;
+        public $User;
+        public $Context;
     }
 }
