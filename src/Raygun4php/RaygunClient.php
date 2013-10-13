@@ -179,7 +179,7 @@ namespace Raygun4php
     /*
      * Transmits an exception or ErrorException to the Raygun.io API
      * @throws Raygun4php\Raygun4PhpException
-     * @param \ErrorException $errorException
+     * @param Raygun4php\RaygunMessage $message A populated message to be posted to the Raygun API
      * @return The HTTP status code of the result after transmitting the message to Raygun.io
      * 200 if accepted, 403 if invalid JSON payload
      */
