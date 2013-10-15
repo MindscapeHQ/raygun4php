@@ -2,6 +2,7 @@
 namespace Raygun4php
 {
   require_once realpath(__DIR__.'/RaygunMessage.php');
+  require_once realpath(__DIR__.'/RaygunIdentifier.php');
   require_once realpath(__DIR__.'/Raygun4PhpException.php');
   require_once realpath(__DIR__.'/Uuid.php');  
 
