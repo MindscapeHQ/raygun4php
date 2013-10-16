@@ -30,13 +30,14 @@ namespace Raygun4php
             }
 
             $this->headers = $this->emu_getAllHeaders();
-            $this->data = $_SERVER;
-            $this->form = array_map(
-                function($str) {
-                    return iconv('UTF-8', 'UTF-8//IGNORE', $str);
-                }, 
-                $_POST
-            );
+            $this->data = $_SERVER;            
+
+            $utf8_convert = function($value) use (&$utf8_convert) {
+                return is_array($value) ? 
+                array_map($utf8_convert, $value) : 
+                iconv('UTF-8', 'UTF-8//IGNORE', $value);
+            };
+            $this->form = array_map($utf8_convert, $_POST);
 
             if (php_sapi_name() !== 'cli' &&
                 $_SERVER['REQUEST_METHOD'] != 'GET' &&
