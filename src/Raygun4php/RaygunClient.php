@@ -112,13 +112,15 @@ namespace Raygun4php
         {
             $this->user = $user;
             $_SESSION['rguserid'] = $user;
+            $_SESSION['rguuid'] = false;
         }     
         else
         {          
-          if (empty($_SESSION['rguserid']))
+          if (!$_SESSION['rguuid'])
           {
             $_SESSION['rguserid'] = (string) Uuid::uuid4();
-          }
+            $_SESSION['rguuid'] = true;
+          }          
           
           $this->user = $_SESSION['rguserid'];
         }
