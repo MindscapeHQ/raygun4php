@@ -116,7 +116,7 @@ namespace Raygun4php
         }     
         else
         {          
-          if (!$_SESSION['rguuid'])
+          if (!array_key_exists('rguuid', $_SESSION))
           {
             $_SESSION['rguserid'] = (string) Uuid::uuid4();
             $_SESSION['rguuid'] = true;
