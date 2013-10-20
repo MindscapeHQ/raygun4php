@@ -19,11 +19,6 @@ namespace Raygun4php
     public function __construct($key)
     {
         $this->apiKey = $key;
-
-        if (session_id() == "")
-        {
-          session_start();            
-        }
     }
 
     /*
@@ -110,19 +105,23 @@ namespace Raygun4php
     {        
         if (is_string($user))
         {
-            $this->user = $user;
-            $_SESSION['rguserid'] = $user;
-            $_SESSION['rguuid'] = false;
+            $this->user = $user;            
+            setcookie('rguserid', $user, time()+60*60*24*30);
+            setcookie('rguuid', 'false', time()+60*60*24*30);            
         }     
         else
-        {          
-          if (!array_key_exists('rguuid', $_SESSION))
+        {                    
+          if (!array_key_exists('rguuid', $_COOKIE))
+          {        
+            $uuid = (string) Uuid::uuid4();    
+            setcookie('rguserid', $uuid, time()+60*60*24*30);
+            setcookie('rguuid', 'true', time()+60*60*24*30);            
+            $this->user = $uuid;
+          }
+          else
           {
-            $_SESSION['rguserid'] = (string) Uuid::uuid4();
-            $_SESSION['rguuid'] = true;
-          }          
-          
-          $this->user = $_SESSION['rguserid'];
+            $this->user = $_COOKIE['rguserid'];            
+          }                
         }
     }
 
@@ -145,9 +144,8 @@ namespace Raygun4php
         }
         else 
         {                    
-          $message->Details->User = new RaygunIdentifier($_SESSION['rguserid']);          
-        }
-
+          $message->Details->User = new RaygunIdentifier($_COOKIE['rguserid']);                    
+        }                        
         return $message;
     }
 
