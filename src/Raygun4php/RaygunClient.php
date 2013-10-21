@@ -106,17 +106,22 @@ namespace Raygun4php
         if (is_string($user))
         {
             $this->user = $user;            
-            setcookie('rguserid', $user, time()+60*60*24*30);
-            setcookie('rguuid', 'false', time()+60*60*24*30);            
+            if (php_sapi_name() != 'cli')
+            {
+              setcookie('rguserid', $user, time()+60*60*24*30);
+              setcookie('rguuid', 'false', time()+60*60*24*30);
+            }            
         }     
         else
         {                    
           if (!array_key_exists('rguuid', $_COOKIE))
-          {        
-            $uuid = (string) Uuid::uuid4();    
-            setcookie('rguserid', $uuid, time()+60*60*24*30);
-            setcookie('rguuid', 'true', time()+60*60*24*30);            
-            $this->user = $uuid;
+          {                    
+            $this->user = (string) Uuid::uuid4();
+            if (php_sapi_name() != 'cli')
+            {
+              setcookie('rguserid', $this->user, time()+60*60*24*30);
+              setcookie('rguuid', 'true', time()+60*60*24*30);
+            }
           }
           else
           {

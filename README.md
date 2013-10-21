@@ -79,6 +79,10 @@ You can transmit the version number of your PHP project along with the message b
 
 You can call $client->SetUser($user), passing in a string representing the username or email address of the current user of the calling application. This will be attached to the message and visible in the dashboard. This method is optional - if it is not called, a random identifier will be used. If you use this, and the user changes (log in/out), be sure to call it again passing in the new user (or just call $client->SetUser() to assign a new random identifier).
 
+Note that this data is stored as a cookie. If you do not call SetUser the default is to store a random UUID to represent the user.
+
+This feature can be used in CLI mode by calling SetUser(string) at the start of your session.
+
 ## Troubleshooting
 
 SendError and SendException return the HTTP status code of the transaction - `echo`ing this will give you a 403 if your API key is incorrect or a 200 if everything was a success.
