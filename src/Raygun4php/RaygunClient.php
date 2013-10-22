@@ -15,10 +15,12 @@ namespace Raygun4php
     protected $tags;
     protected $user;    
     protected $httpData;
+    protected $useAsyncSending;
 
-    public function __construct($key)
-    {
+    public function __construct($key, $useAsyncSending = TRUE)
+    {        
         $this->apiKey = $key;
+        $this->useAsyncSending = $useAsyncSending;
     }
 
     /*
@@ -47,8 +49,9 @@ namespace Raygun4php
       if ($userCustomData != null)
       {
           $this->AddUserCustomData($message, $userCustomData);
-      }      
-      return $this->Send($message);
+      }   
+
+      return $this->Send($message);      
     }
 
     /*
@@ -75,9 +78,8 @@ namespace Raygun4php
       {
           $this->AddUserCustomData($message, $userCustomData);
       }
-
-      $result = $this->Send($message);
-      return $result;
+      
+      return $this->Send($message);
     }
 
     /*
@@ -183,46 +185,79 @@ namespace Raygun4php
     }
 
     /*
-     * Transmits an exception or ErrorException to the Raygun.io API
-     * @throws Raygun4php\Raygun4PhpException
+     * Transmits an exception or ErrorException to the Raygun.io API. The default attempts to transmit asynchronously.
+     * To disable this and transmit sync (blocking), pass false in as the 2nd parameter in RaygunClient's
+     * constructor. This may be necessary on some Windows installations where the implementation is broken.     
      * @param Raygun4php\RaygunMessage $message A populated message to be posted to the Raygun API
      * @return The HTTP status code of the result after transmitting the message to Raygun.io
-     * 200 if accepted, 403 if invalid JSON payload
+     * 202 if accepted, 403 if invalid JSON payload
      */
     public function Send($message)
     {
-        if (!function_exists('curl_version'))
-        {
-          throw new \Raygun4php\Raygun4PhpException("cURL is not available, thus Raygun4php cannot send. Please install and enable cURL in your PHP server.");
-        }
-        else if (empty($this->apiKey))
-        {
-            throw new \Raygun4php\Raygun4PhpException("API not valid, cannot send message to Raygun");
-        }
-        else
-        {         
-          if (!$this->httpData) {
-              $this->httpData = curl_init('https://api.raygun.io/entries');
-          }
-          curl_setopt($this->httpData, CURLOPT_POSTFIELDS, json_encode($message));
-          curl_setopt($this->httpData, CURLOPT_RETURNTRANSFER, true);
-          curl_setopt($this->httpData, CURLINFO_HEADER_OUT, true);
-          curl_setopt($this->httpData, CURLOPT_CAINFO, realpath(__DIR__.'/cacert.crt'));
-          curl_setopt($this->httpData, CURLOPT_HTTPHEADER, array(
-              'X-ApiKey: '.$this->apiKey
-          ));
+      if (empty($this->apiKey))
+      {
+          throw new \Raygun4php\Raygun4PhpException("API not valid, cannot send message to Raygun");
+      }
 
-          curl_exec($this->httpData);
-          $info = curl_getinfo($this->httpData);
+      return $this->postAsync('api.raygun.io', '/entries', json_encode($message), realpath(__DIR__.'/cacert.crt'));  
+    }
 
-          return $info['http_code'];
+    private function postAsync($host, $path, $data_to_send, $cert_path,
+      $opts=array('headers'=>0, 'transport' =>'ssl', 'port'=>443))
+    {
+      $transport = ''; $port=80;
+      if (!empty($opts['transport'])) $transport=$opts['transport'];
+      if (!empty($opts['port'])) $port=$opts['port'];
+      $remote=$transport.'://'.$host.':'.$port;    
+
+      $context = stream_context_create();
+      $result = stream_context_set_option($context, 'ssl', 'verify_host', true);
+      if (!empty($cert_path)) {
+        $result = stream_context_set_option($context, 'ssl', 'cafile', $cert_path);
+        $result = stream_context_set_option($context, 'ssl', 'verify_peer', true);
+      } else {
+        $result = stream_context_set_option($context, 'ssl', 'allow_self_signed', true);
+      }
+
+      if (strcmp(strtoupper(substr(PHP_OS, 0, 3)), 'WIN') != 0)
+      {
+
+      }
+
+      if ($this->useAsyncSending && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN')
+      {        
+        $fp = stream_socket_client($remote, $err, $errstr, 10, STREAM_CLIENT_ASYNC_CONNECT, $context);
+      }
+      else
+      {        
+        $fp = stream_socket_client($remote, $err, $errstr, 10, STREAM_CLIENT_CONNECT, $context);
+      }
+
+      if ($fp) {
+        $req = '';
+        $req .= "POST $path HTTP/1.1\r\n";
+        $req .= "Host: $host\r\n";
+        $req .= "X-ApiKey: ".$this->apiKey."\r\n";          
+        $req .= 'Content-length: '. strlen($data_to_send) ."\r\n";
+        $req .= "Content-type: application/json\r\n";
+        $req .= "Connection: close\r\n\r\n";
+        fwrite($fp, $req);
+        fwrite($fp, $data_to_send);
+        fclose($fp);
+        return 202;
+      }
+      else
+      {
+        echo "<br/><br/>"."<strong>Raygun Warning:</strong> Couldn't send asynchronously. Try calling new RaygunClient('apikey', FALSE); to use an alternate sending method"."<br/><br/>";
+        trigger_error('httpPost error: '.$errstr);
+        return NULL;
       }
     }
 
-      public function __destruct()
-      {
-          if ($this->httpData)
-              curl_close($this->httpData);
-      }
+    public function __destruct()
+    {
+        if ($this->httpData)
+            curl_close($this->httpData);
+    }
   }
 }
