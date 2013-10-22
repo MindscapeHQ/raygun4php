@@ -71,6 +71,25 @@ Copy your application's API key from the Raygun.io dashboard, and place it in th
 
 If the handlers reside in their own file, just import it in every file where you'd like exceptions and errors to be sent, and they will be delivered to Raygun.io.
 
+## New in 1.1.1: Choice of sending algorithm - fast or slow
+
+This release introduces a new function and optional parameter in the constructor:
+
+```php
+$client = new \Raygun4php\RaygunClient("{{apikey}}==", boolean useFastSending);
+```
+
+* If useFastSending is *false*, the old cURL algorithm will be used. This is slower but potentially more reliable, assuming you have the cURL dependency enabled. *This is the default behavior.*
+
+* If useFastSending is *true*, a new algorithm will be called to send to Raygun. This uses fsockopen and provides a >50% speedup versus the other method. This does not rely on the cURL library either, so you can use it if cURL is not available on your server. It is, howver, still a non-blocking synchronous request. It has been included as an option so we can judge feedback and compatibility.
+
+Benchmarks:
+
+useFastSending = FALSE: 1.6s reponse time (Default)
+
+useFastSending = TRUE: 720ms reponse time
+
+
 #### Version numbers
 
 You can transmit the version number of your PHP project along with the message by calling `SetVersion()` on your RaygunClient after it is instantiated - this is optional but recommended as the version number is considered to be first-class data for a message.
@@ -88,6 +107,8 @@ This feature can be used in CLI mode by calling SetUser(string) at the start of 
 SendError and SendException return the HTTP status code of the transaction - `echo`ing this will give you a 403 if your API key is incorrect or a 200 if everything was a success.
 
 ## Changelog
+
+* Version 1.1.1: Added alternate fsockopen sending algorithm
 
 * Version 1.1: Added user tracking support; improved experience in CLI mode; add user-specified timestamp support; fixed user data encoding error
 

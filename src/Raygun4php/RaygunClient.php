@@ -15,10 +15,12 @@ namespace Raygun4php
     protected $tags;
     protected $user;    
     protected $httpData;
+    protected $useFastSending;
 
-    public function __construct($key)
+    public function __construct($key, $useFastSending = FALSE)
     {        
         $this->apiKey = $key;
+        $this->useFastSending = $useFastSending;
     }
 
     /*
@@ -47,8 +49,16 @@ namespace Raygun4php
       if ($userCustomData != null)
       {
           $this->AddUserCustomData($message, $userCustomData);
-      }      
-      return $this->Send($message);
+      }   
+
+      if ($this->useFastSending)
+      {
+        return $this->SendBlockingFast($message);
+      }        
+      else
+      {
+        return $this->Send($message);
+      }
     }
 
     /*
@@ -75,9 +85,15 @@ namespace Raygun4php
       {
           $this->AddUserCustomData($message, $userCustomData);
       }
-
-      $result = $this->Send($message);
-      return $result;
+      
+      if ($this->useFastSending)
+      {
+        return $this->SendBlockingFast($message);
+      }        
+      else
+      {
+        return $this->Send($message);
+      }
     }
 
     /*
@@ -183,7 +199,8 @@ namespace Raygun4php
     }
 
     /*
-     * Transmits an exception or ErrorException to the Raygun.io API
+     * Transmits an exception or ErrorException to the Raygun.io API using cURL. This is the slowest yet
+     * most compatible way of sending, if you have the cURL library installed. If not, use SendBlockingFast().
      * @throws Raygun4php\Raygun4PhpException
      * @param Raygun4php\RaygunMessage $message A populated message to be posted to the Raygun API
      * @return The HTTP status code of the result after transmitting the message to Raygun.io
@@ -201,7 +218,7 @@ namespace Raygun4php
         }
         else
         {         
-          /*if (!$this->httpData) {
+          if (!$this->httpData) {
               $this->httpData = curl_init('https://api.raygun.io/entries');
           }
           curl_setopt($this->httpData, CURLOPT_POSTFIELDS, json_encode($message));
@@ -215,15 +232,23 @@ namespace Raygun4php
           curl_exec($this->httpData);
           $info = curl_getinfo($this->httpData);
 
-          return $info['http_code'];*/
-          return $this->postAsync('api.raygun.io', '/entries', json_encode($message), realpath(__DIR__.'/cacert.crt'));          
+          return $info['http_code'];
+                  
       }
     }
 
-    public function __destruct()
+    /*
+    * An alternate way to send to Raygun. This does not rely on the cURL library, and transmits over 50% faster
+    * than Send(). It is however still a blocking send (not asynchronous).
+    */
+    public function SendBlockingFast($message)
     {
-        if ($this->httpData)
-            curl_close($this->httpData);
+      if (empty($this->apiKey))
+      {
+          throw new \Raygun4php\Raygun4PhpException("API not valid, cannot send message to Raygun");
+      }
+
+      return $this->postAsync('api.raygun.io', '/entries', json_encode($message), realpath(__DIR__.'/cacert.crt'));  
     }
 
     private function postAsync($host, $path, $data_to_send, $cert_path,
@@ -232,7 +257,7 @@ namespace Raygun4php
       $transport = ''; $port=80;
       if (!empty($opts['transport'])) $transport=$opts['transport'];
       if (!empty($opts['port'])) $port=$opts['port'];
-      $remote=$transport.'://'.$host; //.':'.$port;      
+      $remote=$transport.'://'.$host;    
 
       $context = stream_context_create();
       $result = stream_context_set_option($context, 'ssl', 'verify_host', true);
@@ -247,29 +272,31 @@ namespace Raygun4php
       stream_set_blocking ($fp, 0);
       $n = NULL;   
       $f = array($fp);
-      stream_select($n, $f, $n, 4);   
-      echo '<br/>'.$errstr.'<br/>';
+      stream_select($n, $f, $n, 4);      
       if ($fp) {
-        //if (stream_socket_get_name($fp, true))
-        {
-          $req = '';
-          $req .= "POST $path HTTP/1.1\r\n";
-          $req .= "Host: $host\r\n";
-          $req .= "X-ApiKey: ".$this->apiKey."\r\n";          
-          $req .= 'Content-length: '. strlen($data_to_send) ."\r\n";
-          $req .= "Content-type: application/json\r\n";
-          $req .= "Connection: close\r\n\r\n";
-          fwrite($fp, $req);
-          fwrite($fp, $data_to_send);
-          fclose($fp);
-          return 202;
-        }
+        $req = '';
+        $req .= "POST $path HTTP/1.1\r\n";
+        $req .= "Host: $host\r\n";
+        $req .= "X-ApiKey: ".$this->apiKey."\r\n";          
+        $req .= 'Content-length: '. strlen($data_to_send) ."\r\n";
+        $req .= "Content-type: application/json\r\n";
+        $req .= "Connection: close\r\n\r\n";
+        fwrite($fp, $req);
+        fwrite($fp, $data_to_send);
+        fclose($fp);
+        return 202;
       }
       else
       {
         trigger_error('httpPost error: '.$errstr);
         return NULL;
       }
+    }
+
+    public function __destruct()
+    {
+        if ($this->httpData)
+            curl_close($this->httpData);
     }
   }
 }
