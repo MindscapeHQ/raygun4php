@@ -71,23 +71,17 @@ Copy your application's API key from the Raygun.io dashboard, and place it in th
 
 If the handlers reside in their own file, just import it in every file where you'd like exceptions and errors to be sent, and they will be delivered to Raygun.io.
 
-## New in 1.1.1: Choice of sending algorithm - fast or slow
+## New in 1.1.1: Choice of sending algorithm - async or non-async (blocking)
 
 This release introduces a new function and optional parameter in the constructor:
 
 ```php
-$client = new \Raygun4php\RaygunClient("{{apikey}}==", boolean useFastSending);
+$client = new \Raygun4php\RaygunClient("{{apikey}}==", boolean useAsyncSending);
 ```
 
-* If useFastSending is *false*, the old cURL algorithm will be used. This is slower but potentially more reliable, assuming you have the cURL dependency enabled. *This is the default behavior.*
+* If useAsyncSending is *true*, the message will be sent asynchronously. This provides a great speedup versus the older cURL method. This is the default.
 
-* If useFastSending is *true*, a new algorithm will be called to send to Raygun. This uses fsockopen and provides a >50% speedup versus the other method. This does not rely on the cURL library either, so you can use it if cURL is not available on your server. It is, howver, still a non-blocking synchronous request. It has been included as an option so we can judge feedback and compatibility.
-
-Benchmarks:
-
-useFastSending = FALSE: 1.6s reponse time (Default)
-
-useFastSending = TRUE: 720ms reponse time
+* If useAsyncSending is *false*, the message will be sent with a blocking socket connection. This is provided for compatibility, and as a workaround for a bug in PHP 5.3 running on Windows. If this library is used on Windows, this is the only option available - you can however override it manually if you wish. This method still provides a >50% speedup over the old cURL method.
 
 
 #### Version numbers
@@ -108,7 +102,7 @@ SendError and SendException return the HTTP status code of the transaction - `ec
 
 ## Changelog
 
-* Version 1.1.1: Added alternate fsockopen sending algorithm
+* Version 1.1.1: Added new async sending function; removed cURL dependency
 
 * Version 1.1: Added user tracking support; improved experience in CLI mode; add user-specified timestamp support; fixed user data encoding error
 
