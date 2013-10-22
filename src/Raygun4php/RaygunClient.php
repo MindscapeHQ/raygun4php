@@ -17,7 +17,7 @@ namespace Raygun4php
     protected $httpData;
 
     public function __construct($key)
-    {
+    {        
         $this->apiKey = $key;
     }
 
@@ -201,7 +201,7 @@ namespace Raygun4php
         }
         else
         {         
-          if (!$this->httpData) {
+          /*if (!$this->httpData) {
               $this->httpData = curl_init('https://api.raygun.io/entries');
           }
           curl_setopt($this->httpData, CURLOPT_POSTFIELDS, json_encode($message));
@@ -215,14 +215,61 @@ namespace Raygun4php
           curl_exec($this->httpData);
           $info = curl_getinfo($this->httpData);
 
-          return $info['http_code'];
+          return $info['http_code'];*/
+          return $this->postAsync('api.raygun.io', '/entries', json_encode($message), realpath(__DIR__.'/cacert.crt'));          
       }
     }
 
-      public function __destruct()
-      {
-          if ($this->httpData)
-              curl_close($this->httpData);
+    public function __destruct()
+    {
+        if ($this->httpData)
+            curl_close($this->httpData);
+    }
+
+    private function postAsync($host, $path, $data_to_send, $cert_path,
+      $opts=array('headers'=>0, 'transport' =>'ssl', 'port'=>443))
+    {
+      $transport = ''; $port=80;
+      if (!empty($opts['transport'])) $transport=$opts['transport'];
+      if (!empty($opts['port'])) $port=$opts['port'];
+      $remote=$transport.'://'.$host; //.':'.$port;      
+
+      $context = stream_context_create();
+      $result = stream_context_set_option($context, 'ssl', 'verify_host', true);
+      if (!empty($cert_path)) {
+        $result = stream_context_set_option($context, 'ssl', 'cafile', $cert_path);
+        $result = stream_context_set_option($context, 'ssl', 'verify_peer', true);
+      } else {
+        $result = stream_context_set_option($context, 'ssl', 'allow_self_signed', true);
       }
+
+      $fp = pfsockopen($remote, 443, $err, $errstr, 10);
+      stream_set_blocking ($fp, 0);
+      $n = NULL;   
+      $f = array($fp);
+      stream_select($n, $f, $n, 4);   
+      echo '<br/>'.$errstr.'<br/>';
+      if ($fp) {
+        //if (stream_socket_get_name($fp, true))
+        {
+          $req = '';
+          $req .= "POST $path HTTP/1.1\r\n";
+          $req .= "Host: $host\r\n";
+          $req .= "X-ApiKey: ".$this->apiKey."\r\n";          
+          $req .= 'Content-length: '. strlen($data_to_send) ."\r\n";
+          $req .= "Content-type: application/json\r\n";
+          $req .= "Connection: close\r\n\r\n";
+          fwrite($fp, $req);
+          fwrite($fp, $data_to_send);
+          fclose($fp);
+          return 202;
+        }
+      }
+      else
+      {
+        trigger_error('httpPost error: '.$errstr);
+        return NULL;
+      }
+    }
   }
 }
