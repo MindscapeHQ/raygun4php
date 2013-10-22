@@ -219,12 +219,17 @@ namespace Raygun4php
         $result = stream_context_set_option($context, 'ssl', 'allow_self_signed', true);
       }
 
-      if ($this->useAsyncSending)
+      if (strcmp(strtoupper(substr(PHP_OS, 0, 3)), 'WIN') != 0)
       {
+
+      }
+
+      if ($this->useAsyncSending && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN')
+      {        
         $fp = stream_socket_client($remote, $err, $errstr, 10, STREAM_CLIENT_ASYNC_CONNECT, $context);
       }
       else
-      {
+      {        
         $fp = stream_socket_client($remote, $err, $errstr, 10, STREAM_CLIENT_CONNECT, $context);
       }
 
