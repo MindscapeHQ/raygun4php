@@ -15,12 +15,12 @@ namespace Raygun4php
     protected $tags;
     protected $user;    
     protected $httpData;
-    protected $useFastSending;
+    protected $useAsyncSending;
 
-    public function __construct($key, $useFastSending = FALSE)
+    public function __construct($key, $useAsyncSending = TRUE)
     {        
         $this->apiKey = $key;
-        $this->useFastSending = $useFastSending;
+        $this->useAsyncSending = $useAsyncSending;
     }
 
     /*
@@ -51,14 +51,7 @@ namespace Raygun4php
           $this->AddUserCustomData($message, $userCustomData);
       }   
 
-      if ($this->useFastSending)
-      {
-        return $this->SendBlockingFast($message);
-      }        
-      else
-      {
-        return $this->Send($message);
-      }
+      return $this->Send($message);      
     }
 
     /*
@@ -86,14 +79,7 @@ namespace Raygun4php
           $this->AddUserCustomData($message, $userCustomData);
       }
       
-      if ($this->useFastSending)
-      {
-        return $this->SendBlockingFast($message);
-      }        
-      else
-      {
-        return $this->Send($message);
-      }
+      return $this->Send($message);
     }
 
     /*
@@ -199,49 +185,14 @@ namespace Raygun4php
     }
 
     /*
-     * Transmits an exception or ErrorException to the Raygun.io API using cURL. This is the slowest yet
-     * most compatible way of sending, if you have the cURL library installed. If not, use SendBlockingFast().
-     * @throws Raygun4php\Raygun4PhpException
+     * Transmits an exception or ErrorException to the Raygun.io API. The default attempts to transmit asynchronously.
+     * To disable this and transmit sync (blocking), pass false in as the 2nd parameter in RaygunClient's
+     * constructor. This may be necessary on some Windows installations where the implementation is broken.     
      * @param Raygun4php\RaygunMessage $message A populated message to be posted to the Raygun API
      * @return The HTTP status code of the result after transmitting the message to Raygun.io
-     * 200 if accepted, 403 if invalid JSON payload
+     * 202 if accepted, 403 if invalid JSON payload
      */
     public function Send($message)
-    {
-        if (!function_exists('curl_version'))
-        {
-          throw new \Raygun4php\Raygun4PhpException("cURL is not available, thus Raygun4php cannot send. Please install and enable cURL in your PHP server.");
-        }
-        else if (empty($this->apiKey))
-        {
-            throw new \Raygun4php\Raygun4PhpException("API not valid, cannot send message to Raygun");
-        }
-        else
-        {         
-          if (!$this->httpData) {
-              $this->httpData = curl_init('https://api.raygun.io/entries');
-          }
-          curl_setopt($this->httpData, CURLOPT_POSTFIELDS, json_encode($message));
-          curl_setopt($this->httpData, CURLOPT_RETURNTRANSFER, true);
-          curl_setopt($this->httpData, CURLINFO_HEADER_OUT, true);
-          curl_setopt($this->httpData, CURLOPT_CAINFO, realpath(__DIR__.'/cacert.crt'));
-          curl_setopt($this->httpData, CURLOPT_HTTPHEADER, array(
-              'X-ApiKey: '.$this->apiKey
-          ));
-
-          curl_exec($this->httpData);
-          $info = curl_getinfo($this->httpData);
-
-          return $info['http_code'];
-                  
-      }
-    }
-
-    /*
-    * An alternate way to send to Raygun. This does not rely on the cURL library, and transmits over 50% faster
-    * than Send(). It is however still a blocking send (not asynchronous).
-    */
-    public function SendBlockingFast($message)
     {
       if (empty($this->apiKey))
       {
@@ -257,7 +208,7 @@ namespace Raygun4php
       $transport = ''; $port=80;
       if (!empty($opts['transport'])) $transport=$opts['transport'];
       if (!empty($opts['port'])) $port=$opts['port'];
-      $remote=$transport.'://'.$host;    
+      $remote=$transport.'://'.$host.':'.$port;    
 
       $context = stream_context_create();
       $result = stream_context_set_option($context, 'ssl', 'verify_host', true);
@@ -268,11 +219,15 @@ namespace Raygun4php
         $result = stream_context_set_option($context, 'ssl', 'allow_self_signed', true);
       }
 
-      $fp = pfsockopen($remote, 443, $err, $errstr, 10);
-      stream_set_blocking ($fp, 0);
-      $n = NULL;   
-      $f = array($fp);
-      stream_select($n, $f, $n, 4);      
+      if ($this->useAsyncSending)
+      {
+        $fp = stream_socket_client($remote, $err, $errstr, 10, STREAM_CLIENT_ASYNC_CONNECT, $context);
+      }
+      else
+      {
+        $fp = stream_socket_client($remote, $err, $errstr, 10, STREAM_CLIENT_CONNECT, $context);
+      }
+
       if ($fp) {
         $req = '';
         $req .= "POST $path HTTP/1.1\r\n";
@@ -288,6 +243,7 @@ namespace Raygun4php
       }
       else
       {
+        echo "<br/><br/>"."<strong>Raygun Warning:</strong> Couldn't send asynchronously. Try calling new RaygunClient('apikey', FALSE); to use an alternate sending method"."<br/><br/>";
         trigger_error('httpPost error: '.$errstr);
         return NULL;
       }
