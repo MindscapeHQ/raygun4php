@@ -71,7 +71,7 @@ Copy your application's API key from the Raygun.io dashboard, and place it in th
 
 If the handlers reside in their own file, just import it in every file where you'd like exceptions and errors to be sent, and they will be delivered to Raygun.io.
 
-## New in 1.1.1: Choice of sending algorithm - async or non-async (blocking)
+## New in 1.2: Choice of sending algorithm - async or non-async (blocking)
 
 This release introduces a new function and optional parameter in the constructor:
 
@@ -102,7 +102,7 @@ SendError and SendException return the HTTP status code of the transaction - `ec
 
 ## Changelog
 
-* Version 1.1.1: Added new async sending function; removed cURL dependency
+* Version 1.2: Added new async sending function; removed cURL dependency
 
 * Version 1.1: Added user tracking support; improved experience in CLI mode; add user-specified timestamp support; fixed user data encoding error
 
