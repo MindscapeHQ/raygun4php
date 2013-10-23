@@ -39,14 +39,27 @@ namespace Raygun4php
             };
             $this->form = array_map($utf8_convert, $_POST);
 
-            if (php_sapi_name() !== 'cli' &&
-                $_SERVER['REQUEST_METHOD'] != 'GET' &&
-                $_SERVER['CONTENT_TYPE'] != 'application/x-www-form-urlencoded' &&
-                $_SERVER['CONTENT_TYPE'] != 'multipart/form-data' &&
-                $_SERVER['CONTENT_TYPE'] != 'text/html')
-            {                
-                $this->rawData = iconv('UTF-8', 'UTF-8//IGNORE', file_get_contents('php://input'));
-            }
+            if (php_sapi_name() !== 'cli')
+            {
+                $contentType = null;
+                if (isset($_SERVER['CONTENT_TYPE']))
+                {
+                    $contentType = $_SERVER['CONTENT_TYPE'];
+                }
+                else if (isset($_SERVER['HTTP_CONTENT_TYPE']))
+                {
+                    $contentType = $_SERVER['HTTP_CONTENT_TYPE'];
+                }
+                
+                if ($_SERVER['REQUEST_METHOD'] != 'GET' &&
+                    $contentType != null &&
+                    $contentType != 'application/x-www-form-urlencoded' &&
+                    $contentType != 'multipart/form-data' &&
+                    $contentType != 'text/html')
+                {                
+                  $this->rawData = iconv('UTF-8', 'UTF-8//IGNORE', file_get_contents('php://input'));
+                }
+            }            
         }
 
         private function emu_getAllHeaders()
