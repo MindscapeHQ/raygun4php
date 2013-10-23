@@ -17,7 +17,7 @@ Composer is a package management tool for PHP which automatically fetches depend
 ```json
 {
         "require": {
-            "mindscape/raygun4php": "dev-master"
+            "mindscape/raygun4php": "1.*"
         }
 }
 ```
