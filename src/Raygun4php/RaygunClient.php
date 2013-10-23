@@ -21,6 +21,7 @@ namespace Raygun4php
     {        
         $this->apiKey = $key;
         $this->useAsyncSending = $useAsyncSending;
+        $this->SetUser();
     }
 
     /*
@@ -36,10 +37,6 @@ namespace Raygun4php
     */
     public function SendError($errno, $errstr, $errfile, $errline, $tags = null, $userCustomData = null, $timestamp = null)
     {
-      if ($this->user == null)
-      {
-        $this->SetUser();
-      }
       $message = $this->BuildMessage(new \ErrorException($errstr, $errno, 0, $errfile, $errline), $timestamp);
 
       if ($tags != null)
@@ -64,10 +61,6 @@ namespace Raygun4php
     */
     public function SendException($exception, $tags = null, $userCustomData = null, $timestamp = null)
     {
-      if ($this->user == null)
-      {
-        $this->SetUser();
-      }
       $message = $this->BuildMessage($exception, $timestamp);
 
       if ($tags != null)
@@ -108,7 +101,7 @@ namespace Raygun4php
         if (is_string($user))
         {
             $this->user = $user;            
-            if (php_sapi_name() != 'cli')
+            if (php_sapi_name() != 'cli' && !headers_sent())
             {
               setcookie('rguserid', $user, time()+60*60*24*30);
               setcookie('rguuid', 'false', time()+60*60*24*30);
@@ -119,15 +112,15 @@ namespace Raygun4php
           if (!array_key_exists('rguuid', $_COOKIE))
           {                    
             $this->user = (string) Uuid::uuid4();
-            if (php_sapi_name() != 'cli')
-            {
+            if (php_sapi_name() != 'cli' && !headers_sent())
+            {              
               setcookie('rguserid', $this->user, time()+60*60*24*30);
               setcookie('rguuid', 'true', time()+60*60*24*30);
             }
           }
           else
           {
-            $this->user = $_COOKIE['rguserid'];            
+            $this->user = $_COOKIE['rguserid']; 
           }                
         }
     }
