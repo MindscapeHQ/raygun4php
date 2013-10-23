@@ -219,38 +219,37 @@ namespace Raygun4php
         $result = stream_context_set_option($context, 'ssl', 'allow_self_signed', true);
       }
 
-      if (strcmp(strtoupper(substr(PHP_OS, 0, 3)), 'WIN') != 0)
-      {
-
-      }
-
       if ($this->useAsyncSending && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN')
-      {        
-        $fp = stream_socket_client($remote, $err, $errstr, 10, STREAM_CLIENT_ASYNC_CONNECT, $context);
-      }
-      else
-      {        
-        $fp = stream_socket_client($remote, $err, $errstr, 10, STREAM_CLIENT_CONNECT, $context);
-      }
+      { 
+      	$cmd = "curl -X POST -H 'Content-Type: application/json' -H 'X-ApiKey: ".$this->apiKey."'";
+	$cmd .= " -d '".$data_to_send."' --cacert '".realpath(__DIR__.'/cacert.crt')."' 'https://api.raygun.io:443/entries' > /dev/null 2>&1 &";
 
-      if ($fp) {
-        $req = '';
-        $req .= "POST $path HTTP/1.1\r\n";
-        $req .= "Host: $host\r\n";
-        $req .= "X-ApiKey: ".$this->apiKey."\r\n";          
-        $req .= 'Content-length: '. strlen($data_to_send) ."\r\n";
-        $req .= "Content-type: application/json\r\n";
-        $req .= "Connection: close\r\n\r\n";
-        fwrite($fp, $req);
-        fwrite($fp, $data_to_send);
-        fclose($fp);
-        return 202;
+	exec($cmd, $output, $exit);
+	return $exit;
       }
       else
       {
-        echo "<br/><br/>"."<strong>Raygun Warning:</strong> Couldn't send asynchronously. Try calling new RaygunClient('apikey', FALSE); to use an alternate sending method"."<br/><br/>";
-        trigger_error('httpPost error: '.$errstr);
-        return NULL;
+	$fp = stream_socket_client($remote, $err, $errstr, 10, STREAM_CLIENT_CONNECT, $context);
+	if ($fp)
+	{
+          $req = '';
+          $req .= "POST $path HTTP/1.1\r\n";
+          $req .= "Host: $host\r\n";
+          $req .= "X-ApiKey: ".$this->apiKey."\r\n";          
+          $req .= 'Content-length: '. strlen($data_to_send) ."\r\n";
+          $req .= "Content-type: application/json\r\n";
+	  $req .= "Connection: close\r\n\r\n";
+          fwrite($fp, $req);
+          fwrite($fp, $data_to_send);
+          fclose($fp);
+          return 202;
+      	}
+	else
+	{
+	  echo "<br/><br/>"."<strong>Raygun Warning:</strong> Couldn't send asynchronously. Try calling new RaygunClient('apikey', FALSE); to use an alternate sending method"."<br/><br/>";
+          trigger_error('httpPost error: '.$errstr);
+          return NULL;
+        }
       }
     }
 
