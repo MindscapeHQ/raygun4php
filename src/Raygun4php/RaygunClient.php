@@ -214,32 +214,32 @@ namespace Raygun4php
 
       if ($this->useAsyncSending && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN')
       { 
-      	$cmd = "curl -X POST -H 'Content-Type: application/json' -H 'X-ApiKey: ".$this->apiKey."'";
-	$cmd .= " -d '".$data_to_send."' --cacert '".realpath(__DIR__.'/cacert.crt')."' 'https://api.raygun.io:443/entries' > /dev/null 2>&1 &";
+        $cmd = "curl -X POST -H 'Content-Type: application/json' -H 'X-ApiKey: ".$this->apiKey."'";
+  $cmd .= " -d '".$data_to_send."' --cacert '".realpath(__DIR__.'/cacert.crt')."' 'https://api.raygun.io:443/entries' > /dev/null 2>&1 &";
 
-	exec($cmd, $output, $exit);
-	return $exit;
+  exec($cmd, $output, $exit);
+  return $exit;
       }
       else
       {
-	$fp = stream_socket_client($remote, $err, $errstr, 10, STREAM_CLIENT_CONNECT, $context);
-	if ($fp)
-	{
+  $fp = stream_socket_client($remote, $err, $errstr, 10, STREAM_CLIENT_CONNECT, $context);
+  if ($fp)
+  {
           $req = '';
           $req .= "POST $path HTTP/1.1\r\n";
           $req .= "Host: $host\r\n";
           $req .= "X-ApiKey: ".$this->apiKey."\r\n";          
           $req .= 'Content-length: '. strlen($data_to_send) ."\r\n";
           $req .= "Content-type: application/json\r\n";
-	  $req .= "Connection: close\r\n\r\n";
+    $req .= "Connection: close\r\n\r\n";
           fwrite($fp, $req);
           fwrite($fp, $data_to_send);
           fclose($fp);
           return 202;
-      	}
-	else
-	{
-	  echo "<br/><br/>"."<strong>Raygun Warning:</strong> Couldn't send asynchronously. Try calling new RaygunClient('apikey', FALSE); to use an alternate sending method"."<br/><br/>";
+        }
+  else
+  {
+    echo "<br/><br/>"."<strong>Raygun Warning:</strong> Couldn't send asynchronously. Try calling new RaygunClient('apikey', FALSE); to use an alternate sending method"."<br/><br/>";
           trigger_error('httpPost error: '.$errstr);
           return NULL;
         }
