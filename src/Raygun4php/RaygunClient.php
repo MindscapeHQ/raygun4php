@@ -108,7 +108,7 @@ namespace Raygun4php
         if (is_string($user))
         {
             $this->user = $user;            
-            if (php_sapi_name() != 'cli')
+            if (php_sapi_name() != 'cli' && !headers_sent())
             {
               setcookie('rguserid', $user, time()+60*60*24*30);
               setcookie('rguuid', 'false', time()+60*60*24*30);
@@ -119,7 +119,7 @@ namespace Raygun4php
           if (!array_key_exists('rguuid', $_COOKIE))
           {                    
             $this->user = (string) Uuid::uuid4();
-            if (php_sapi_name() != 'cli')
+            if (php_sapi_name() != 'cli' && !headers_sent())
             {
               setcookie('rguserid', $this->user, time()+60*60*24*30);
               setcookie('rguuid', 'true', time()+60*60*24*30);
