@@ -206,9 +206,8 @@ namespace Raygun4php {
 
             if ($this->useAsyncSending && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
                 $cmd = "curl -X POST -H 'Content-Type: application/json' -H 'X-ApiKey: " . $this->apiKey . "'";
-                $cmd .= " -d '" . $data_to_send . "' --cacert '" . realpath(
-                      __DIR__ . '/cacert.crt'
-                  ) . "' 'https://api.raygun.io:443/entries' > /dev/null 2>&1 &";
+                $cmd .= " -d '" . $data_to_send . "' --cacert '" . realpath(__DIR__ . '/cacert.crt')
+                     . "' 'https://api.raygun.io:443/entries' > /dev/null 2>&1 &";
 
                 exec($cmd, $output, $exit);
                 return $exit;
