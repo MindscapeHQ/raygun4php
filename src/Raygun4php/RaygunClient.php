@@ -171,18 +171,18 @@ namespace Raygun4php {
                 throw new \Raygun4php\Raygun4PhpException("API not valid, cannot send message to Raygun");
             }
 
-            return $this->queueMessage($message);
+            if ($this->useAsyncSending) {
+                return $this->queueMessage($message);
+            }
+            else {
+                return $this->postMessage($message);
+            }
         }
 
         public function flushSendQueue()
         {
             foreach ($this->queuedMessages as $message) {
-                $this->postAsync(
-                    'api.raygun.io',
-                    '/entries',
-                    json_encode($message),
-                    realpath(__DIR__ . '/cacert.crt')
-                );
+                $this->postMessage($message);
             }
             $this->queuedMessages = array();
         }
@@ -190,6 +190,20 @@ namespace Raygun4php {
         private function queueMessage($data_to_send) {
             $this->queuedMessages[] = $data_to_send;
             return 202;
+        }
+
+        /**
+         * @param $message
+         * @return int|null
+         */
+        protected function postMessage($message)
+        {
+            return $this->postAsync(
+                'api.raygun.io',
+                '/entries',
+                json_encode($message),
+                realpath(__DIR__ . '/cacert.crt')
+            );
         }
 
         private function postAsync(
