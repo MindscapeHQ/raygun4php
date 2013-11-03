@@ -47,7 +47,7 @@ namespace
 {
 	// your 'requires' statement
 	
-	$client = new \Raygun4php\RaygunClient("{{apikey for your application}}");
+	$client = new \Raygun4php\RaygunClient("apikey for your application");
 
 	function error_handler($errno, $errstr, $errfile, $errline ) {
 		global $client;
@@ -76,7 +76,7 @@ If the handlers reside in their own file, just import it in every file where you
 This release introduces a new function and optional parameter in the constructor:
 
 ```php
-$client = new \Raygun4php\RaygunClient("{{apikey}}==", boolean useAsyncSending);
+$client = new \Raygun4php\RaygunClient("apiKey", boolean useAsyncSending);
 ```
 
 * If useAsyncSending is *true*, the message will be sent asynchronously. This provides a great speedup versus the older cURL method. This is the default.
