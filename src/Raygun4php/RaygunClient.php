@@ -1,27 +1,26 @@
 <?php
-namespace Raygun4php
-{
-  require_once realpath(__DIR__.'/RaygunMessage.php');
-  require_once realpath(__DIR__.'/RaygunIdentifier.php');
-  require_once realpath(__DIR__.'/Raygun4PhpException.php');
-  require_once realpath(__DIR__.'/Uuid.php');  
+namespace Raygun4php {
+  require_once realpath(__DIR__ . '/RaygunMessage.php');
+  require_once realpath(__DIR__ . '/RaygunIdentifier.php');
+  require_once realpath(__DIR__ . '/Raygun4PhpException.php');
+  require_once realpath(__DIR__ . '/Uuid.php');
 
-  use Rhumsaa\Uuid\Uuid;  
+  use Rhumsaa\Uuid\Uuid;
 
   class RaygunClient
   {
     protected $apiKey;
     protected $version;
     protected $tags;
-    protected $user;    
+    protected $user;
     protected $httpData;
     protected $useAsyncSending;
 
-    public function __construct($key, $useAsyncSending = TRUE)
-    {        
-        $this->apiKey = $key;
-        $this->useAsyncSending = $useAsyncSending;
-        $this->SetUser();
+    public function __construct($key, $useAsyncSending = true)
+    {
+      $this->apiKey = $key;
+      $this->useAsyncSending = $useAsyncSending;
+      $this->SetUser();
     }
 
     /*
@@ -41,14 +40,15 @@ namespace Raygun4php
 
       if ($tags != null)
       {
-          $this->AddTags($message, $tags);
+        $this->AddTags($message, $tags);
       }
+
       if ($userCustomData != null)
       {
-          $this->AddUserCustomData($message, $userCustomData);
-      }   
+        $this->AddUserCustomData($message, $userCustomData);
+      }
 
-      return $this->Send($message);      
+      return $this->Send($message);
     }
 
     /*
@@ -65,13 +65,14 @@ namespace Raygun4php
 
       if ($tags != null)
       {
-          $this->AddTags($message, $tags);
+        $this->AddTags($message, $tags);
       }
+
       if ($userCustomData != null)
       {
-          $this->AddUserCustomData($message, $userCustomData);
+        $this->AddUserCustomData($message, $userCustomData);
       }
-      
+
       return $this->Send($message);
     }
 
@@ -84,7 +85,7 @@ namespace Raygun4php
      */
     public function SetVersion($version)
     {
-        $this->version = $version;
+      $this->version = $version;
     }
 
     /*
@@ -97,32 +98,34 @@ namespace Raygun4php
     *
     */
     public function SetUser($user = null)
-    {        
-        if (is_string($user))
+    {
+      if (is_string($user))
+      {
+        $this->user = $user;
+
+        if (php_sapi_name() != 'cli' && !headers_sent())
         {
-            $this->user = $user;            
-            if (php_sapi_name() != 'cli' && !headers_sent())
-            {
-              setcookie('rguserid', $user, time()+60*60*24*30);
-              setcookie('rguuid', 'false', time()+60*60*24*30);
-            }            
-        }     
-        else
-        {                    
-          if (!array_key_exists('rguuid', $_COOKIE))
-          {                    
-            $this->user = (string) Uuid::uuid4();
-            if (php_sapi_name() != 'cli' && !headers_sent())
-            {              
-              setcookie('rguserid', $this->user, time()+60*60*24*30);
-              setcookie('rguuid', 'true', time()+60*60*24*30);
-            }
-          }
-          else
-          {
-            $this->user = $_COOKIE['rguserid']; 
-          }                
+          setcookie('rguserid', $user, time() + 60 * 60 * 24 * 30);
+          setcookie('rguuid', 'false', time() + 60 * 60 * 24 * 30);
         }
+      }
+      else
+      {
+        if (!array_key_exists('rguuid', $_COOKIE))
+        {
+          $this->user = (string)Uuid::uuid4();
+
+          if (php_sapi_name() != 'cli' && !headers_sent())
+          {
+            setcookie('rguserid', $this->user, time() + 60 * 60 * 24 * 30);
+            setcookie('rguuid', 'true', time() + 60 * 60 * 24 * 30);
+          }
+        }
+        else
+        {
+          $this->user = $_COOKIE['rguserid'];
+        }        
+      }
     }
 
     /*
@@ -133,54 +136,56 @@ namespace Raygun4php
     */
     private function BuildMessage($errorException, $timestamp = null)
     {
-        $message = new RaygunMessage($timestamp);
-        $message->Build($errorException);
-        $message->Details->Version = $this->version;        
-        $message->Details->Context = new RaygunIdentifier(session_id());
-        
-        if ($this->user != null)
-        {
-          $message->Details->User = new RaygunIdentifier($this->user);
-        }
-        else 
-        {                    
-          $message->Details->User = new RaygunIdentifier($_COOKIE['rguserid']);                    
-        }                        
-        return $message;
+      $message = new RaygunMessage($timestamp);
+      $message->Build($errorException);
+      $message->Details->Version = $this->version;
+      $message->Details->Context = new RaygunIdentifier(session_id());
+
+      if ($this->user != null)
+      {
+        $message->Details->User = new RaygunIdentifier($this->user);
+      }
+      else
+      {
+        $message->Details->User = new RaygunIdentifier($_COOKIE['rguserid']);
+      }
+
+      return $message;
     }
 
     private function AddTags(&$message, $tags)
     {
-        if (is_array($tags))
-        {
-            $message->Details->Tags = $tags;
-        }
-        else
-        {
-            throw new \Raygun4php\Raygun4PhpException("Tags must be an array");
-        }
+      if (is_array($tags))
+      {
+        $message->Details->Tags = $tags;
+      }
+      else
+      {
+        throw new \Raygun4php\Raygun4PhpException("Tags must be an array");
+      }
     }
 
     private function AddUserCustomData(&$message, $userCustomData)
     {
-        if ($this->is_assoc($userCustomData))
-        {
-            $message->Details->UserCustomData = $userCustomData;
-        }
-        else
-        {
-            throw new \Raygun4php\Raygun4PhpException("UserCustomData must be an associative array");
-        }
+      if ($this->is_assoc($userCustomData))
+      {
+        $message->Details->UserCustomData = $userCustomData;
+      }
+      else
+      {
+        throw new \Raygun4php\Raygun4PhpException("UserCustomData must be an associative array");
+      }
     }
 
-    private function is_assoc($array) {
+    private function is_assoc($array)
+    {
       return (bool)count(array_filter(array_keys($array), 'is_string'));
     }
 
     /*
      * Transmits an exception or ErrorException to the Raygun.io API. The default attempts to transmit asynchronously.
      * To disable this and transmit sync (blocking), pass false in as the 2nd parameter in RaygunClient's
-     * constructor. This may be necessary on some Windows installations where the implementation is broken.     
+     * constructor. This may be necessary on some Windows installations where the implementation is broken.
      * @param Raygun4php\RaygunMessage $message A populated message to be posted to the Raygun API
      * @return The HTTP status code of the result after transmitting the message to Raygun.io
      * 202 if accepted, 403 if invalid JSON payload
@@ -189,67 +194,78 @@ namespace Raygun4php
     {
       if (empty($this->apiKey))
       {
-          throw new \Raygun4php\Raygun4PhpException("API not valid, cannot send message to Raygun");
+        throw new \Raygun4php\Raygun4PhpException("API not valid, cannot send message to Raygun");
       }
 
-      return $this->postAsync('api.raygun.io', '/entries', json_encode($message), realpath(__DIR__.'/cacert.crt'));  
+      return $this->postAsync(json_encode($message), realpath(__DIR__ . '/cacert.crt'));
     }
 
-    private function postAsync($host, $path, $data_to_send, $cert_path,
-      $opts=array('headers'=>0, 'transport' =>'ssl', 'port'=>443))
+    private function postAsync($data_to_send, $cert_path)
     {
-      $transport = ''; $port=80;
-      if (!empty($opts['transport'])) $transport=$opts['transport'];
-      if (!empty($opts['port'])) $port=$opts['port'];
-      $remote=$transport.'://'.$host.':'.$port;    
+      $headers = 0;
+      $host = 'api.raygun.io';
+      $path = '/entries';
+      $transport = 'ssl';
+      $port = 443;
+      $remote = $transport . '://' . $host . ':' . $port;
 
       $context = stream_context_create();
       $result = stream_context_set_option($context, 'ssl', 'verify_host', true);
-      if (!empty($cert_path)) {
+
+      if (!empty($cert_path))
+      {
         $result = stream_context_set_option($context, 'ssl', 'cafile', $cert_path);
         $result = stream_context_set_option($context, 'ssl', 'verify_peer', true);
-      } else {
+      }
+      else
+      {
         $result = stream_context_set_option($context, 'ssl', 'allow_self_signed', true);
       }
 
       if ($this->useAsyncSending && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN')
-      { 
-        $cmd = "curl -X POST -H 'Content-Type: application/json' -H 'X-ApiKey: ".$this->apiKey."'";
-  $cmd .= " -d '".$data_to_send."' --cacert '".realpath(__DIR__.'/cacert.crt')."' 'https://api.raygun.io:443/entries' > /dev/null 2>&1 &";
+      {
+        $cmd = "curl -X POST -H 'Content-Type: application/json' -H 'X-ApiKey: " . $this->apiKey . "'";
+        $cmd .= " -d '" . $data_to_send . "' --cacert '" . realpath(__DIR__ . '/cacert.crt')
+           . "' 'https://api.raygun.io:443/entries' > /dev/null 2>&1 &";
 
-  exec($cmd, $output, $exit);
-  return $exit;
+        exec($cmd, $output, $exit);
+        return $exit;
       }
       else
       {
-  $fp = stream_socket_client($remote, $err, $errstr, 10, STREAM_CLIENT_CONNECT, $context);
-  if ($fp)
-  {
+        $fp = stream_socket_client($remote, $err, $errstr, 10, STREAM_CLIENT_CONNECT, $context);
+
+        if ($fp)
+        {
           $req = '';
           $req .= "POST $path HTTP/1.1\r\n";
           $req .= "Host: $host\r\n";
-          $req .= "X-ApiKey: ".$this->apiKey."\r\n";          
-          $req .= 'Content-length: '. strlen($data_to_send) ."\r\n";
+          $req .= "X-ApiKey: " . $this->apiKey . "\r\n";
+          $req .= 'Content-length: ' . strlen($data_to_send) . "\r\n";
           $req .= "Content-type: application/json\r\n";
-    $req .= "Connection: close\r\n\r\n";
+          $req .= "Connection: close\r\n\r\n";
           fwrite($fp, $req);
           fwrite($fp, $data_to_send);
           fclose($fp);
           return 202;
         }
-  else
-  {
-    echo "<br/><br/>"."<strong>Raygun Warning:</strong> Couldn't send asynchronously. Try calling new RaygunClient('apikey', FALSE); to use an alternate sending method"."<br/><br/>";
-          trigger_error('httpPost error: '.$errstr);
-          return NULL;
+        else
+        {
+          $errMsg = "<br/><br/>" . "<strong>Raygun Warning:</strong> Couldn't send asynchronously. ";
+          $errMsg .= "Try calling new RaygunClient('apikey', FALSE); to use an alternate sending method" . "<br/><br/>";
+          echo $errMsg;
+          trigger_error('httpPost error: ' . $errstr);
+          return null;
         }
       }
     }
 
     public function __destruct()
     {
-        if ($this->httpData)
-            curl_close($this->httpData);
+      if ($this->httpData)
+      {
+        curl_close($this->httpData);
+      }
     }
   }
 }
