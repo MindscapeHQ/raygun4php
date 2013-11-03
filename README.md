@@ -102,6 +102,8 @@ SendError and SendException return the HTTP status code of the transaction - `ec
 
 ## Changelog
 
+* Version 1.2.2: Minor formatting refactor
+
 * Version 1.2.1: Several bugfixes for user tracking and request processing
 
 * Version 1.2: Added new async sending function; removed cURL dependency
