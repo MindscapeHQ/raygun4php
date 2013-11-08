@@ -5,7 +5,6 @@ namespace Raygun4php {
     require_once realpath(__DIR__ . '/Raygun4PhpException.php');
     require_once realpath(__DIR__ . '/Uuid.php');
 
-    use Rhumsaa\Uuid\Uuid;
 
     class RaygunQueueingClient
     {
@@ -13,7 +12,6 @@ namespace Raygun4php {
         protected $version;
         protected $tags;
         protected $user;
-        protected $httpData;
         protected $useAsyncSending;
         protected $queuedMessages = array();
 
@@ -212,9 +210,6 @@ namespace Raygun4php {
         public function __destruct()
         {
             $this->flushSendQueue();
-            if ($this->httpData) {
-                curl_close($this->httpData);
-            }
         }
     }
 }
