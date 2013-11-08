@@ -232,7 +232,8 @@ namespace Raygun4php {
                 $result = stream_context_set_option($context, 'ssl', 'allow_self_signed', true);
             }
 
-            $fp = stream_socket_client($remote, $errorNumber, $errorString, 10, STREAM_CLIENT_CONNECT, $context);
+            $connectionFlags = STREAM_CLIENT_CONNECT | STREAM_CLIENT_ASYNC_CONNECT;
+            $fp = stream_socket_client($remote, $errorNumber, $errorString, 10, $connectionFlags, $context);
             stream_set_blocking($fp, 0);
             if ($fp) {
                 $req = '';
