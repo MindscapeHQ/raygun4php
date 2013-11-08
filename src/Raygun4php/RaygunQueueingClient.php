@@ -7,7 +7,7 @@ namespace Raygun4php {
 
     use Rhumsaa\Uuid\Uuid;
 
-    class RaygunClient
+    class RaygunQueueingClient
     {
         protected $apiKey;
         protected $version;
@@ -15,6 +15,7 @@ namespace Raygun4php {
         protected $user;
         protected $httpData;
         protected $useAsyncSending;
+        protected $queuedMessages = array();
 
         public function __construct($key, $useAsyncSending = true)
         {
@@ -170,6 +171,33 @@ namespace Raygun4php {
                 throw new \Raygun4php\Raygun4PhpException("API not valid, cannot send message to Raygun");
             }
 
+            if ($this->useAsyncSending) {
+                return $this->queueMessage($message);
+            }
+            else {
+                return $this->postMessage($message);
+            }
+        }
+
+        public function flushSendQueue()
+        {
+            foreach ($this->queuedMessages as $message) {
+                $this->postMessage($message);
+            }
+            $this->queuedMessages = array();
+        }
+
+        private function queueMessage($data_to_send) {
+            $this->queuedMessages[] = $data_to_send;
+            return 202;
+        }
+
+        /**
+         * @param $message
+         * @return int|null
+         */
+        protected function postMessage($message)
+        {
             return $this->postAsync(
                 'api.raygun.io',
                 '/entries',
@@ -204,37 +232,30 @@ namespace Raygun4php {
                 $result = stream_context_set_option($context, 'ssl', 'allow_self_signed', true);
             }
 
-            if ($this->useAsyncSending && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
-                $cmd = "curl -X POST -H 'Content-Type: application/json' -H 'X-ApiKey: " . $this->apiKey . "'";
-                $cmd .= " -d '" . $data_to_send . "' --cacert '" . realpath(__DIR__ . '/cacert.crt')
-                     . "' 'https://api.raygun.io:443/entries' > /dev/null 2>&1 &";
-
-                exec($cmd, $output, $exit);
-                return $exit;
+            $fp = stream_socket_client($remote, $err, $errstr, 10, STREAM_CLIENT_CONNECT, $context);
+            stream_set_blocking($fp, 0);
+            if ($fp) {
+                $req = '';
+                $req .= "POST $path HTTP/1.1\r\n";
+                $req .= "Host: $host\r\n";
+                $req .= "X-ApiKey: " . $this->apiKey . "\r\n";
+                $req .= 'Content-length: ' . strlen($data_to_send) . "\r\n";
+                $req .= "Content-type: application/json\r\n";
+                $req .= "Connection: close\r\n\r\n";
+                fwrite($fp, $req);
+                fwrite($fp, $data_to_send);
+                fclose($fp);
+                return 202;
             } else {
-                $fp = stream_socket_client($remote, $err, $errstr, 10, STREAM_CLIENT_CONNECT, $context);
-                if ($fp) {
-                    $req = '';
-                    $req .= "POST $path HTTP/1.1\r\n";
-                    $req .= "Host: $host\r\n";
-                    $req .= "X-ApiKey: " . $this->apiKey . "\r\n";
-                    $req .= 'Content-length: ' . strlen($data_to_send) . "\r\n";
-                    $req .= "Content-type: application/json\r\n";
-                    $req .= "Connection: close\r\n\r\n";
-                    fwrite($fp, $req);
-                    fwrite($fp, $data_to_send);
-                    fclose($fp);
-                    return 202;
-                } else {
-                    echo "<br/><br/>" . "<strong>Raygun Warning:</strong> Couldn't send asynchronously. Try calling new RaygunClient('apikey', FALSE); to use an alternate sending method" . "<br/><br/>";
-                    trigger_error('httpPost error: ' . $errstr);
-                    return null;
-                }
+                echo "<br/><br/>" . "<strong>Raygun Warning:</strong> Couldn't send asynchronously. Try calling new RaygunClient('apikey', FALSE); to use an alternate sending method" . "<br/><br/>";
+                trigger_error('httpPost error: ' . $errstr);
+                return null;
             }
         }
 
         public function __destruct()
         {
+            $this->flushSendQueue();
             if ($this->httpData) {
                 curl_close($this->httpData);
             }
