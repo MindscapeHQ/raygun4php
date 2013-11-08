@@ -8,10 +8,6 @@ namespace Raygun4php {
 
     class RaygunQueueingClient
     {
-        protected $apiKey;
-        protected $version;
-        protected $tags;
-        protected $user;
         protected $useAsyncSending;
         protected $queuedMessages = array();
 
@@ -20,13 +16,18 @@ namespace Raygun4php {
          */
         protected $messageSender;
 
+        /**
+         * @var RaygunMessageBuilder
+         */
+        protected $messageBuilder;
+
         public function __construct($key, $useAsyncSending = true)
         {
-            $this->apiKey = $key;
             $this->useAsyncSending = $useAsyncSending;
-            $this->SetUser();
 
             $this->messageSender = new RaygunMessageSender($key);
+            $this->messageBuilder = new RaygunMessageBuilder();
+            $this->messageBuilder->SetUser();
         }
 
         /*
@@ -42,10 +43,11 @@ namespace Raygun4php {
         */
         public function SendError($errno, $errstr, $errfile, $errline, $tags = null, $userCustomData = null, $timestamp = null)
         {
-            $message = $this->BuildMessage(new \ErrorException($errstr, $errno, 0, $errfile, $errline), $timestamp);
+            $errorException = new \ErrorException($errstr, $errno, 0, $errfile, $errline);
+            $message = $this->messageBuilder->BuildMessage($errorException, $timestamp);
 
             if ($tags != null) {
-                $this->AddTags($message, $tags);
+                $this->messageBuilder->AddTagsToMessage($message, $tags);
             }
             if ($userCustomData != null) {
                 $this->AddUserCustomData($message, $userCustomData);
@@ -64,10 +66,10 @@ namespace Raygun4php {
         */
         public function SendException($exception, $tags = null, $userCustomData = null, $timestamp = null)
         {
-            $message = $this->BuildMessage($exception, $timestamp);
+            $message = $this->messageBuilder->BuildMessage($exception, $timestamp);
 
             if ($tags != null) {
-                $this->AddTags($message, $tags);
+                $this->messageBuilder->AddTagsToMessage($message, $tags);
             }
             if ($userCustomData != null) {
                 $this->AddUserCustomData($message, $userCustomData);
@@ -85,7 +87,7 @@ namespace Raygun4php {
          */
         public function SetVersion($version)
         {
-            $this->version = $version;
+            $this->messageBuilder->SetVersion($version);
         }
 
         /*
@@ -99,53 +101,7 @@ namespace Raygun4php {
         */
         public function SetUser($user = null)
         {
-            if (is_string($user)) {
-                $this->user = $user;
-                if (php_sapi_name() != 'cli' && !headers_sent()) {
-                    setcookie('rguserid', $user, time() + 60 * 60 * 24 * 30);
-                    setcookie('rguuid', 'false', time() + 60 * 60 * 24 * 30);
-                }
-            } else {
-                if (!array_key_exists('rguuid', $_COOKIE)) {
-                    $this->user = (string)Uuid::uuid4();
-                    if (php_sapi_name() != 'cli' && !headers_sent()) {
-                        setcookie('rguserid', $this->user, time() + 60 * 60 * 24 * 30);
-                        setcookie('rguuid', 'true', time() + 60 * 60 * 24 * 30);
-                    }
-                } else {
-                    $this->user = $_COOKIE['rguserid'];
-                }
-            }
-        }
-
-        /*
-         * Sets a string array of tags relating to the message,
-         * used for identification. These will be transmitted along with messages that
-         * are sent.
-         * @param array $tags The tags relating to your project's version
-        */
-        private function BuildMessage($errorException, $timestamp = null)
-        {
-            $message = new RaygunMessage($timestamp);
-            $message->Build($errorException);
-            $message->Details->Version = $this->version;
-            $message->Details->Context = new RaygunIdentifier(session_id());
-
-            if ($this->user != null) {
-                $message->Details->User = new RaygunIdentifier($this->user);
-            } else {
-                $message->Details->User = new RaygunIdentifier($_COOKIE['rguserid']);
-            }
-            return $message;
-        }
-
-        private function AddTags(&$message, $tags)
-        {
-            if (is_array($tags)) {
-                $message->Details->Tags = $tags;
-            } else {
-                throw new \Raygun4php\Raygun4PhpException("Tags must be an array");
-            }
+            $this->messageBuilder->SetUser($user);
         }
 
         private function AddUserCustomData(&$message, $userCustomData)
