@@ -232,7 +232,7 @@ namespace Raygun4php {
                 $result = stream_context_set_option($context, 'ssl', 'allow_self_signed', true);
             }
 
-            $fp = stream_socket_client($remote, $err, $errstr, 10, STREAM_CLIENT_CONNECT, $context);
+            $fp = stream_socket_client($remote, $errorNumber, $errorString, 10, STREAM_CLIENT_CONNECT, $context);
             stream_set_blocking($fp, 0);
             if ($fp) {
                 $req = '';
@@ -247,8 +247,7 @@ namespace Raygun4php {
                 fclose($fp);
                 return 202;
             } else {
-                echo "<br/><br/>" . "<strong>Raygun Warning:</strong> Couldn't send asynchronously. Try calling new RaygunClient('apikey', FALSE); to use an alternate sending method" . "<br/><br/>";
-                trigger_error('httpPost error: ' . $errstr);
+                syslog(LOG_WARNING, "Error logging error with raygun: " . $errorString);
                 return null;
             }
         }
