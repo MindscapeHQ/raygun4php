@@ -9,6 +9,12 @@ class RaygunMessageBuilder {
     private $user;
     private $version;
 
+    function __construct()
+    {
+        $this->SetUser();
+    }
+
+
     public function SetUser($user = null)
     {
         if (is_string($user)) {

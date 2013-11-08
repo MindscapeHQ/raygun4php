@@ -27,7 +27,6 @@ namespace Raygun4php {
 
             $this->messageSender = new RaygunMessageSender($key);
             $this->messageBuilder = new RaygunMessageBuilder();
-            $this->messageBuilder->SetUser();
         }
 
         /*
