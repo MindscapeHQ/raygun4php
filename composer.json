@@ -1,8 +1,7 @@
 {
-    "name": "mead-steve/raygun4php",
+    "name": "mindscape/raygun4php",
     "type": "library",
-    "description": "Fork and extension of the official Raygun.io client for PHP. Implements some extra communication options. Provides message builders and senders to allow composition of new clients.",
-    "version": "0.1.0",
+    "description": "Raygun.io client for PHP 5.3, to send errors and exceptions automatically.",
     "authors": [
         {
             "name": "Mindscape",
