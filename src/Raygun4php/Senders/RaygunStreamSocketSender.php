@@ -7,7 +7,7 @@ class RaygunStreamSocketSender {
 
     private $apiKey;
     private $host;
-    private $path;
+    private $end_point;
     private $cert_path;
     private $opts;
 
@@ -15,14 +15,14 @@ class RaygunStreamSocketSender {
     function __construct(
         $apiKey,
         $host,
-        $path,
+        $end_point,
         $cert_path,
         $opts = array('headers' => 0, 'transport' => 'ssl', 'port' => 443)
     )
     {
         $this->apiKey = $apiKey;
         $this->host = $host;
-        $this->path = $path;
+        $this->end_point = $end_point;
         $this->cert_path = $cert_path;
         $this->opts = $opts;
     }
@@ -37,7 +37,7 @@ class RaygunStreamSocketSender {
         stream_set_blocking($fp, 0);
 
         if ($fp) {
-            $req = $this->buildRequestBody($this->host, $this->path, $data_to_send);
+            $req = $this->buildRequestBody($this->host, $this->end_point, $data_to_send);
             fwrite($fp, $req);
             fwrite($fp, $data_to_send);
             fclose($fp);
