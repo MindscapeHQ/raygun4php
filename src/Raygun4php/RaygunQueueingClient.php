@@ -4,6 +4,7 @@ namespace Raygun4php {
     require_once realpath(__DIR__ . '/RaygunIdentifier.php');
     require_once realpath(__DIR__ . '/Raygun4PhpException.php');
     require_once realpath(__DIR__ . '/Uuid.php');
+    require_once realpath(__DIR__ . '/Senders/RaygunMessageSender.php');
     require_once realpath(__DIR__ . '/Senders/RaygunStreamSocketSender.php');
 
 
@@ -127,14 +128,14 @@ namespace Raygun4php {
                 return $this->queueMessage($message);
             }
             else {
-                return $this->postMessage($message);
+                return $this->messageSender->Send($message);
             }
         }
 
         public function flushSendQueue()
         {
             foreach ($this->queuedMessages as $message) {
-                $this->postMessage($message);
+                $this->messageSender->Send($message);
             }
             $this->queuedMessages = array();
         }
@@ -142,15 +143,6 @@ namespace Raygun4php {
         private function queueMessage($data_to_send) {
             $this->queuedMessages[] = $data_to_send;
             return 202;
-        }
-
-        /**
-         * @param $message
-         * @return int|null
-         */
-        protected function postMessage($message)
-        {
-            return $this->messageSender->postAsync(json_encode($message));
         }
 
         public function __destruct()

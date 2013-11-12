@@ -3,7 +3,9 @@
 namespace Raygun4php\Senders;
 
 
-class RaygunStreamSocketSender {
+use Raygun4php\RaygunMessage;
+
+class RaygunStreamSocketSender implements RaygunMessageSender {
 
     private $apiKey;
     private $host;
@@ -28,8 +30,9 @@ class RaygunStreamSocketSender {
     }
 
 
-    public  function postAsync($data_to_send)
+    public  function Send(RaygunMessage $message)
     {
+        $data_to_send = json_encode($message);
         $remote = $this->buildRemotePath($this->host, $this->opts);
         $context = $this->buildRequestContext($this->cert_path);
         $connectionFlags = STREAM_CLIENT_CONNECT | STREAM_CLIENT_ASYNC_CONNECT;
