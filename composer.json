@@ -1,23 +1,31 @@
 {
-	"name": "mindscape/raygun4php",
-	"type": "library",
-	"description": "Raygun.io client for PHP 5.3, to send errors and exceptions automatically.",
-	"authors": [{
-		"name": "Mindscape",
-		"email": "contact@mindscape.co.nz",
-		"homepage": "http://www.mindscapehq.com"
-		}],
-	"homepage": "http://raygun.io",
-	"keywords": ["raygun", "errors", "exceptions", "logging"],	
-	"license": "MIT",
-	"require": {
-		"php": ">=5.3.0"
-
-	},
-        "suggest": {    
-                "ext-curl": "*"      
+    "name": "mead-steve/raygun4php",
+    "type": "library",
+    "description": "Fork and extension of the official Raygun.io client for PHP. Implements some extra communication options. Provides message builders and senders to allow composition of new clients.",
+    "authors": [
+        {
+            "name": "Mindscape",
+            "email": "contact@mindscape.co.nz",
+            "homepage": "http://www.mindscapehq.com"
         },
-	"autoload": {
+        {
+            "name": "Steve Brazier",
+            "email": "meadsteve@gmail.com",
+            "homepage": "http://www.stevebrazier.co.uk"
+        }
+    ],
+    "homepage": "http://raygun.io",
+    "keywords": ["raygun", "errors", "exceptions", "logging"],
+    "license": "MIT",
+    "require": {
+        "php": ">=5.3.0",
+        "rhumsaa/uuid": "2.5.0"
+
+    },
+    "suggest": {
+        "ext-curl": "*"
+    },
+    "autoload": {
         "psr-0": {
             "Raygun4php": "src/"
         }
