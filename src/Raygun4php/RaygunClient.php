@@ -93,5 +93,19 @@ namespace Raygun4php {
         {
             $this->messageBuilder->SetVersion($version);
         }
+
+        /*
+         *  Stores the current user of the calling application. This will be added to any messages sent
+         *  by this provider. It is used in the dashboard to provide unique user tracking.
+         *  If it is an email address, the user's Gravatar can be displayed. This method is optional,
+         *  if it is not used a random identifier will be assigned to the current user.
+         *  @param string $user A username, email address or other identifier for the current user
+         *  of the calling application.
+         *
+         */
+        public function SetUser($user = null)
+        {
+            $this->messageBuilder->SetUser($user);
+        }
     }
 }
