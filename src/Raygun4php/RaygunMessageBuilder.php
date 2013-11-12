@@ -80,4 +80,18 @@ class RaygunMessageBuilder {
             throw new Raygun4PhpException("Tags must be an array");
         }
     }
+
+    public  function AddUserCustomDataToMessage(&$message, $userCustomData)
+    {
+        if ($this->is_assoc($userCustomData)) {
+            $message->Details->UserCustomData = $userCustomData;
+        } else {
+            throw new \Raygun4php\Raygun4PhpException("UserCustomData must be an associative array");
+        }
+    }
+
+    private function is_assoc($array)
+    {
+        return (bool)count(array_filter(array_keys($array), 'is_string'));
+    }
 } 
