@@ -6,28 +6,38 @@ namespace Raygun4php\Senders;
 class RaygunStreamSocketSender {
 
     private $apiKey;
+    private $host;
+    private $path;
+    private $cert_path;
+    private $opts;
 
-    function __construct($apiKey)
+
+    function __construct(
+        $apiKey,
+        $host,
+        $path,
+        $cert_path,
+        $opts = array('headers' => 0, 'transport' => 'ssl', 'port' => 443)
+    )
     {
         $this->apiKey = $apiKey;
+        $this->host = $host;
+        $this->path = $path;
+        $this->cert_path = $cert_path;
+        $this->opts = $opts;
     }
 
 
-    public  function postAsync(
-        $host,
-        $path,
-        $data_to_send,
-        $cert_path,
-        $opts = array('headers' => 0, 'transport' => 'ssl', 'port' => 443)
-    ) {
-        $remote = $this->buildRemotePath($host, $opts);
-        $context = $this->buildRequestContext($cert_path);
+    public  function postAsync($data_to_send)
+    {
+        $remote = $this->buildRemotePath($this->host, $this->opts);
+        $context = $this->buildRequestContext($this->cert_path);
         $connectionFlags = STREAM_CLIENT_CONNECT | STREAM_CLIENT_ASYNC_CONNECT;
         $fp = stream_socket_client($remote, $errorNumber, $errorString, 10, $connectionFlags, $context);
         stream_set_blocking($fp, 0);
 
         if ($fp) {
-            $req = $this->buildRequestBody($host, $path, $data_to_send);
+            $req = $this->buildRequestBody($this->host, $this->path, $data_to_send);
             fwrite($fp, $req);
             fwrite($fp, $data_to_send);
             fclose($fp);

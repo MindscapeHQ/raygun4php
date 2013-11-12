@@ -26,7 +26,13 @@ namespace Raygun4php {
         {
             $this->useAsyncSending = $useAsyncSending;
 
-            $this->messageSender = new Senders\RaygunStreamSocketSender($key);
+            $this->messageSender = new Senders\RaygunStreamSocketSender(
+                $key,
+                'api.raygun.io',
+                '/entries',
+                realpath(__DIR__ . '/cacert.crt')
+            );
+
             $this->messageBuilder = new RaygunMessageBuilder();
         }
 
@@ -144,12 +150,7 @@ namespace Raygun4php {
          */
         protected function postMessage($message)
         {
-            return $this->messageSender->postAsync(
-                'api.raygun.io',
-                '/entries',
-                json_encode($message),
-                realpath(__DIR__ . '/cacert.crt')
-            );
+            return $this->messageSender->postAsync(json_encode($message));
         }
 
         public function __destruct()
