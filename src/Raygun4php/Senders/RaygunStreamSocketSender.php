@@ -1,9 +1,9 @@
 <?php
 
-namespace Raygun4php;
+namespace Raygun4php\Senders;
 
 
-class RaygunMessageSender {
+class RaygunStreamSocketSender {
 
     private $apiKey;
 

@@ -4,6 +4,7 @@ namespace Raygun4php {
     require_once realpath(__DIR__ . '/RaygunIdentifier.php');
     require_once realpath(__DIR__ . '/Raygun4PhpException.php');
     require_once realpath(__DIR__ . '/Uuid.php');
+    require_once realpath(__DIR__ . '/Senders/RaygunStreamSocketSender.php');
 
 
     class RaygunQueueingClient
@@ -12,7 +13,7 @@ namespace Raygun4php {
         protected $queuedMessages = array();
 
         /**
-         * @var RaygunMessageSender
+         * @var Senders\RaygunStreamSocketSender
          */
         protected $messageSender;
 
@@ -25,7 +26,7 @@ namespace Raygun4php {
         {
             $this->useAsyncSending = $useAsyncSending;
 
-            $this->messageSender = new RaygunMessageSender($key);
+            $this->messageSender = new Senders\RaygunStreamSocketSender($key);
             $this->messageBuilder = new RaygunMessageBuilder();
         }
 
