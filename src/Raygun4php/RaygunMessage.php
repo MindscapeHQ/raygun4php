@@ -17,7 +17,7 @@ namespace Raygun4php
             if ($timestamp === null) {
                 $timestamp = time();
             }
-            $this->OccurredOn = gmdate("Y-m-d\TH:i:s", $timestamp);
+            $this->OccurredOn = gmdate("Y-m-d\TH:i:s\Z", $timestamp);
             $this->Details = new RaygunMessageDetails();
         }
 
