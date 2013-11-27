@@ -45,8 +45,8 @@ Then, create handlers that look something like this:
 ```php
 namespace
 {
-	// your 'requires' statement
-	
+	// paste your 'requires' statement
+
 	$client = new \Raygun4php\RaygunClient("apikey for your application");
 
 	function error_handler($errno, $errstr, $errfile, $errline ) {
@@ -101,6 +101,8 @@ This feature can be used in CLI mode by calling SetUser(string) at the start of 
 SendError and SendException return the HTTP status code of the transaction - `echo`ing this will give you a 403 if your API key is incorrect or a 200 if everything was a success.
 
 ## Changelog
+
+* Version 1.2.3: Fixed a bug where OccurredOn wasn't in correct ISO 8601 representation
 
 * Version 1.2.2: Minor formatting refactor
 
