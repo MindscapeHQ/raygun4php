@@ -31,6 +31,7 @@ namespace Raygun4php {
     * @param int $errline The line the error occurred on
     * @param array $tags An optional array of string tags used to provide metadata for the message
     * @param array $userCustomData An optional associative array that can be used to place custom key-value
+    * @param int $timestamp Current Unix timestamp in the local timezone, used to set when an error occurred.
     * data in the message payload
     * @return The HTTP status code of the result when transmitting the message to Raygun.io
     */
@@ -57,6 +58,7 @@ namespace Raygun4php {
     * @param array $tags An optional array of string tags used to provide metadata for the message
     * @param array $userCustomData An optional associative array that can be used to place custom key-value
     * data in the message payload
+    * @param int $timestamp Current Unix timestamp in the local timezone, used to set when an exception occurred.
     * @return The HTTP status code of the result when transmitting the message to Raygun.io
     */
     public function SendException($exception, $tags = null, $userCustomData = null, $timestamp = null)
@@ -124,7 +126,7 @@ namespace Raygun4php {
         else
         {
           $this->user = $_COOKIE['rguserid'];
-        }        
+        }
       }
     }
 
