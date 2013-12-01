@@ -10,7 +10,7 @@ namespace Raygun4php
         public function __construct()
         {
             $this->name = "Raygun4php";
-            $this->version = "1.0.1";
+            $this->version = "1.2.4";
             $this->clientUrl = "https://github.com/MindscapeHQ/raygun4php";
         }
     }

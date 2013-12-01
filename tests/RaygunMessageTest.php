@@ -1,17 +1,30 @@
 <?php
-require_once realpath(__DIR__ . '../src/Raygun4php/Raygun4PhpException.php');
 
 class RaygunMessageTest extends PHPUnit_Framework_TestCase
 {
-
-  /**
-   * @expectedException Raygun4PhpException
-   * @expectedExceptionMessage API not valid, cannot send message to Raygun
-   */
-  public function testSendReturns403WithInvalidApiKey()
+  public function testDefaultConstructorGeneratesValid8601()
   {
-    $client = new \Raygun4php\RaygunClient("", true);
-    $client->SendException(new Exception(''));
+    $msg = new \Raygun4php\RaygunMessage();
+
+    $matches = preg_match('/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z$/', $msg->OccurredOn);
+
+    $this->assertEquals(1, $matches);
+  }
+
+  public function testUnixTimestampResultsInCorrect8601()
+  {
+    $msg = new \Raygun4php\RaygunMessage(0);
+
+    $this->assertEquals($msg->OccurredOn, '1970-01-01T00:00:00Z');
+  }
+
+  public function testBuildMessageWithException()
+  {
+    $msg = new \Raygun4php\RaygunMessage();
+
+    $msg->Build(new Exception('test'));
+
+    $this->assertEquals($msg->Details->Error->Message, 'Exception: test');
   }
 }
 ?>
