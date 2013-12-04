@@ -102,6 +102,8 @@ SendError and SendException return the HTTP status code of the transaction - `ec
 
 ## Changelog
 
+* Version 1.2.5: Request rawData (php://input) limited to 4096 bytes in line with other providers; clamp UTC offset to sane values as API was seeing some entries with max int offsets
+
 * Version 1.2.4: Merged in unit tests
 
 * Version 1.2.3: Fixed a bug where OccurredOn wasn't in correct ISO 8601 representation

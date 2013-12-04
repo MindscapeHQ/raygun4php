@@ -30,11 +30,11 @@ namespace Raygun4php
             }
 
             $this->headers = $this->emu_getAllHeaders();
-            $this->data = $_SERVER;            
+            $this->data = $_SERVER;
 
             $utf8_convert = function($value) use (&$utf8_convert) {
-                return is_array($value) ? 
-                array_map($utf8_convert, $value) : 
+                return is_array($value) ?
+                array_map($utf8_convert, $value) :
                 iconv('UTF-8', 'UTF-8//IGNORE', $value);
             };
             $this->form = array_map($utf8_convert, $_POST);
@@ -50,16 +50,23 @@ namespace Raygun4php
                 {
                     $contentType = $_SERVER['HTTP_CONTENT_TYPE'];
                 }
-                
+
                 if ($_SERVER['REQUEST_METHOD'] != 'GET' &&
                     $contentType != null &&
                     $contentType != 'application/x-www-form-urlencoded' &&
                     $contentType != 'multipart/form-data' &&
                     $contentType != 'text/html')
-                {                
-                  $this->rawData = iconv('UTF-8', 'UTF-8//IGNORE', file_get_contents('php://input'));
+                {
+                  $raw = file_get_contents('php://input');
+
+                  if ($raw != null && strlen($raw) > 4096)
+                  {
+                    $raw = substr($raw, 0, 4095);
+                  }
+
+                  $this->rawData = iconv('UTF-8', 'UTF-8//IGNORE', $raw);
                 }
-            }            
+            }
         }
 
         private function emu_getAllHeaders()
