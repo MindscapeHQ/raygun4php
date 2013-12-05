@@ -12,8 +12,8 @@ namespace Raygun4php
                 $this->utcOffset = @date('Z') / 3600;
             }
 
-            $utcOffset = max($utcOffset, -24);
-            $utcOffset = min($utcOffset, 24);
+            $this->utcOffset = max($this->utcOffset, -24);
+            $this->utcOffset = min($this->utcOffset, 24);
         }
     }
 }
