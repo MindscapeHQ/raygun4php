@@ -15,11 +15,13 @@ namespace Raygun4php {
     protected $user;
     protected $httpData;
     protected $useAsyncSending;
+    protected $debugSending;
 
-    public function __construct($key, $useAsyncSending = true)
+    public function __construct($key, $useAsyncSending = true, $debugSending = false)
     {
       $this->apiKey = $key;
       $this->useAsyncSending = $useAsyncSending;
+      $this->debugSending = $debugSending;
       $this->SetUser();
     }
 
@@ -185,9 +187,10 @@ namespace Raygun4php {
     }
 
     /*
-     * Transmits an exception or ErrorException to the Raygun.io API. The default attempts to transmit asynchronously.
+     * Transmits a RaygunMessage to the Raygun.io API. The default attempts to transmit asynchronously.
      * To disable this and transmit sync (blocking), pass false in as the 2nd parameter in RaygunClient's
      * constructor. This may be necessary on some Windows installations where the implementation is broken.
+     * This is a lower level function used by SendException and SendError and one of those should be used preferrably.
      * @param Raygun4php\RaygunMessage $message A populated message to be posted to the Raygun API
      * @return The HTTP status code of the result after transmitting the message to Raygun.io
      * 202 if accepted, 403 if invalid JSON payload
@@ -199,11 +202,12 @@ namespace Raygun4php {
         throw new \Raygun4php\Raygun4PhpException("API not valid, cannot send message to Raygun");
       }
 
-      return $this->postAsync(json_encode($message), realpath(__DIR__ . '/cacert.crt'));
+      return $this->post(json_encode($message), realpath(__DIR__ . '/cacert.crt'));
     }
 
-    private function postAsync($data_to_send, $cert_path)
+    private function post($data_to_send, $cert_path)
     {
+      $start = microtime(true);
       $headers = 0;
       $host = 'api.raygun.io';
       $path = '/entries';
@@ -248,13 +252,30 @@ namespace Raygun4php {
           $req .= "Connection: close\r\n\r\n";
           fwrite($fp, $req);
           fwrite($fp, $data_to_send);
-          fclose($fp);
-          return 202;
+
+          $response = "";
+          if ($this->debugSending)
+          {
+            while(!preg_match("/^HTTP\/[\d\.]* (\d{3})/", $response))
+            {
+              $response .= fgets($fp, 128);
+            }
+
+            fclose($fp);
+
+            return $response;
+          }
+          else
+          {
+            fclose($fp);
+
+            return 0;
+          }
         }
         else
         {
           $errMsg = "<br/><br/>" . "<strong>Raygun Warning:</strong> Couldn't send asynchronously. ";
-          $errMsg .= "Try calling new RaygunClient('apikey', FALSE); to use an alternate sending method" . "<br/><br/>";
+          $errMsg .= "Try calling new RaygunClient('apikey', FALSE); to use an alternate sending method, or RaygunClient('key', TRUE, TRUE) to echo the HTTP response" . "<br/><br/>";
           echo $errMsg;
           trigger_error('httpPost error: ' . $errstr);
           return null;
