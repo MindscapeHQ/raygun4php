@@ -1,7 +1,7 @@
 Raygun4php
 ==========
 
-[Raygun.io](http://raygun.io) provider for PHP 5.3
+[Raygun.io](http://raygun.io) provider for PHP 5.3+
 
 ## Installation
 
@@ -71,24 +71,68 @@ Copy your application's API key from the Raygun.io dashboard, and place it in th
 
 If the handlers reside in their own file, just import it in every file where you'd like exceptions and errors to be sent, and they will be delivered to Raygun.io.
 
-## New in 1.2: Choice of sending algorithm - async or non-async (blocking)
+## Configuration
 
-This release introduces a new function and optional parameter in the constructor:
+### Sending method - async/sync
+
+Raygun4PHP has two algorithms which it can use to send your errors:
+
+* **Asynchronous**: POSTs the message and returns to your script immediately without waiting for the response from the Raygun API.
+
+* **Synchronous**: POSTs the message, blocks and receives the HTTP response from the Raygun API. This uses a socket connection which is still reasonably fast. This also allows the use of the debug mode to receive the HTTP response code; see below.
+
+
+This can be set by passing in a boolean as the 2nd parameter to the constructor:
 
 ```php
-$client = new \Raygun4php\RaygunClient("apiKey", boolean useAsyncSending);
+$client = new \Raygun4php\RaygunClient("apiKey", $useAsyncSending);
+```
+#### $useAsyncSending options
+
+Type: *boolean*
+
+Linux/OS X default: *true*
+
+Windows default: *false*
+
+* If **$useAsyncSending** is *true*, and the script is running on a *nix platform, the message will be delivered asynchronously. SendError() and SendException() will return 0 if all went well.
+
+	Expected script return time: ~45ms
+
+* If **$useAsyncSending** is *false*, the script will block and receive the HTTP response.
+
+	Expected script return time: ~650ms if not in debug mode (still a 400% speedup over the inital 1.0 version of this library, upgrading is recommended)
+
+For Windows, *false* is the only effective option available due to a bug in SSL sending on IIS with certain versions of PHP. Passing in *true* will do nothing on this platform.
+
+### Debug mode
+
+New in 1.3, the client offers a debug mode in which the HTTP response code can be returned after a POST attempt. This can be useful when adding Raygun to your site. This is accessed by passing in *true* as the third parameter in the client constructor:
+
+```php
+$client = new \Raygun4php\RaygunClient("apiKey", $useAsyncSending, $debugMode);
 ```
 
-* If useAsyncSending is *true*, the message will be sent asynchronously. This provides a great speedup versus the older cURL method. This is the default.
+#### $debugMode options
 
-* If useAsyncSending is *false*, the message will be sent with a blocking socket connection. This is provided for compatibility, and as a workaround for a bug in PHP 5.3 running on Windows. If this library is used on Windows, this is the only option available - you can however override it manually if you wish. This method still provides a >50% speedup over the old cURL method.
+*Default: false*
 
+If true is passed in, and **$useAsyncSending** is set to *false*, client->SendException() or SendError() will return the HTTP status code of the POST attempt.
 
-#### Version numbers
+**Note:** If $useAsyncSending is *true*, $debugMode is not available.
+
+#### Response codes
+
+* **202**: Message received by Raygun API correctly
+* **403**: Invalid API key. Copy it from your Raygun Application Settings, it should be of the form `new RaygunClient("A+nUc2dLh27vbh8abls7==")`
+* **400**: Bad message. This may indicate an unparsable payload, an invalid timestamp passed in or a bug in the provider - please contact us if you continue to see this.
+* **500**: Server error- the Raygun API failed to parse the payload correctly; again please contact us if you see this.
+
+### Version numbers
 
 You can transmit the version number of your PHP project along with the message by calling `SetVersion()` on your RaygunClient after it is instantiated - this is optional but recommended as the version number is considered to be first-class data for a message.
 
-#### User tracking
+### User tracking
 
 You can call $client->SetUser($user), passing in a string representing the username or email address of the current user of the calling application. This will be attached to the message and visible in the dashboard. This method is optional - if it is not called, a random identifier will be used. If you use this, and the user changes (log in/out), be sure to call it again passing in the new user (or just call $client->SetUser() to assign a new random identifier).
 
@@ -98,9 +142,17 @@ This feature can be used in CLI mode by calling SetUser(string) at the start of 
 
 ## Troubleshooting
 
-SendError and SendException return the HTTP status code of the transaction - `echo`ing this will give you a 403 if your API key is incorrect or a 200 if everything was a success.
+As above, enable debug mode by instantiating the client with
+
+```php
+$client = new \Raygun4php\RaygunClient("apiKey", FALSE, TRUE);
+```
+
+This will echo the HTTP response code. Check the list above, and create an issue or contact us if you continue to have problems.
 
 ## Changelog
+
+* Version 1.3: Added debug mode to output HTTP response code when in socket mode
 
 * Version 1.2.6: Fixed a bug in previous release rendering the UTC offset fix ineffective (thanks @mrardon for spotting this)
 
