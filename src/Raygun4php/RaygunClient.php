@@ -17,6 +17,14 @@ namespace Raygun4php {
     protected $useAsyncSending;
     protected $debugSending;
 
+    /*
+    * Creates a new RaygunClient instance.
+    * @param bool $useAsyncSending If true, attempts to post rapidly and asynchronously the script by forking a cURL process.
+    * RaygunClient cannot return the HTTP result when in async mode, however. If false, sends using a blocking socket connection.
+    * This is the only method available on Windows.
+    * @param bool $debugSending If true, and $useAsyncSending is true, this will output the HTTP response code from posting
+    * error messages. See the GitHub documentation for code meaning. This param does nothing if useAsyncSending is set to true.
+    */
     public function __construct($key, $useAsyncSending = true, $debugSending = false)
     {
       $this->apiKey = $key;
@@ -207,7 +215,6 @@ namespace Raygun4php {
 
     private function post($data_to_send, $cert_path)
     {
-      $start = microtime(true);
       $headers = 0;
       $host = 'api.raygun.io';
       $path = '/entries';
@@ -275,7 +282,7 @@ namespace Raygun4php {
         else
         {
           $errMsg = "<br/><br/>" . "<strong>Raygun Warning:</strong> Couldn't send asynchronously. ";
-          $errMsg .= "Try calling new RaygunClient('apikey', FALSE); to use an alternate sending method, or RaygunClient('key', TRUE, TRUE) to echo the HTTP response" . "<br/><br/>";
+          $errMsg .= "Try calling new RaygunClient('apikey', FALSE); to use an alternate sending method, or RaygunClient('key', FALSE, TRUE) to echo the HTTP response" . "<br/><br/>";
           echo $errMsg;
           trigger_error('httpPost error: ' . $errstr);
           return null;
