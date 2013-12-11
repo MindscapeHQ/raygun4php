@@ -30,7 +30,14 @@ namespace Raygun4php
             }
 
             $this->headers = $this->emu_getAllHeaders();
-            $this->data = $_SERVER;
+
+            $mb_utf8_convert = function($value) use (&$mb_utf8_convert) {
+                return is_array($value) ?
+                array_map($mb_utf8_convert, $value) :
+                mb_convert_encoding($value, 'UTF-8', 'UTF-8');
+            };
+            $this->data = array_map($mb_utf8_convert, $_SERVER);            
+
 
             $utf8_convert = function($value) use (&$utf8_convert) {
                 return is_array($value) ?
