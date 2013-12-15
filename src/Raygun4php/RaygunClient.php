@@ -17,6 +17,11 @@ namespace Raygun4php {
     protected $useAsyncSending;
     protected $debugSending;
 
+    private $host = 'api.raygun.io';
+    private $path = '/entries';
+    private $transport = 'ssl';
+    private $port = 443;
+
     /*
     * Creates a new RaygunClient instance.
     * @param bool $useAsyncSending If true, attempts to post rapidly and asynchronously the script by forking a cURL process.
@@ -210,17 +215,13 @@ namespace Raygun4php {
         throw new \Raygun4php\Raygun4PhpException("API not valid, cannot send message to Raygun");
       }
 
-      return $this->post(json_encode($message), realpath(__DIR__ . '/cacert.crt'));
+      return $this->post($this->toJsonRemoveUnicodeSequences($message), realpath(__DIR__ . '/cacert.crt'));
     }
 
     private function post($data_to_send, $cert_path)
     {
       $headers = 0;
-      $host = 'api.raygun.io';
-      $path = '/entries';
-      $transport = 'ssl';
-      $port = 443;
-      $remote = $transport . '://' . $host . ':' . $port;
+      $remote = $this->transport . '://' . $this->host . ':' . $this->port;
 
       $context = stream_context_create();
       $result = stream_context_set_option($context, 'ssl', 'verify_host', true);
@@ -251,8 +252,8 @@ namespace Raygun4php {
         if ($fp)
         {
           $req = '';
-          $req .= "POST $path HTTP/1.1\r\n";
-          $req .= "Host: $host\r\n";
+          $req .= "POST $this->path HTTP/1.1\r\n";
+          $req .= "Host: $this->host\r\n";
           $req .= "X-ApiKey: " . $this->apiKey . "\r\n";
           $req .= 'Content-length: ' . strlen($data_to_send) . "\r\n";
           $req .= "Content-type: application/json\r\n";
@@ -288,6 +289,10 @@ namespace Raygun4php {
           return null;
         }
       }
+    }
+
+    function toJsonRemoveUnicodeSequences($struct) {
+      return preg_replace("/\\\\u([a-f0-9]{4})/e", "iconv('UCS-4LE','UTF-8',pack('V', hexdec('U$1')))", json_encode($struct));
     }
 
     public function __destruct()
