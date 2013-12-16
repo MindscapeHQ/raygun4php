@@ -7,7 +7,6 @@ namespace Raygun4php
         public $url;
         public $httpMethod;
         public $ipAddress;
-        //
         public $queryString;
         public $headers;
         public $data;
@@ -31,20 +30,18 @@ namespace Raygun4php
 
             $this->headers = $this->emu_getAllHeaders();
 
-            $mb_utf8_convert = function($value) use (&$mb_utf8_convert) {
-                return is_array($value) ?
-                array_map($mb_utf8_convert, $value) :
-                mb_convert_encoding($value, 'UTF-8', 'UTF-8');
-            };
-            $this->data = array_map($mb_utf8_convert, $_SERVER);            
-
-
             $utf8_convert = function($value) use (&$utf8_convert) {
                 return is_array($value) ?
                 array_map($utf8_convert, $value) :
                 iconv('UTF-8', 'UTF-8//IGNORE', $value);
             };
+
+            $utf8_convert_server = function($value) {
+                return iconv('UTF-8', 'UTF-8', utf8_encode($value));
+            };
+
             $this->form = array_map($utf8_convert, $_POST);
+            $this->data = array_map($utf8_convert_server, $_SERVER);
 
             if (php_sapi_name() !== 'cli')
             {
