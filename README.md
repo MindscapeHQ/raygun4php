@@ -152,6 +152,8 @@ This will echo the HTTP response code. Check the list above, and create an issue
 
 ## Changelog
 
+* Version 1.3.2: UTF-8 encoding routine from previous version updated to remove PHP 5.5 deprecated function
+
 * Version 1.3.1: Request data, specifically $_SERVER variables, are now correctly encoded in UTF-8
 
 * Version 1.3: Added debug mode to output HTTP response code when in socket mode
