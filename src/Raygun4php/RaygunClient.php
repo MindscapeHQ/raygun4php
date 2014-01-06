@@ -292,7 +292,7 @@ namespace Raygun4php {
     }
 
     function toJsonRemoveUnicodeSequences($struct) {
-      return preg_replace_callback("/\\\\u([a-f0-9]{4})/", function($matches){ return iconv('UCS-4LE','UTF-8',pack('V', hexdec("U$matches[1]"))); }, json_encode($struct)) );
+      return preg_replace_callback("/\\\\u([a-f0-9]{4})/", function($matches){ return iconv('UCS-4LE','UTF-8',pack('V', hexdec("U$matches[1]"))); }, json_encode($struct));
     }
 
     public function __destruct()
