@@ -36,11 +36,14 @@ namespace Raygun4php
                 iconv('UTF-8', 'UTF-8//IGNORE', $value);
             };
 
-            $utf8_convert_server = function($value) {
-                return iconv('UTF-8', 'UTF-8', utf8_encode($value));
+            $utf8_convert_server = function($value) use (&$utf8_convert_server) {
+                return is_array($value) ?
+                array_map($utf8_convert_server, $value) :
+                iconv('UTF-8', 'UTF-8', utf8_encode($value));
             };
 
             $this->form = array_map($utf8_convert, $_POST);
+
             $this->data = array_map($utf8_convert_server, $_SERVER);
 
             if (php_sapi_name() !== 'cli')
