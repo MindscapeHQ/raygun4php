@@ -236,14 +236,28 @@ namespace Raygun4php {
         $result = stream_context_set_option($context, 'ssl', 'allow_self_signed', true);
       }
 
-      if ($this->useAsyncSending && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN')
+      if ($this->useAsyncSending)
       {
-        $cmd = "curl -X POST -H 'Content-Type: application/json' -H 'X-ApiKey: " . $this->apiKey . "'";
-        $cmd .= " -d '" . $data_to_send . "' --cacert '" . realpath(__DIR__ . '/cacert.crt')
-           . "' 'https://api.raygun.io:443/entries' > /dev/null 2>&1 &";
+        if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN')
+        {
+          $cmd  = "curl -X POST -H \"Content-Type: application/json\" -H \"X-ApiKey: " . $this->apiKey . "\"";
+          $cmd .= " -d '" . $data_to_send . "' --cacert '" . realpath(__DIR__ . '/cacert.crt').
+                  "' 'https://api.raygun.io:443/entries' > /dev/null 2>&1 &";
+          exec($cmd, $output, $exit);
+          return $exit;
+        }
+        else
+        {
+          file_put_contents("1.json", $data_to_send);
 
-        exec($cmd, $output, $exit);
-        return $exit;
+          $cmd = "curl -X POST -H \"Content-Type: application/json\" -H \"X-ApiKey: " . $this->apiKey . "\" -d ";
+          $cmd .= "@1.json";
+          $cmd .= " --cacert \"". realpath(__DIR__ . '/cacert.crt')."\" https://api.raygun.io:443/entries";
+
+          $res = pclose(popen("start /b cmd /c \"". $cmd . " && del 1.json\"", "r"));
+
+          return $res;
+        }
       }
       else
       {
