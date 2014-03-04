@@ -152,6 +152,8 @@ This will echo the HTTP response code. Check the list above, and create an issue
 
 ## Changelog
 
+* Version 1.3.4: Bugfix in request message for testing
+
 * Version 1.3.3: Hotfix for script error in v1.3.2
 
 * Version 1.3.2: UTF-8 encoding routine from previous version updated to remove PHP 5.5 deprecated function
