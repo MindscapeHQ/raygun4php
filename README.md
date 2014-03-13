@@ -150,6 +150,10 @@ $client = new \Raygun4php\RaygunClient("apiKey", FALSE, TRUE);
 
 This will echo the HTTP response code. Check the list above, and create an issue or contact us if you continue to have problems.
 
+### 400 from command-line Posix environments
+
+If, when running a PHP script from the command line on *nix operating systems, you receive a '400 Bad Request' error (when debug mode is enabled), check to see if you have any LESS_TERMCAP environment variables set. These are not compatible with the current version of Raygun4PHP. As a workaround, unset these variables before your script runs, then reset them afterwards.
+
 ## Changelog
 
 * Version 1.3.4: Bugfix in request message for testing
