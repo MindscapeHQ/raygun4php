@@ -21,6 +21,7 @@ namespace Raygun4php {
     private $path = '/entries';
     private $transport = 'ssl';
     private $port = 443;
+	private $tempFileName;
 
     /*
     * Creates a new RaygunClient instance.
@@ -238,9 +239,13 @@ namespace Raygun4php {
 
       if ($this->useAsyncSending && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN')
       {
-        $fullCertPath = realpath(__DIR__ . '/cacert.crt');
-        $cmd = "curl -X POST -H 'Content-Type: application/json' -H 'X-ApiKey: {$this->apiKey}'";
-        $cmd .= " -d '" . $data_to_send . "' --cacert '{$fullCertPath}' 'https://api.raygun.io:443/entries' > /dev/null 2>&1 &";
+	    // create a temp file and write the error data to that file. Using this method
+	    // allows for the error data to contain characters that cannot be sent normally
+	    // via curl without the proper escaping.
+	    $this->createTempFile($data_to_send);
+	    $fullCertPath = realpath(__DIR__ . '/cacert.crt');
+	    $cmd = "curl -X POST -H 'Content-Type: application/json' -H 'X-ApiKey: {$this->apiKey}'";
+	    $cmd .= " -d @{$this->tempFileName} --cacert '{$fullCertPath}' 'https://api.raygun.io:443/entries' > /dev/null 2>&1 &";
 
         exec($cmd, $output, $exit);
         return $exit;
@@ -295,12 +300,32 @@ namespace Raygun4php {
       return preg_replace_callback("/\\\\u([a-f0-9]{4})/", function($matches){ return iconv('UCS-4LE','UTF-8',pack('V', hexdec("U$matches[1]"))); }, json_encode($struct));
     }
 
+	/**
+	* Create a temp file and write the data to send to Raygun to that file
+	* @param $dataToWrite string
+	*/
+	function createTempFile($dataToWrite)
+	{
+	  $this->tempFileName = tempnam(sys_get_temp_dir(), 'error_for_raygun');
+	  $fileHandle = fopen($this->tempFileName, "w+");
+	  // write the data to the file
+      fwrite($fileHandle, $dataToWrite);
+	  // move back to the beginning of the file
+	  fseek($fileHandle, 0);
+	  // close the file handle
+	  fclose($fileHandle);
+	}
+
     public function __destruct()
     {
       if ($this->httpData)
       {
         curl_close($this->httpData);
       }
+
+	  if ($this->tempFileName && file_exists($this->tempFileName)) {
+		unlink($this->tempFileName);
+	  }
     }
   }
 }
