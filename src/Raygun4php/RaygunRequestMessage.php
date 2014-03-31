@@ -105,7 +105,7 @@ namespace Raygun4php
 	    {
 		    $ip = null;
 
-		    if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+		    if (!empty(@$_SERVER['HTTP_X_FORWARDED_FOR'])) {
 			    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
 		    }
 		    else if (!empty($_SERVER['REMOTE_ADDR'])) {
