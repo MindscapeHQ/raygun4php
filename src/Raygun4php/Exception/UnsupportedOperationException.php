@@ -9,7 +9,7 @@
  * @license http://opensource.org/licenses/MIT MIT
  */
 
-namespace Rhumsaa\Uuid\Exception;
+namespace Raygun4Php\Rhumsaa\Uuid\Exception;
 
 /**
  * Thrown to indicate that the requested operation is not supported.
