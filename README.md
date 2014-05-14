@@ -97,17 +97,13 @@ Windows default: *false*
 
 * If **$useAsyncSending** is *true*, and the script is running on a *nix platform, the message will be delivered asynchronously. SendError() and SendException() will return 0 if all went well.
 
-	Expected script return time: ~45ms
-
 * If **$useAsyncSending** is *false*, the script will block and receive the HTTP response.
 
-	Expected script return time: ~650ms if not in debug mode (still a 400% speedup over the inital 1.0 version of this library, upgrading is recommended)
-
-For Windows, *false* is the only effective option available due to a bug in SSL sending on IIS with certain versions of PHP. Passing in *true* will do nothing on this platform.
+*false* is the only effective option on Windows due to platform and library limitations within the supported versions.
 
 ### Debug mode
 
-New in 1.3, the client offers a debug mode in which the HTTP response code can be returned after a POST attempt. This can be useful when adding Raygun to your site. This is accessed by passing in *true* as the third parameter in the client constructor:
+The client offers a debug mode in which the HTTP response code can be returned after a POST attempt. This can be useful when adding Raygun to your site. This is accessed by passing in *true* as the third parameter in the client constructor:
 
 ```php
 $client = new \Raygun4php\RaygunClient("apiKey", $useAsyncSending, $debugMode);
@@ -125,8 +121,6 @@ If true is passed in, and **$useAsyncSending** is set to *false*, client->SendEx
 
 * **202**: Message received by Raygun API correctly
 * **403**: Invalid API key. Copy it from your Raygun Application Settings, it should be of the form `new RaygunClient("A+nUc2dLh27vbh8abls7==")`
-* **400**: Bad message. This may indicate an unparsable payload, an invalid timestamp passed in or a bug in the provider - please contact us if you continue to see this.
-* **500**: Server error- the Raygun API failed to parse the payload correctly; again please contact us if you see this.
 
 ### Version numbers
 
@@ -156,6 +150,7 @@ If, when running a PHP script from the command line on *nix operating systems, y
 
 ## Changelog
 
+- 1.3.6: Move included Rhumsaa\Uuid lib into this namespace to prevent collisions if already included
 - 1.3.5: Fixed possible bug in async curl logic
 - 1.3.4: Bugfix in request message for testing
 - 1.3.3: Hotfix for script error in v1.3.2
