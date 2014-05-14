@@ -5,7 +5,7 @@ namespace Raygun4php {
   require_once realpath(__DIR__ . '/Raygun4PhpException.php');
   require_once realpath(__DIR__ . '/Uuid.php');
 
-  use Rhumsaa\Uuid\Uuid;
+  use Raygun4Php\Rhumsaa\Uuid\Uuid;
 
   class RaygunClient
   {
