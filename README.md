@@ -150,6 +150,7 @@ If, when running a PHP script from the command line on *nix operating systems, y
 
 ## Changelog
 
+- 1.3.7: Improved Error traces, when thrown with trigger_error or sent manually via a $rg->SendError() call
 - 1.3.6: Move included Rhumsaa\Uuid lib into this namespace to prevent collisions if already included
 - 1.3.5: Fixed possible bug in async curl logic
 - 1.3.4: Bugfix in request message for testing
