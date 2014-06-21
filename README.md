@@ -134,6 +134,46 @@ Note that this data is stored as a cookie. If you do not call SetUser the defaul
 
 This feature can be used in CLI mode by calling SetUser(string) at the start of your session.
 
+### Filtering
+
+Some error data will be too sensitive to transmit to an external service, such as credit card details or passwords. Since this data is very application specific, Raygun doesn't filter out anything by default. You can configure to either replace or otherwise transform specific values based on their keys. These transformations apply to form data (`$_POST`), custom user data, HTTP headers, and environment data (`$_SERVER`). It does not filter the URL or its `$_GET` parameters, or custom message strings. Since Raygun doesn't log method arguments in stack traces, those don't need filtering. All key comparisons are case insensitive.
+
+```php
+$client = new \Raygun4php\RaygunClient("apiKey");
+$client->setFilterParams(array(
+	'password' => true,
+	'creditcardnumber' => true,
+	'ccv' => true,
+	'php_auth_pw' => true, // filters basic auth from $_SERVER
+));
+// Example input: array('Username' => 'myuser','Password' => 'secret')
+// Example output: array('Username' => 'myuser','Password' => '[filtered]')
+```
+
+You can also define keys as regular expressions:
+
+```php
+$client = new \Raygun4php\RaygunClient("apiKey");
+$client->setFilterParams(array(
+	'/^credit/i' => true,
+));
+// Example input: array('CreditCardNumber' => '4111111111111111','CreditCardCcv' => '123')
+// Example output: array('CreditCardNumber' => '[filtered]','CreditCardCcv' => '[filtered]')
+```
+
+In case you want to retain some hints on the data rather than removing it completely, you can also apply custom transformations through PHP's anonymous functions. The following example truncates all keys starting with "address". 
+
+```php
+$client = new \Raygun4php\RaygunClient("apiKey");
+$client->setFilterParams(array(
+	'Email' => function($key, $val) {return substr($val, 0, 5) . '...';}
+));
+// Example input: array('Email' => 'test@test.com')
+// Example output: array('Email' => 'test@...')
+```
+
+Note that when any filters are defined, the Raygun error will no longer contain the raw HTTP data, since there's no effective way to filter it.
+
 ## Troubleshooting
 
 As above, enable debug mode by instantiating the client with

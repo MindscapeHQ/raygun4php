@@ -17,6 +17,13 @@ namespace Raygun4php {
     protected $useAsyncSending;
     protected $debugSending;
 
+    /**
+     * @var Array Parameter names to filter out of logged form data. Case insensitive.
+     * Accepts regular expressions when the name starts with a forward slash.
+     * Maps either to TRUE, or to a callable with $key and $value arguments.
+     */
+    protected $filterParams = array();
+
     private $host = 'api.raygun.io';
     private $path = '/entries';
     private $transport = 'ssl';
@@ -215,7 +222,10 @@ namespace Raygun4php {
         throw new \Raygun4php\Raygun4PhpException("API not valid, cannot send message to Raygun");
       }
 
-      return $this->post($this->toJsonRemoveUnicodeSequences($message), realpath(__DIR__ . '/cacert.crt'));
+      $message = $this->filterParamsFromMessage($message);
+      $message = $this->toJsonRemoveUnicodeSequences($message);
+
+      return $this->post($message, realpath(__DIR__ . '/cacert.crt'));
     }
 
     private function post($data_to_send, $cert_path)
@@ -295,6 +305,83 @@ namespace Raygun4php {
       return preg_replace_callback("/\\\\u([a-f0-9]{4})/", function($matches){ return iconv('UCS-4LE','UTF-8',pack('V', hexdec("U$matches[1]"))); }, json_encode($struct));
     }
 
+    /**
+     * Optionally applies a value transformation to every matching key, as defined by {@link FilterParams}.
+     * Replaces the value by default, but also supports custom transformations through
+     * anonymous functions. Applies to form data, environment data, HTTP headers.
+     * Does not apply to GET parameters in the request URI.
+     * Filters out raw HTTP data in case any filters are defined, since we can't accurately filter it.
+     *
+     * @param RaygunMessage $message
+     * @param  string $replace Value to be inserted by default (unless specified otherwise by custom transformations).
+     * @return RaygunMessage
+     */
+    function filterParamsFromMessage($message, $replace = '[filtered]') {
+      $filterParams = $this->getFilterParams();
+
+      // Skip checks if none are defined
+      if(!$filterParams) {
+        return $message;
+      }
+
+      // Ensure all filters are callable
+      foreach($filterParams as $filterKey => $filterFn) {
+        if(!is_callable($filterFn)) {
+          $filterParams[$filterKey] = function($key, $val) use ($replace) {return $replace;};
+        }
+      }
+
+      $walkFn = function(&$val, $key) use ($filterParams) {
+        foreach($filterParams as $filterKey => $filterFn) {
+          if(
+            (strpos($filterKey, '/') === 0 && preg_match($filterKey, $key))
+            || (strpos($filterKey, '/') === FALSE && strtolower($filterKey) == strtolower($key))
+          ) {
+            $val = $filterFn($key, $val);
+          }
+        }
+      };
+
+      if($message->Details->Request->form) {
+        array_walk_recursive($message->Details->Request->form, $walkFn);
+      }
+
+      if($message->Details->Request->headers) {
+        array_walk_recursive($message->Details->Request->headers, $walkFn);
+      }
+
+      if($message->Details->Request->data) {
+        array_walk_recursive($message->Details->Request->data, $walkFn);
+      }
+
+      if($message->Details->UserCustomData) {
+        array_walk_recursive($message->Details->UserCustomData, $walkFn);
+      }
+
+      // Unset raw HTTP data since we can't accurately filter it
+      if($message->Details->Request->rawData) {
+        $message->Details->Request->rawData = null;
+      }
+
+      return $message;
+    }
+
+    /**
+     * @param Array $params
+     * @return Raygun4php\RaygunClient
+     */
+    function setFilterParams($params) {
+      $this->filterParams = $params;
+      return $this;
+    }
+
+    /**
+     * @return Array
+     */
+    function getFilterParams() {
+      return $this->filterParams;
+    }
+
     public function __destruct()
     {
       if ($this->httpData)
@@ -302,5 +389,6 @@ namespace Raygun4php {
         curl_close($this->httpData);
       }
     }
+
   }
 }
