@@ -3,6 +3,9 @@ Raygun4php
 
 [Raygun.io](http://raygun.io) provider for PHP 5.3+
 
+[![Build
+Status](https://secure.travis-ci.org/MindscapeHQ/raygun4php.png?branch=master)](http://travis-ci.org/MindscapeHQ/raygun4php)
+
 ## Installation
 
 Firstly, ensure that **curl** is installed and enabled in your server's php.ini file.
