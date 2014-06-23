@@ -1,4 +1,4 @@
-Raygun4php
+Raygun4PHP
 ==========
 
 [Raygun.io](http://raygun.io) provider for PHP 5.3+
@@ -12,9 +12,9 @@ Firstly, ensure that **curl** is installed and enabled in your server's php.ini 
 
 ### With Composer
 
-Composer is a package management tool for PHP which automatically fetches dependencies and also supports autoloading - this is a low-impact way to get Raygun4php into your site.
+Composer is a package management tool for PHP which automatically fetches dependencies and also supports autoloading - this is a low-impact way to get Raygun4PHP into your site.
 
-1. If you use a *nix environment, [follow the instructions](http://getcomposer.org/doc/01-basic-usage.md#installation) to install Composer. Windows users can run [this installer](https://github.com/johnstevenson/composer-setup) to automatically add it to the path etc.
+1. If you use a *nix environment, [follow the instructions](http://getcomposer.org/doc/01-basic-usage.md#installation) to install Composer. Windows users can run [this installer](https://github.com/johnstevenson/composer-setup) to automatically add it to the Path.
 
 2. Inside your project's root directory create a composer.json file, containing:
 ```json
@@ -41,7 +41,7 @@ require (dirname(dirname(__FILE__)).'/vendor/Raygun4php/RaygunClient.php');
 ```
 ## Usage
 
-You can send both PHP errors and object-oriented exceptions to Raygun. An easy way to accomplish this is to create a file containing exception and error handlers which make calls to the appropriate Raygun4php functions. As above, import Raygun4php - if you're using Composer, just add `require_once 'vendor/autoload.php'`, or if not manually import RaygunClient.php.
+You can send both PHP errors and object-oriented exceptions to Raygun. An easy way to accomplish this is to create a file containing exception and error handlers which make calls to the appropriate Raygun4PHP functions. As above, import Raygun4PHP - if you're using Composer, just add `require_once 'vendor/autoload.php'`, or if not manually import RaygunClient.php.
 
 Then, create handlers that look something like this:
 
@@ -137,7 +137,7 @@ Note that this data is stored as a cookie. If you do not call SetUser the defaul
 
 This feature can be used in CLI mode by calling SetUser(string) at the start of your session.
 
-### Filtering
+### Filtering Sensitive Data
 
 Some error data will be too sensitive to transmit to an external service, such as credit card details or passwords. Since this data is very application specific, Raygun doesn't filter out anything by default. You can configure to either replace or otherwise transform specific values based on their keys. These transformations apply to form data (`$_POST`), custom user data, HTTP headers, and environment data (`$_SERVER`). It does not filter the URL or its `$_GET` parameters, or custom message strings. Since Raygun doesn't log method arguments in stack traces, those don't need filtering. All key comparisons are case insensitive.
 
@@ -164,7 +164,7 @@ $client->setFilterParams(array(
 // Example output: array('CreditCardNumber' => '[filtered]','CreditCardCcv' => '[filtered]')
 ```
 
-In case you want to retain some hints on the data rather than removing it completely, you can also apply custom transformations through PHP's anonymous functions. The following example truncates all keys starting with "address". 
+In case you want to retain some hints on the data rather than removing it completely, you can also apply custom transformations through PHP's anonymous functions. The following example truncates all keys starting with "address".
 
 ```php
 $client = new \Raygun4php\RaygunClient("apiKey");
@@ -193,7 +193,7 @@ If, when running a PHP script from the command line on *nix operating systems, y
 
 ## Changelog
 
-- 1.3.7: Improved Error traces, when thrown with trigger_error or sent manually via a $rg->SendError() call
+- 1.4.0: Added Sensitive Data Filtering; improved Error backtraces; Travis CI enabled
 - 1.3.6: Move included Rhumsaa\Uuid lib into this namespace to prevent collisions if already included
 - 1.3.5: Fixed possible bug in async curl logic
 - 1.3.4: Bugfix in request message for testing
