@@ -41,13 +41,12 @@ namespace Raygun4php
             if (array_key_exists('function', $trace) &&
                 array_key_exists('class', $trace))
             {
-
               if ($trace['function'] == 'SendError' && $trace['class'] == 'Raygun4php\RaygunClient')
               {
                 $fromManualSendError = true;
               }
-
             }
+
             if (array_key_exists('args', $trace) && $fromManualSendError == true) {
               $errorData = $trace['args'];
 
