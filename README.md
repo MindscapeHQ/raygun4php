@@ -145,7 +145,7 @@ This feature and values are optional if you wish to disable it for privacy conce
 
 Note that this data is stored as a cookie. If you do not call SetUser the default is to store a random UUID to represent the user.
 
-This feature can be used in CLI mode by calling SetUser(string) at the start of your session.
+This feature can be used in CLI mode by calling SetUser() at the start of your session.
 
 ### Filtering Sensitive Data
 
@@ -203,6 +203,7 @@ If, when running a PHP script from the command line on *nix operating systems, y
 
 ## Changelog
 
+- 1.5.0: Add enhanced user data support; fix null backtrace frames that could occur in 1.4
 - 1.4.0: Added Sensitive Data Filtering; improved Error backtraces; Travis CI enabled
 - 1.3.6: Move included Rhumsaa\Uuid lib into this namespace to prevent collisions if already included
 - 1.3.5: Fixed possible bug in async curl logic
