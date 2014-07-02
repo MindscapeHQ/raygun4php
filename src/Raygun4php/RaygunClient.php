@@ -130,6 +130,13 @@ namespace Raygun4php {
     {
       $timestamp = time() + 60 * 60 * 24 * 30;
 
+      $this->firstName = $this->StoreOrRetrieveUserCookie('rgfirstname', $firstName);
+      $this->fullName = $this->StoreOrRetrieveUserCookie('rgfullname', $fullName);
+      $this->email = $this->StoreOrRetrieveUserCookie('rgemail', $email);
+
+      $this->uuid = $this->StoreOrRetrieveUserCookie('rguuidvalue', $uuid);
+      $this->isAnonymous = $this->StoreOrRetrieveUserCookie('rgisanonymous', $isAnonymous ? 'true' : 'false') == 'true' ? true : false;
+
       if (is_string($user))
       {
         $this->user = $user;
@@ -156,15 +163,9 @@ namespace Raygun4php {
         {
           $this->user = $_COOKIE['rguserid'];
         }
+
+        $this->isAnonymous = $this->StoreOrRetrieveUserCookie('rgisanonymous', 'true') == 'true';
       }
-
-      $this->firstName = $this->StoreOrRetrieveUserCookie('rgfirstname', $firstName);
-      $this->fullName = $this->StoreOrRetrieveUserCookie('rgfullname', $fullName);
-      $this->email = $this->StoreOrRetrieveUserCookie('rgemail', $email);
-
-      $this->uuid = $this->StoreOrRetrieveUserCookie('rguuidvalue', $uuid);
-
-      $this->isAnonymous = $this->StoreOrRetrieveUserCookie('rgisanonymous', $isAnonymous ? 1 : 0) == 1 ? true : false;
     }
 
     private function StoreOrRetrieveUserCookie($key, $value)
@@ -184,6 +185,10 @@ namespace Raygun4php {
       {
         if (array_key_exists($key, $_COOKIE))
         {
+          if ($_COOKIE[$key] != $value && php_sapi_name() != 'cli' && !headers_sent())
+          {
+            setcookie($key, $value, $timestamp);
+          }
           return $_COOKIE[$key];
         }
       }
