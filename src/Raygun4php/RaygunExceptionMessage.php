@@ -15,14 +15,14 @@ namespace Raygun4php
         {
             $exceptionClass = get_class($exception);
 
-            if ($exceptionClass != "ErrorException")
+            if ($exceptionClass != 'ErrorException')
             {
-                $this->Message = $exceptionClass.": ".$exception->getMessage();
+                $this->Message = $exceptionClass.': '.$exception->getMessage();
                 $this->BuildStackTrace($exception);
             }
             else
             {
-                $this->Message = "Error: ".$exception->getMessage();
+                $this->Message = 'Error: '.$exception->getMessage();
                 $this->BuildErrorTrace($exception);
             }
 
@@ -37,8 +37,17 @@ namespace Raygun4php
           foreach ($traces as $trace) {
             $line = new RaygunExceptionTraceLineMessage();
 
-            $argCount = count($trace['args']);
-            if (array_key_exists('args', $trace) && $argCount != 5) {
+            $fromManualSendError = false;
+            if (array_key_exists('function', $trace) &&
+                array_key_exists('class', $trace))
+            {
+              if ($trace['function'] == 'SendError' && $trace['class'] == 'Raygun4php\RaygunClient')
+              {
+                $fromManualSendError = true;
+              }
+            }
+
+            if (array_key_exists('args', $trace) && $fromManualSendError == true) {
               $errorData = $trace['args'];
 
               if (count($errorData) >= 2) {
@@ -79,21 +88,21 @@ namespace Raygun4php
         {
             $line = new RaygunExceptionTraceLineMessage();
 
-            if (array_key_exists("file", $trace))
+            if (array_key_exists('file', $trace))
             {
-              $line->FileName = $trace["file"];
+              $line->FileName = $trace['file'];
             }
-            if (array_key_exists("class", $trace))
+            if (array_key_exists('class', $trace))
             {
-              $line->ClassName = $trace["class"];
+              $line->ClassName = $trace['class'];
             }
-            if (array_key_exists("function", $trace))
+            if (array_key_exists('function', $trace))
             {
-              $line->MethodName = $trace["function"];
+              $line->MethodName = $trace['function'];
             }
-            if (array_key_exists("line", $trace))
+            if (array_key_exists('line', $trace))
             {
-              $line->LineNumber = $trace["line"];
+              $line->LineNumber = $trace['line'];
             }
 
             return $line;
@@ -132,7 +141,7 @@ namespace Raygun4php
                     }
                 }
             }
-            if ($class != "")
+            if ($class != '')
             {
                 return $class;
             }
