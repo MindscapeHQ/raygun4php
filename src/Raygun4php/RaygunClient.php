@@ -21,6 +21,7 @@ namespace Raygun4php {
     protected $httpData;
     protected $useAsyncSending;
     protected $debugSending;
+    protected $disableUserTracking;
 
     /**
      * @var Array Parameter names to filter out of logged form data. Case insensitive.
@@ -42,12 +43,17 @@ namespace Raygun4php {
     * @param bool $debugSending If true, and $useAsyncSending is true, this will output the HTTP response code from posting
     * error messages. See the GitHub documentation for code meaning. This param does nothing if useAsyncSending is set to true.
     */
-    public function __construct($key, $useAsyncSending = true, $debugSending = false)
+    public function __construct($key, $useAsyncSending = true, $debugSending = false, $disableUserTracking = false)
     {
       $this->apiKey = $key;
       $this->useAsyncSending = $useAsyncSending;
       $this->debugSending = $debugSending;
-      $this->SetUser();
+
+      if (!$disableUserTracking) {
+        $this->SetUser();
+      }
+
+      $this->disableUserTracking = $disableUserTracking;
     }
 
     /*
@@ -213,7 +219,7 @@ namespace Raygun4php {
       {
         $message->Details->User = new RaygunIdentifier($this->user, $this->firstName, $this->fullName, $this->email, $this->isAnonymous, $this->uuid);
       }
-      else
+      else if (!$this->disableUserTracking)
       {
         $message->Details->User = new RaygunIdentifier($_COOKIE['rguserid']);
       }
