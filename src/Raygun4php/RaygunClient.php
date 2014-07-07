@@ -159,7 +159,7 @@ namespace Raygun4php {
             setcookie('rguuid', 'true', $timestamp);
           }
         }
-        else
+        else if (array_key_exists('rguserid', $_COOKIE))
         {
           $this->user = $_COOKIE['rguserid'];
         }
