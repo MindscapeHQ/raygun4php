@@ -15,13 +15,14 @@ namespace Raygun4php
 
         public function __construct()
         {
-            if (php_sapi_name() !== 'cli') {
-                $this->hostName = $_SERVER['HTTP_HOST'];
-                $this->httpMethod = $_SERVER['REQUEST_METHOD'];
-                $this->url = $_SERVER['REQUEST_URI'];
-                $this->ipAddress = $_SERVER['REMOTE_ADDR'];
+            $this->hostName = (isset($_SERVER['HTTP_HOST'])) ? $_SERVER['HTTP_HOST'] : null;
+            $this->httpMethod = (isset($_SERVER['REQUEST_METHOD'])) ? $_SERVER['REQUEST_METHOD'] : null;
+            $this->url = (isset($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] :  null;
+            $this->ipAddress = (isset($_SERVER['REMOTE_ADDR'])) ? $_SERVER['REMOTE_ADDR'] : null;
 
+            if(isset($_SERVER['QUERY_STRING'])) {
                 parse_str($_SERVER['QUERY_STRING'], $this->queryString);
+                
                 if (empty($this->queryString))
                 {
                     $this->queryString = null;
