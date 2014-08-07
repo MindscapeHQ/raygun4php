@@ -21,10 +21,14 @@ namespace Raygun4php
                 $this->url = $_SERVER['REQUEST_URI'];
                 $this->ipAddress = $_SERVER['REMOTE_ADDR'];
 
-                parse_str($_SERVER['QUERY_STRING'], $this->queryString);
-                if (empty($this->queryString))
+                if (array_key_exists('QUERY_STRING', $_SERVER))
                 {
-                    $this->queryString = null;
+                  parse_str($_SERVER['QUERY_STRING'], $this->queryString);
+
+                  if (empty($this->queryString))
+                  {
+                      $this->queryString = null;
+                  }
                 }
             }
 
