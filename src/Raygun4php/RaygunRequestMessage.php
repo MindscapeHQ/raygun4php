@@ -19,7 +19,7 @@ namespace Raygun4php
                 $this->hostName = $_SERVER['HTTP_HOST'];
                 $this->httpMethod = $_SERVER['REQUEST_METHOD'];
                 $this->url = $_SERVER['REQUEST_URI'];
-                $this->ipAddress = $_SERVER['REMOTE_ADDR'];
+                $this->ipAddress = $this->getRemoteAddr();
 
                 if (array_key_exists('QUERY_STRING', $_SERVER))
                 {
@@ -99,5 +99,24 @@ namespace Raygun4php
                 return getallheaders();
             }
         }
+
+	    /**
+	     * Get the remote ip address
+	     *
+	     * @return null/string
+	     */
+	    private function getRemoteAddr()
+	    {
+		    $ip = null;
+
+		    if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+			    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+		    }
+		    else if (!empty($_SERVER['REMOTE_ADDR'])) {
+			    $ip = $_SERVER['REMOTE_ADDR'];
+		    }
+
+		    return $ip;
+	    }
     }
 }
