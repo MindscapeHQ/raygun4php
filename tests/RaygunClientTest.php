@@ -52,7 +52,7 @@ class RaygunClientTest extends PHPUnit_Framework_TestCase
 
     $filteredMessage = $client->filterParamsFromMessage($message);
     $this->assertEquals(
-        $filteredMessage->Details->Request->Dorm,
+        $filteredMessage->Details->Request->Form,
         array('MyParam' => '[filtered]',)
     );
   }
