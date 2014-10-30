@@ -392,16 +392,16 @@ namespace Raygun4php {
         }
       };
 
-      if($message->Details->Request->form) {
-        array_walk_recursive($message->Details->Request->form, $walkFn);
+      if($message->Details->Request->Form) {
+        array_walk_recursive($message->Details->Request->Form, $walkFn);
       }
 
-      if($message->Details->Request->headers) {
-        array_walk_recursive($message->Details->Request->headers, $walkFn);
+      if($message->Details->Request->Headers) {
+        array_walk_recursive($message->Details->Request->Headers, $walkFn);
       }
 
-      if($message->Details->Request->data) {
-        array_walk_recursive($message->Details->Request->data, $walkFn);
+      if($message->Details->Request->Data) {
+        array_walk_recursive($message->Details->Request->Data, $walkFn);
       }
 
       if($message->Details->UserCustomData) {
@@ -409,8 +409,8 @@ namespace Raygun4php {
       }
 
       // Unset raw HTTP data since we can't accurately filter it
-      if($message->Details->Request->rawData) {
-        $message->Details->Request->rawData = null;
+      if($message->Details->Request->RawData) {
+        $message->Details->Request->RawData = null;
       }
 
       return $message;
