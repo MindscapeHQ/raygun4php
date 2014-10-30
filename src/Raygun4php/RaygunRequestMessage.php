@@ -3,36 +3,36 @@ namespace Raygun4php
 {
     class RaygunRequestMessage
     {
-        public $hostName;
-        public $url;
-        public $httpMethod;
-        public $ipAddress;
-        public $queryString;
-        public $headers;
-        public $data;
-        public $form;
-        public $rawData;
+        public $HostName;
+        public $Url;
+        public $HttpMethod;
+        public $IpAddress;
+        public $QueryString;
+        public $Headers;
+        public $Data;
+        public $Form;
+        public $RawData;
 
         public function __construct()
         {
             if (php_sapi_name() !== 'cli') {
-                $this->hostName = $_SERVER['HTTP_HOST'];
-                $this->httpMethod = $_SERVER['REQUEST_METHOD'];
-                $this->url = $_SERVER['REQUEST_URI'];
-                $this->ipAddress = $_SERVER['REMOTE_ADDR'];
+                $this->HostName = $_SERVER['HTTP_HOST'];
+                $this->HttpMethod = $_SERVER['REQUEST_METHOD'];
+                $this->Url = $_SERVER['REQUEST_URI'];
+                $this->IpAddress = $_SERVER['REMOTE_ADDR'];
 
                 if (array_key_exists('QUERY_STRING', $_SERVER))
                 {
-                  parse_str($_SERVER['QUERY_STRING'], $this->queryString);
+                  parse_str($_SERVER['QUERY_STRING'], $this->QueryString);
 
-                  if (empty($this->queryString))
+                  if (empty($this->QueryString))
                   {
-                      $this->queryString = null;
+                      $this->QueryString = null;
                   }
                 }
             }
 
-            $this->headers = $this->emu_getAllHeaders();
+            $this->Headers = $this->emu_getAllHeaders();
 
             $utf8_convert = function($value) use (&$utf8_convert) {
                 return is_array($value) ?
@@ -46,9 +46,9 @@ namespace Raygun4php
                 iconv('UTF-8', 'UTF-8', utf8_encode($value));
             };
 
-            $this->form = array_map($utf8_convert, $_POST);
+            $this->Form = array_map($utf8_convert, $_POST);
 
-            $this->data = array_map($utf8_convert_server, $_SERVER);
+            $this->Data = array_map($utf8_convert_server, $_SERVER);
 
             if (php_sapi_name() !== 'cli')
             {
@@ -75,7 +75,7 @@ namespace Raygun4php
                     $raw = substr($raw, 0, 4095);
                   }
 
-                  $this->rawData = iconv('UTF-8', 'UTF-8//IGNORE', $raw);
+                  $this->RawData = iconv('UTF-8', 'UTF-8//IGNORE', $raw);
                 }
             }
         }
