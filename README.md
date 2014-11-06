@@ -104,6 +104,15 @@ Windows default: *false*
 
 *false* is the only effective option on Windows due to platform and library limitations within the supported versions.
 
+### Proxies
+
+A HTTP proxy can be set if your environment can't connect out through PHP or the `curl` binrary natively:
+
+```php
+$client = new \Raygun4php\RaygunClient("apiKey");
+$client->setProxy('http://someproxy:8080');
+```
+
 ### Debug mode
 
 The client offers a debug mode in which the HTTP response code can be returned after a POST attempt. This can be useful when adding Raygun to your site. This is accessed by passing in *true* as the third parameter in the client constructor:
