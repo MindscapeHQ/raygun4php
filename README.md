@@ -212,6 +212,7 @@ If, when running a PHP script from the command line on *nix operating systems, y
 
 ## Changelog
 
+- 1.6.0: Added HTTP proxy support, support X-Forwarded-For, null server var guards
 - 1.5.3: Unify property casing (internal change)
 - 1.5.2: Prevent error when query_string isn't present in $_SERVER
 - 1.5.1: Guard against intermittent user id cookie being null; overload for disabling user tracking
