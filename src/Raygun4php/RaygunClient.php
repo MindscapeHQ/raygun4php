@@ -22,6 +22,7 @@ namespace Raygun4php {
     protected $useAsyncSending;
     protected $debugSending;
     protected $disableUserTracking;
+    protected $proxy;
 
     /**
      * @var Array Parameter names to filter out of logged form data. Case insensitive.
@@ -296,12 +297,23 @@ namespace Raygun4php {
         $result = stream_context_set_option($context, 'ssl', 'allow_self_signed', true);
       }
 
+      if ($this->proxy) {
+        $result = stream_context_set_option($context, 'http', 'proxy', $this->proxy);
+      }
+
       if ($this->useAsyncSending && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN')
       {
-        $cmd = "curl -X POST -H 'Content-Type: application/json' -H 'X-ApiKey: " . $this->apiKey . "'";
-        $cmd .= " -d " . escapeshellarg($data_to_send) . " --cacert '" . realpath(__DIR__ . '/cacert.crt')
-           . "' 'https://api.raygun.io:443/entries' > /dev/null 2>&1 &";
-
+        $curlOpts = array(
+          "-X POST",
+          "-H 'Content-Type: application/json'",
+          "-H 'X-ApiKey: " . $this->apiKey . "'",
+          "-d " . escapeshellarg($data_to_send),
+          "--cacert '" . realpath(__DIR__ . '/cacert.crt') . "'"
+        );
+        if ($this->proxy) {
+          $curlOpts[] = "--proxy '" . $this->proxy . "'";
+        }
+        $cmd = "curl " . implode(' ', $curlOpts) . " 'https://api.raygun.io:443/entries' > /dev/null 2>&1 &";
         exec($cmd, $output, $exit);
         return $exit;
       }
@@ -430,6 +442,24 @@ namespace Raygun4php {
      */
     function getFilterParams() {
       return $this->filterParams;
+    }
+
+    /**
+     * Use a proxy for sending HTTP requests to Raygun.
+     * 
+     * @param String $url URL including protocol and an optional port, e.g. http://myproxy:8080
+     * @return Raygun4php\RaygunClient
+     */
+    function setProxy($proxy) {
+      $this->proxy = $proxy;
+      return $this;
+    }
+
+    /**
+     * @return String
+     */
+    function getProxy() {
+      return $this->proxy;
     }
 
     public function __destruct()
