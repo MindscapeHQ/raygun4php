@@ -1,6 +1,6 @@
 <phpunit backupGlobals="false"
          backupStaticAttributes="false"
-         bootstrap="testbootstrap.php"
+         bootstrap="vendor/autoload.php"
          colors="true"
          syntaxCheck="false">
   <testsuites>
