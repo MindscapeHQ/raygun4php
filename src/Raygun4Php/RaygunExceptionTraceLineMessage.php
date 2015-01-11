@@ -1,5 +1,5 @@
 <?php
-namespace Raygun4php;
+namespace Raygun4Php;
 
 class RaygunExceptionTraceLineMessage
 {

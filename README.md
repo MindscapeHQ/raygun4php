@@ -34,10 +34,10 @@ and the library will be imported ready for use.
 
 ### Manually with Git
 
-Clone this repository and copy src/Raygun4php into an appropriate subdirectory in your project, such as /vendor/Raygun4php. Add `requires` definitions for RaygunClient.php where you want to make a call to Send().
+Clone this repository and copy src/Raygun4Php into an appropriate subdirectory in your project, such as /vendor/Raygun4Php. Add `requires` definitions for RaygunClient.php where you want to make a call to Send().
 
 ```php
-require (dirname(dirname(__FILE__)).'/vendor/Raygun4php/RaygunClient.php');
+require (dirname(dirname(__FILE__)).'/vendor/Raygun4Php/RaygunClient.php');
 ```
 ## Usage
 
@@ -50,7 +50,7 @@ namespace
 {
 	// paste your 'requires' statement
 
-	$client = new \Raygun4php\RaygunClient("apikey for your application");
+	$client = new \Raygun4Php\RaygunClient("apikey for your application");
 
 	function error_handler($errno, $errstr, $errfile, $errline ) {
 		global $client;
@@ -88,7 +88,7 @@ Raygun4PHP has two algorithms which it can use to send your errors:
 This can be set by passing in a boolean as the 2nd parameter to the constructor:
 
 ```php
-$client = new \Raygun4php\RaygunClient("apiKey", $useAsyncSending);
+$client = new \Raygun4Php\RaygunClient("apiKey", $useAsyncSending);
 ```
 #### $useAsyncSending options
 
@@ -109,7 +109,7 @@ Windows default: *false*
 A HTTP proxy can be set if your environment can't connect out through PHP or the `curl` binrary natively:
 
 ```php
-$client = new \Raygun4php\RaygunClient("apiKey");
+$client = new \Raygun4Php\RaygunClient("apiKey");
 $client->setProxy('http://someproxy:8080');
 ```
 
@@ -118,7 +118,7 @@ $client->setProxy('http://someproxy:8080');
 The client offers a debug mode in which the HTTP response code can be returned after a POST attempt. This can be useful when adding Raygun to your site. This is accessed by passing in *true* as the third parameter in the client constructor:
 
 ```php
-$client = new \Raygun4php\RaygunClient("apiKey", $useAsyncSending, $debugMode);
+$client = new \Raygun4Php\RaygunClient("apiKey", $useAsyncSending, $debugMode);
 ```
 
 #### $debugMode options
@@ -161,7 +161,7 @@ This feature can be used in CLI mode by calling SetUser() at the start of your s
 Some error data will be too sensitive to transmit to an external service, such as credit card details or passwords. Since this data is very application specific, Raygun doesn't filter out anything by default. You can configure to either replace or otherwise transform specific values based on their keys. These transformations apply to form data (`$_POST`), custom user data, HTTP headers, and environment data (`$_SERVER`). It does not filter the URL or its `$_GET` parameters, or custom message strings. Since Raygun doesn't log method arguments in stack traces, those don't need filtering. All key comparisons are case insensitive.
 
 ```php
-$client = new \Raygun4php\RaygunClient("apiKey");
+$client = new \Raygun4Php\RaygunClient("apiKey");
 $client->setFilterParams(array(
 	'password' => true,
 	'creditcardnumber' => true,
@@ -175,7 +175,7 @@ $client->setFilterParams(array(
 You can also define keys as regular expressions:
 
 ```php
-$client = new \Raygun4php\RaygunClient("apiKey");
+$client = new \Raygun4Php\RaygunClient("apiKey");
 $client->setFilterParams(array(
 	'/^credit/i' => true,
 ));
@@ -186,7 +186,7 @@ $client->setFilterParams(array(
 In case you want to retain some hints on the data rather than removing it completely, you can also apply custom transformations through PHP's anonymous functions. The following example truncates all keys starting with "address".
 
 ```php
-$client = new \Raygun4php\RaygunClient("apiKey");
+$client = new \Raygun4Php\RaygunClient("apiKey");
 $client->setFilterParams(array(
 	'Email' => function($key, $val) {return substr($val, 0, 5) . '...';}
 ));
@@ -201,7 +201,7 @@ Note that when any filters are defined, the Raygun error will no longer contain 
 As above, enable debug mode by instantiating the client with
 
 ```php
-$client = new \Raygun4php\RaygunClient("apiKey", FALSE, TRUE);
+$client = new \Raygun4Php\RaygunClient("apiKey", FALSE, TRUE);
 ```
 
 This will echo the HTTP response code. Check the list above, and create an issue or contact us if you continue to have problems.

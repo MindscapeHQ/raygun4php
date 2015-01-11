@@ -1,5 +1,5 @@
 <?php
-namespace Raygun4php;
+namespace Raygun4Php;
 
 use Raygun4Php\Rhumsaa\Uuid\Uuid;
 
@@ -237,7 +237,7 @@ class RaygunClient
         if (is_array($tags)) {
             $message->Details->Tags = $tags;
         } else {
-            throw new \Raygun4php\Raygun4PhpException("Tags must be an array");
+            throw new \Raygun4Php\Raygun4PhpException("Tags must be an array");
         }
     }
 
@@ -246,7 +246,7 @@ class RaygunClient
         if ($this->isAssoc($userCustomData)) {
             $message->Details->UserCustomData = $userCustomData;
         } else {
-            throw new \Raygun4php\Raygun4PhpException("UserCustomData must be an associative array");
+            throw new \Raygun4Php\Raygun4PhpException("UserCustomData must be an associative array");
         }
     }
 
@@ -260,14 +260,14 @@ class RaygunClient
     * To disable this and transmit sync (blocking), pass false in as the 2nd parameter in RaygunClient's
     * constructor. This may be necessary on some Windows installations where the implementation is broken.
     * This is a lower level function used by SendException and SendError and one of those should be used preferrably.
-    * @param Raygun4php\RaygunMessage $message A populated message to be posted to the Raygun API
+    * @param Raygun4Php\RaygunMessage $message A populated message to be posted to the Raygun API
     * @return The HTTP status code of the result after transmitting the message to Raygun.io
     * 202 if accepted, 403 if invalid JSON payload
     */
     public function send($message)
     {
         if (empty($this->apiKey)) {
-            throw new \Raygun4php\Raygun4PhpException("API not valid, cannot send message to Raygun");
+            throw new \Raygun4Php\Raygun4PhpException("API not valid, cannot send message to Raygun");
         }
 
         $message = $this->filterParamsFromMessage($message);
@@ -425,7 +425,7 @@ class RaygunClient
 
     /**
     * @param Array $params
-    * @return Raygun4php\RaygunClient
+    * @return Raygun4Php\RaygunClient
     */
     public function setFilterParams($params)
     {
@@ -445,7 +445,7 @@ class RaygunClient
     * Use a proxy for sending HTTP requests to Raygun.
     *
     * @param String $url URL including protocol and an optional port, e.g. http://myproxy:8080
-    * @return Raygun4php\RaygunClient
+    * @return Raygun4Php\RaygunClient
     */
     public function setProxy($proxy)
     {

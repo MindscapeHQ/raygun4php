@@ -1,3 +1,3 @@
 <?php
 
-require_once(__DIR__ .'/src/Raygun4php/RaygunClient.php');
+require_once(__DIR__ .'/src/Raygun4Php/RaygunClient.php');

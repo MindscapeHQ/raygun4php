@@ -1,5 +1,5 @@
 <?php
-namespace Raygun4php;
+namespace Raygun4Php;
 
 class RaygunExceptionMessage
 {
@@ -35,7 +35,7 @@ class RaygunExceptionMessage
             $fromManualSendError = false;
             if (array_key_exists('function', $trace) &&
                 array_key_exists('class', $trace)) {
-                if ($trace['function'] == 'SendError' && $trace['class'] == 'Raygun4php\RaygunClient') {
+                if ($trace['function'] == 'SendError' && $trace['class'] == 'Raygun4Php\RaygunClient') {
                     $fromManualSendError = true;
                 }
             }
