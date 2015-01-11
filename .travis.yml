@@ -13,7 +13,7 @@ cache:
 
 install:
   - composer self-update
-  - composer install --dev --no-interaction --no-progress
+  - composer install --dev --no-progress
 
 script:
   - vendor/bin/phpunit
