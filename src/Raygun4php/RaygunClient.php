@@ -288,13 +288,10 @@ class RaygunClient
     $context = stream_context_create();
     $result = stream_context_set_option($context, 'ssl', 'verify_host', true);
 
-    if (!empty($cert_path))
-    {
+    if (!empty($cert_path)) {
       $result = stream_context_set_option($context, 'ssl', 'cafile', $cert_path);
       $result = stream_context_set_option($context, 'ssl', 'verify_peer', true);
-    }
-    else
-    {
+    } else {
       $result = stream_context_set_option($context, 'ssl', 'allow_self_signed', true);
     }
 
@@ -302,8 +299,7 @@ class RaygunClient
       $result = stream_context_set_option($context, 'http', 'proxy', $this->proxy);
     }
 
-    if ($this->useAsyncSending && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN')
-    {
+    if ($this->useAsyncSending && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
       $curlOpts = array(
         "-X POST",
         "-H 'Content-Type: application/json'",
@@ -317,9 +313,7 @@ class RaygunClient
       $cmd = "curl " . implode(' ', $curlOpts) . " 'https://api.raygun.io:443/entries' > /dev/null 2>&1 &";
       exec($cmd, $output, $exit);
       return $exit;
-    }
-    else
-    {
+    } else {
       $fp = stream_socket_client($remote, $err, $errstr, 10, STREAM_CLIENT_CONNECT, $context);
 
       if ($fp)
@@ -367,7 +361,7 @@ class RaygunClient
   function toJsonRemoveUnicodeSequences($struct)
   {
     return preg_replace_callback("/\\\\u([a-f0-9]{4})/", function($matches) {
-      return iconv('UCS-4LE','UTF-8',pack('V', hexdec("U$matches[1]")));
+      return iconv('UCS-4LE', 'UTF-8', pack('V', hexdec("U$matches[1]")));
     }, json_encode($struct));
   }
 
