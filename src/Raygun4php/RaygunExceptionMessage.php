@@ -113,9 +113,9 @@ class RaygunExceptionMessage
                 continue;
             }
 
-            for (;$i<count($tokens);$i++) {
+            for (; $i<count($tokens); $i++) {
                 if ($tokens[$i][0] === T_NAMESPACE) {
-                    for ($j=$i+1;$j<count($tokens); $j++) {
+                    for ($j=$i+1; $j<count($tokens); $j++) {
                         if ($tokens[$j][0] === T_STRING) {
                             $namespace .= '\\'.$tokens[$j][1];
                         } else {
@@ -127,7 +127,7 @@ class RaygunExceptionMessage
                 }
 
                 if ($tokens[$i][0] === T_CLASS) {
-                    for ($j=$i+1;$j<count($tokens);$j++) {
+                    for ($j=$i+1; $j<count($tokens); $j++) {
                         if ($tokens[$j] === '{') {
                             $class = $tokens[$i+2][1];
                         }
