@@ -27,4 +27,3 @@ class RaygunMessageTest extends PHPUnit_Framework_TestCase
     $this->assertEquals($msg->Details->Error->Message, 'Exception: test');
   }
 }
-?>
