@@ -397,7 +397,7 @@ class RaygunClient
             foreach ($filterParams as $filterKey => $filterFn) {
                 if (
                     (strpos($filterKey, '/') === 0 && preg_match($filterKey, $key))
-                    || (strpos($filterKey, '/') === FALSE && strtolower($filterKey) == strtolower($key))
+                    || (strpos($filterKey, '/') === false && strtolower($filterKey) == strtolower($key))
                 ) {
                     $val = $filterFn($key, $val);
                 }
