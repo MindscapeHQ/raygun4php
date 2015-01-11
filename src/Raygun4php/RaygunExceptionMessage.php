@@ -17,16 +17,16 @@ class RaygunExceptionMessage
 
         if ($exceptionClass != 'ErrorException') {
             $this->Message = $exceptionClass.': '.$exception->getMessage();
-            $this->BuildStackTrace($exception);
+            $this->buildStackTrace($exception);
         } else {
             $this->Message = 'Error: '.$exception->getMessage();
-            $this->BuildErrorTrace($exception);
+            $this->buildErrorTrace($exception);
         }
 
         $this->FileName = baseName($exception->getFile());
     }
 
-    private function BuildErrorTrace($error)
+    private function buildErrorTrace($error)
     {
         $traces = $error->getTrace();
         $lines = array();
@@ -55,7 +55,7 @@ class RaygunExceptionMessage
                     $line->LineNumber= $errorData[3];
                 }
             } else {
-                $line = $this->BuildLine($trace);
+                $line = $this->buildLine($trace);
             }
 
             $lines[] = $line;
@@ -64,19 +64,19 @@ class RaygunExceptionMessage
         $this->StackTrace = $lines;
     }
 
-    private function BuildStackTrace($exception)
+    private function buildStackTrace($exception)
     {
         $traces = $exception->getTrace();
         $lines = array();
 
         foreach ($traces as $trace) {
-            $lines[] = $this->BuildLine($trace);
+            $lines[] = $this->buildLine($trace);
         }
 
         $this->StackTrace = $lines;
     }
 
-    private function BuildLine($trace)
+    private function buildLine($trace)
     {
         $line = new RaygunExceptionTraceLineMessage();
 
@@ -96,7 +96,7 @@ class RaygunExceptionMessage
         return $line;
     }
 
-    private function GetClassName()
+    private function getClassName()
     {
         $fp = fopen($this->fileName, 'r');
         $class = $namespace = $buffer = '';

@@ -21,7 +21,7 @@ class RaygunMessage
         $this->Details = new RaygunMessageDetails();
     }
 
-    public function Build($exception)
+    public function build($exception)
     {
         $this->Details->MachineName = gethostname();
         $this->Details->Error = new RaygunExceptionMessage($exception);

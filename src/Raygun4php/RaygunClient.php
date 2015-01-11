@@ -56,7 +56,7 @@ class RaygunClient
         $this->debugSending = $debugSending;
 
         if (!$disableUserTracking) {
-            $this->SetUser();
+            $this->setUser();
         }
 
         $this->disableUserTracking = $disableUserTracking;
@@ -74,7 +74,7 @@ class RaygunClient
     * data in the message payload
     * @return The HTTP status code of the result when transmitting the message to Raygun.io
     */
-    public function SendError(
+    public function sendError(
         $errno,
         $errstr,
         $errfile,
@@ -83,17 +83,17 @@ class RaygunClient
         $userCustomData = null,
         $timestamp = null
     ) {
-        $message = $this->BuildMessage(new \ErrorException($errstr, $errno, 0, $errfile, $errline), $timestamp);
+        $message = $this->buildMessage(new \ErrorException($errstr, $errno, 0, $errfile, $errline), $timestamp);
 
         if ($tags != null) {
-            $this->AddTags($message, $tags);
+            $this->addTags($message, $tags);
         }
 
         if ($userCustomData != null) {
-            $this->AddUserCustomData($message, $userCustomData);
+            $this->addUserCustomData($message, $userCustomData);
         }
 
-        return $this->Send($message);
+        return $this->send($message);
     }
 
     /*
@@ -105,19 +105,19 @@ class RaygunClient
     * @param int $timestamp Current Unix timestamp in the local timezone, used to set when an exception occurred.
     * @return The HTTP status code of the result when transmitting the message to Raygun.io
     */
-    public function SendException($exception, $tags = null, $userCustomData = null, $timestamp = null)
+    public function sendException($exception, $tags = null, $userCustomData = null, $timestamp = null)
     {
-        $message = $this->BuildMessage($exception, $timestamp);
+        $message = $this->buildMessage($exception, $timestamp);
 
         if ($tags != null) {
-            $this->AddTags($message, $tags);
+            $this->addTags($message, $tags);
         }
 
         if ($userCustomData != null) {
-            $this->AddUserCustomData($message, $userCustomData);
+            $this->addUserCustomData($message, $userCustomData);
         }
 
-        return $this->Send($message);
+        return $this->send($message);
     }
 
     /*
@@ -127,7 +127,7 @@ class RaygunClient
     * where x is a positive integer.
     *
     */
-    public function SetVersion($version)
+    public function setVersion($version)
     {
         $this->version = $version;
     }
@@ -141,7 +141,7 @@ class RaygunClient
     *  of the calling application.
     *
     */
-    public function SetUser(
+    public function setUser(
         $user = null,
         $firstName = null,
         $fullName = null,
@@ -151,12 +151,12 @@ class RaygunClient
     ) {
         $timestamp = time() + 60 * 60 * 24 * 30;
 
-        $this->firstName = $this->StoreOrRetrieveUserCookie('rgfirstname', $firstName);
-        $this->fullName = $this->StoreOrRetrieveUserCookie('rgfullname', $fullName);
-        $this->email = $this->StoreOrRetrieveUserCookie('rgemail', $email);
+        $this->firstName = $this->storeOrRetrieveUserCookie('rgfirstname', $firstName);
+        $this->fullName = $this->storeOrRetrieveUserCookie('rgfullname', $fullName);
+        $this->email = $this->storeOrRetrieveUserCookie('rgemail', $email);
 
-        $this->uuid = $this->StoreOrRetrieveUserCookie('rguuidvalue', $uuid);
-        $this->isAnonymous = $this->StoreOrRetrieveUserCookie('rgisanonymous', $isAnonymous ? 'true' : 'false');
+        $this->uuid = $this->storeOrRetrieveUserCookie('rguuidvalue', $uuid);
+        $this->isAnonymous = $this->storeOrRetrieveUserCookie('rgisanonymous', $isAnonymous ? 'true' : 'false');
         $this->isAnonymous = $this->isAnonymous == 'true' ? true : false;
 
         if (is_string($user)) {
@@ -180,11 +180,11 @@ class RaygunClient
                 }
             }
 
-            $this->isAnonymous = $this->StoreOrRetrieveUserCookie('rgisanonymous', 'true') == 'true';
+            $this->isAnonymous = $this->storeOrRetrieveUserCookie('rgisanonymous', 'true') == 'true';
         }
     }
 
-    private function StoreOrRetrieveUserCookie($key, $value)
+    private function storeOrRetrieveUserCookie($key, $value)
     {
         $timestamp = time() + 60 * 60 * 24 * 30;
 
@@ -212,10 +212,10 @@ class RaygunClient
     * are sent.
     * @param array $tags The tags relating to your project's version
     */
-    private function BuildMessage($errorException, $timestamp = null)
+    private function buildMessage($errorException, $timestamp = null)
     {
         $message = new RaygunMessage($timestamp);
-        $message->Build($errorException);
+        $message->build($errorException);
         $message->Details->Version = $this->version;
         $message->Details->Context = new RaygunIdentifier(session_id());
 
@@ -237,7 +237,7 @@ class RaygunClient
         return $message;
     }
 
-    private function AddTags(&$message, $tags)
+    private function addTags(&$message, $tags)
     {
         if (is_array($tags)) {
             $message->Details->Tags = $tags;
@@ -246,16 +246,16 @@ class RaygunClient
         }
     }
 
-    private function AddUserCustomData(&$message, $userCustomData)
+    private function addUserCustomData(&$message, $userCustomData)
     {
-        if ($this->is_assoc($userCustomData)) {
+        if ($this->isAssoc($userCustomData)) {
             $message->Details->UserCustomData = $userCustomData;
         } else {
             throw new \Raygun4php\Raygun4PhpException("UserCustomData must be an associative array");
         }
     }
 
-    private function is_assoc($array)
+    private function isAssoc($array)
     {
         return (bool)count(array_filter(array_keys($array), 'is_string'));
     }
@@ -269,7 +269,7 @@ class RaygunClient
     * @return The HTTP status code of the result after transmitting the message to Raygun.io
     * 202 if accepted, 403 if invalid JSON payload
     */
-    public function Send($message)
+    public function send($message)
     {
         if (empty($this->apiKey)) {
             throw new \Raygun4php\Raygun4PhpException("API not valid, cannot send message to Raygun");

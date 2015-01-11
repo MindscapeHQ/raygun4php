@@ -9,7 +9,7 @@ class RaygunClientTest extends PHPUnit_Framework_TestCase
     public function testSendReturns403WithInvalidApiKey()
     {
         $client = new \Raygun4php\RaygunClient("", true);
-        $client->SendException(new Exception(''));
+        $client->sendException(new Exception(''));
     }
 
     public function testGetFilteredParamsRemovesByKey()

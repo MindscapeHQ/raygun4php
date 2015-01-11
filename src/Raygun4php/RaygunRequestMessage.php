@@ -30,7 +30,7 @@ class RaygunRequestMessage
             }
         }
 
-        $this->Headers = $this->emu_getAllHeaders();
+        $this->Headers = $this->emulateGetAllHeaders();
 
         $utf8_convert = function($value) use (&$utf8_convert) {
             return is_array($value) ?
@@ -74,7 +74,7 @@ class RaygunRequestMessage
         }
     }
 
-    private function emu_getAllHeaders()
+    private function emulateGetAllHeaders()
     {
         if (function_exists('getallheaders')) {
             return getallheaders();
