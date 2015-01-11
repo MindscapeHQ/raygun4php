@@ -23,12 +23,12 @@ class RaygunRequestMessage
 
             if (array_key_exists('QUERY_STRING', $_SERVER))
             {
-              parse_str($_SERVER['QUERY_STRING'], $this->QueryString);
+                parse_str($_SERVER['QUERY_STRING'], $this->QueryString);
 
-              if (empty($this->QueryString))
-              {
-                  $this->QueryString = null;
-              }
+                if (empty($this->QueryString))
+                {
+                      $this->QueryString = null;
+                }
             }
         }
 
@@ -68,14 +68,14 @@ class RaygunRequestMessage
                 $contentType != 'multipart/form-data' &&
                 $contentType != 'text/html')
             {
-              $raw = file_get_contents('php://input');
+                $raw = file_get_contents('php://input');
 
-              if ($raw != null && strlen($raw) > 4096)
-              {
-                $raw = substr($raw, 0, 4095);
-              }
+                if ($raw != null && strlen($raw) > 4096)
+                {
+                    $raw = substr($raw, 0, 4095);
+                }
 
-              $this->RawData = iconv('UTF-8', 'UTF-8//IGNORE', $raw);
+                $this->RawData = iconv('UTF-8', 'UTF-8//IGNORE', $raw);
             }
         }
     }
@@ -106,11 +106,11 @@ class RaygunRequestMessage
 
         if (!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
         {
-          $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
         }
         else if (!empty($_SERVER['REMOTE_ADDR']))
         {
-          $ip = $_SERVER['REMOTE_ADDR'];
+            $ip = $_SERVER['REMOTE_ADDR'];
         }
 
         return $ip;

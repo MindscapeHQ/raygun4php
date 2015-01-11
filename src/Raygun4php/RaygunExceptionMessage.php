@@ -31,44 +31,44 @@ class RaygunExceptionMessage
 
     private function BuildErrorTrace($error)
     {
-      $traces = $error->getTrace();
-      $lines = array();
+        $traces = $error->getTrace();
+        $lines = array();
 
-      foreach ($traces as $trace) {
-        $line = new RaygunExceptionTraceLineMessage();
+        foreach ($traces as $trace) {
+            $line = new RaygunExceptionTraceLineMessage();
 
-        $fromManualSendError = false;
-        if (array_key_exists('function', $trace) &&
-            array_key_exists('class', $trace))
-        {
-          if ($trace['function'] == 'SendError' && $trace['class'] == 'Raygun4php\RaygunClient')
-          {
-            $fromManualSendError = true;
-          }
+            $fromManualSendError = false;
+            if (array_key_exists('function', $trace) &&
+                array_key_exists('class', $trace))
+            {
+                if ($trace['function'] == 'SendError' && $trace['class'] == 'Raygun4php\RaygunClient')
+                {
+                    $fromManualSendError = true;
+                }
+            }
+
+            if (array_key_exists('args', $trace) && $fromManualSendError == true) {
+                $errorData = $trace['args'];
+
+                if (count($errorData) >= 2) {
+                    $line->ClassName= $errorData[1];
+                }
+                if (count($errorData) >= 3) {
+                    $line->FileName= $errorData[2];
+                }
+                if (count($errorData) >= 4) {
+                    $line->LineNumber= $errorData[3];
+                }
+            }
+            else
+            {
+                $line = $this->BuildLine($trace);
+            }
+
+            $lines[] = $line;
         }
 
-        if (array_key_exists('args', $trace) && $fromManualSendError == true) {
-          $errorData = $trace['args'];
-
-          if (count($errorData) >= 2) {
-            $line->ClassName= $errorData[1];
-          }
-          if (count($errorData) >= 3) {
-            $line->FileName= $errorData[2];
-          }
-          if (count($errorData) >= 4) {
-            $line->LineNumber= $errorData[3];
-          }
-        }
-        else
-        {
-          $line = $this->BuildLine($trace);
-        }
-
-        $lines[] = $line;
-      }
-
-      $this->StackTrace = $lines;
+        $this->StackTrace = $lines;
     }
 
     private function BuildStackTrace($exception)
@@ -79,7 +79,7 @@ class RaygunExceptionMessage
         foreach ($traces as $trace)
         {
             $lines[] = $this->BuildLine($trace);
-         }
+        }
 
         $this->StackTrace = $lines;
     }
@@ -90,19 +90,19 @@ class RaygunExceptionMessage
 
         if (array_key_exists('file', $trace))
         {
-          $line->FileName = $trace['file'];
+            $line->FileName = $trace['file'];
         }
         if (array_key_exists('class', $trace))
         {
-          $line->ClassName = $trace['class'];
+            $line->ClassName = $trace['class'];
         }
         if (array_key_exists('function', $trace))
         {
-          $line->MethodName = $trace['function'];
+            $line->MethodName = $trace['function'];
         }
         if (array_key_exists('line', $trace))
         {
-          $line->LineNumber = $trace['line'];
+            $line->LineNumber = $trace['line'];
         }
 
         return $line;
