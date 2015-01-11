@@ -39,11 +39,15 @@ class RaygunClient
 
     /*
     * Creates a new RaygunClient instance.
-    * @param bool $useAsyncSending If true, attempts to post rapidly and asynchronously the script by forking a cURL process.
-    * RaygunClient cannot return the HTTP result when in async mode, however. If false, sends using a blocking socket connection.
+    * @param bool $useAsyncSending If true, attempts to post rapidly and asynchronously the script by forking a cURL
+    * process.
+    * RaygunClient cannot return the HTTP result when in async mode, however. If false, sends using a blocking socket
+    * connection.
     * This is the only method available on Windows.
-    * @param bool $debugSending If true, and $useAsyncSending is true, this will output the HTTP response code from posting
-    * error messages. See the GitHub documentation for code meaning. This param does nothing if useAsyncSending is set to true.
+    * @param bool $debugSending If true, and $useAsyncSending is true, this will output the HTTP response code from
+    * posting
+    * error messages. See the GitHub documentation for code meaning. This param does nothing if useAsyncSending is set
+    * to true.
     */
     public function __construct($key, $useAsyncSending = true, $debugSending = false, $disableUserTracking = false)
     {
@@ -70,8 +74,15 @@ class RaygunClient
     * data in the message payload
     * @return The HTTP status code of the result when transmitting the message to Raygun.io
     */
-    public function SendError($errno, $errstr, $errfile, $errline, $tags = null, $userCustomData = null, $timestamp = null)
-    {
+    public function SendError(
+        $errno,
+        $errstr,
+        $errfile,
+        $errline,
+        $tags = null,
+        $userCustomData = null,
+        $timestamp = null
+    ) {
         $message = $this->BuildMessage(new \ErrorException($errstr, $errno, 0, $errfile, $errline), $timestamp);
 
         if ($tags != null) {
@@ -130,8 +141,14 @@ class RaygunClient
     *  of the calling application.
     *
     */
-    public function SetUser($user = null, $firstName = null, $fullName = null, $email = null, $isAnonymous = null, $uuid = null)
-    {
+    public function SetUser(
+        $user = null,
+        $firstName = null,
+        $fullName = null,
+        $email = null,
+        $isAnonymous = null,
+        $uuid = null
+    ) {
         $timestamp = time() + 60 * 60 * 24 * 30;
 
         $this->firstName = $this->StoreOrRetrieveUserCookie('rgfirstname', $firstName);
@@ -139,7 +156,8 @@ class RaygunClient
         $this->email = $this->StoreOrRetrieveUserCookie('rgemail', $email);
 
         $this->uuid = $this->StoreOrRetrieveUserCookie('rguuidvalue', $uuid);
-        $this->isAnonymous = $this->StoreOrRetrieveUserCookie('rgisanonymous', $isAnonymous ? 'true' : 'false') == 'true' ? true : false;
+        $this->isAnonymous = $this->StoreOrRetrieveUserCookie('rgisanonymous', $isAnonymous ? 'true' : 'false');
+        $this->isAnonymous = $this->isAnonymous == 'true' ? true : false;
 
         if (is_string($user)) {
             $this->user = $user;
@@ -202,7 +220,14 @@ class RaygunClient
         $message->Details->Context = new RaygunIdentifier(session_id());
 
         if ($this->user != null) {
-            $message->Details->User = new RaygunIdentifier($this->user, $this->firstName, $this->fullName, $this->email, $this->isAnonymous, $this->uuid);
+            $message->Details->User = new RaygunIdentifier(
+                $this->user,
+                $this->firstName,
+                $this->fullName,
+                $this->email,
+                $this->isAnonymous,
+                $this->uuid
+            );
         } else {
             if (!$this->disableUserTracking) {
                 $message->Details->User = new RaygunIdentifier($_COOKIE['rguserid']);
@@ -319,7 +344,8 @@ class RaygunClient
                 }
             } else {
                 $errMsg = "<br/><br/>" . "<strong>Raygun Warning:</strong> Couldn't send asynchronously. ";
-                $errMsg .= "Try calling new RaygunClient('apikey', FALSE); to use an alternate sending method, or RaygunClient('key', FALSE, TRUE) to echo the HTTP response" . "<br/><br/>";
+                $errMsg .= "Try calling new RaygunClient('apikey', FALSE); to use an alternate sending method, or ";
+                $errMsg .= "RaygunClient('key', FALSE, TRUE) to echo the HTTP response" . "<br/><br/>";
                 echo $errMsg;
                 trigger_error('httpPost error: ' . $errstr);
                 return null;

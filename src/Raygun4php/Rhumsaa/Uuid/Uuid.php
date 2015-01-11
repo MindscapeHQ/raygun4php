@@ -320,7 +320,8 @@ final class Uuid
      *
      * @return \DateTime A PHP DateTime representation of the date
      * @throws Exception\UnsupportedOperationException If this UUID is not a version 1 UUID
-     * @throws Exception\UnsatisfiedDependencyException if called on a 32-bit system and Moontoast\Math\BigNumber is not present
+     * @throws Exception\UnsatisfiedDependencyException if called on a 32-bit system and Moontoast\Math\BigNumber is not
+     *                                                  present
      */
     public function getDateTime()
     {
@@ -1002,7 +1003,8 @@ final class Uuid
      * @param int $sec Seconds since the Unix Epoch
      * @param int $usec Microseconds
      * @return array
-     * @throws Exception\UnsatisfiedDependencyException if called on a 32-bit system and Moontoast\Math\BigNumber is not present
+     * @throws Exception\UnsatisfiedDependencyException if called on a 32-bit system and Moontoast\Math\BigNumber is not
+     *                                                  present
      */
     protected static function calculateUuidTime($sec, $usec)
     {

@@ -15,8 +15,14 @@ class RaygunIdentifier
 
     public $Uuid;
 
-    public function __construct($id, $firstName = null, $fullName = null, $email = null, $isAnonymous = null, $uuid = null)
-    {
+    public function __construct(
+        $id,
+        $firstName = null,
+        $fullName = null,
+        $email = null,
+        $isAnonymous = null,
+        $uuid = null
+    ) {
         $this->Identifier = $id;
         $this->FirstName = $firstName;
         $this->FullName = $fullName;
