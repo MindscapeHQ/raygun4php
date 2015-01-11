@@ -74,13 +74,11 @@ class RaygunClient
     {
         $message = $this->BuildMessage(new \ErrorException($errstr, $errno, 0, $errfile, $errline), $timestamp);
 
-        if ($tags != null)
-        {
+        if ($tags != null) {
             $this->AddTags($message, $tags);
         }
 
-        if ($userCustomData != null)
-        {
+        if ($userCustomData != null) {
             $this->AddUserCustomData($message, $userCustomData);
         }
 
@@ -100,13 +98,11 @@ class RaygunClient
     {
         $message = $this->BuildMessage($exception, $timestamp);
 
-        if ($tags != null)
-        {
+        if ($tags != null) {
             $this->AddTags($message, $tags);
         }
 
-        if ($userCustomData != null)
-        {
+        if ($userCustomData != null) {
             $this->AddUserCustomData($message, $userCustomData);
         }
 
@@ -145,31 +141,25 @@ class RaygunClient
         $this->uuid = $this->StoreOrRetrieveUserCookie('rguuidvalue', $uuid);
         $this->isAnonymous = $this->StoreOrRetrieveUserCookie('rgisanonymous', $isAnonymous ? 'true' : 'false') == 'true' ? true : false;
 
-        if (is_string($user))
-        {
+        if (is_string($user)) {
             $this->user = $user;
 
-            if (php_sapi_name() != 'cli' && !headers_sent())
-            {
+            if (php_sapi_name() != 'cli' && !headers_sent()) {
                 setcookie('rguserid', $user, $timestamp);
                 setcookie('rguuid', 'false', $timestamp);
             }
-        }
-        else
-        {
-            if (!array_key_exists('rguuid', $_COOKIE))
-            {
+        } else {
+            if (!array_key_exists('rguuid', $_COOKIE)) {
                 $this->user = (string)Uuid::uuid4();
 
-                if (php_sapi_name() != 'cli' && !headers_sent())
-                {
+                if (php_sapi_name() != 'cli' && !headers_sent()) {
                     setcookie('rguserid', $this->user, $timestamp);
                     setcookie('rguuid', 'true', $timestamp);
                 }
-            }
-            else if (array_key_exists('rguserid', $_COOKIE))
-            {
-                $this->user = $_COOKIE['rguserid'];
+            } else {
+                if (array_key_exists('rguserid', $_COOKIE)) {
+                    $this->user = $_COOKIE['rguserid'];
+                }
             }
 
             $this->isAnonymous = $this->StoreOrRetrieveUserCookie('rgisanonymous', 'true') == 'true';
@@ -180,21 +170,15 @@ class RaygunClient
     {
         $timestamp = time() + 60 * 60 * 24 * 30;
 
-        if (is_string($value))
-        {
-            if (php_sapi_name() != 'cli' && !headers_sent())
-            {
+        if (is_string($value)) {
+            if (php_sapi_name() != 'cli' && !headers_sent()) {
                 setcookie($key, $value, $timestamp);
             }
 
             return $value;
-        }
-        else
-        {
-            if (array_key_exists($key, $_COOKIE))
-            {
-                if ($_COOKIE[$key] != $value && php_sapi_name() != 'cli' && !headers_sent())
-                {
+        } else {
+            if (array_key_exists($key, $_COOKIE)) {
+                if ($_COOKIE[$key] != $value && php_sapi_name() != 'cli' && !headers_sent()) {
                     setcookie($key, $value, $timestamp);
                 }
                 return $_COOKIE[$key];
@@ -217,13 +201,12 @@ class RaygunClient
         $message->Details->Version = $this->version;
         $message->Details->Context = new RaygunIdentifier(session_id());
 
-        if ($this->user != null)
-        {
+        if ($this->user != null) {
             $message->Details->User = new RaygunIdentifier($this->user, $this->firstName, $this->fullName, $this->email, $this->isAnonymous, $this->uuid);
-        }
-        else if (!$this->disableUserTracking)
-        {
-            $message->Details->User = new RaygunIdentifier($_COOKIE['rguserid']);
+        } else {
+            if (!$this->disableUserTracking) {
+                $message->Details->User = new RaygunIdentifier($_COOKIE['rguserid']);
+            }
         }
 
         return $message;
@@ -231,24 +214,18 @@ class RaygunClient
 
     private function AddTags(&$message, $tags)
     {
-        if (is_array($tags))
-        {
+        if (is_array($tags)) {
             $message->Details->Tags = $tags;
-        }
-        else
-        {
+        } else {
             throw new \Raygun4php\Raygun4PhpException("Tags must be an array");
         }
     }
 
     private function AddUserCustomData(&$message, $userCustomData)
     {
-        if ($this->is_assoc($userCustomData))
-        {
+        if ($this->is_assoc($userCustomData)) {
             $message->Details->UserCustomData = $userCustomData;
-        }
-        else
-        {
+        } else {
             throw new \Raygun4php\Raygun4PhpException("UserCustomData must be an associative array");
         }
     }
@@ -269,8 +246,7 @@ class RaygunClient
     */
     public function Send($message)
     {
-        if (empty($this->apiKey))
-        {
+        if (empty($this->apiKey)) {
             throw new \Raygun4php\Raygun4PhpException("API not valid, cannot send message to Raygun");
         }
 
@@ -288,13 +264,10 @@ class RaygunClient
         $context = stream_context_create();
         $result = stream_context_set_option($context, 'ssl', 'verify_host', true);
 
-        if (!empty($cert_path))
-        {
+        if (!empty($cert_path)) {
             $result = stream_context_set_option($context, 'ssl', 'cafile', $cert_path);
             $result = stream_context_set_option($context, 'ssl', 'verify_peer', true);
-        }
-        else
-        {
+        } else {
             $result = stream_context_set_option($context, 'ssl', 'allow_self_signed', true);
         }
 
@@ -302,8 +275,7 @@ class RaygunClient
             $result = stream_context_set_option($context, 'http', 'proxy', $this->proxy);
         }
 
-        if ($this->useAsyncSending && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN')
-        {
+        if ($this->useAsyncSending && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
             $curlOpts = array(
                 "-X POST",
                 "-H 'Content-Type: application/json'",
@@ -317,13 +289,10 @@ class RaygunClient
             $cmd = "curl " . implode(' ', $curlOpts) . " 'https://api.raygun.io:443/entries' > /dev/null 2>&1 &";
             exec($cmd, $output, $exit);
             return $exit;
-        }
-        else
-        {
+        } else {
             $fp = stream_socket_client($remote, $err, $errstr, 10, STREAM_CLIENT_CONNECT, $context);
 
-            if ($fp)
-            {
+            if ($fp) {
                 $req = '';
                 $req .= "POST $this->path HTTP/1.1\r\n";
                 $req .= "Host: $this->host\r\n";
@@ -335,26 +304,20 @@ class RaygunClient
                 fwrite($fp, $data_to_send);
 
                 $response = "";
-                if ($this->debugSending)
-                {
-                    while(!preg_match("/^HTTP\/[\d\.]* (\d{3})/", $response))
-                    {
+                if ($this->debugSending) {
+                    while (!preg_match("/^HTTP\/[\d\.]* (\d{3})/", $response)) {
                         $response .= fgets($fp, 128);
                     }
 
                     fclose($fp);
 
                     return $response;
-                }
-                else
-                {
+                } else {
                     fclose($fp);
 
                     return 0;
                 }
-            }
-            else
-            {
+            } else {
                 $errMsg = "<br/><br/>" . "<strong>Raygun Warning:</strong> Couldn't send asynchronously. ";
                 $errMsg .= "Try calling new RaygunClient('apikey', FALSE); to use an alternate sending method, or RaygunClient('key', FALSE, TRUE) to echo the HTTP response" . "<br/><br/>";
                 echo $errMsg;
@@ -364,8 +327,9 @@ class RaygunClient
         }
     }
 
-    function toJsonRemoveUnicodeSequences($struct) {
-        return preg_replace_callback("/\\\\u([a-f0-9]{4})/", function($matches){ return iconv('UCS-4LE','UTF-8',pack('V', hexdec("U$matches[1]"))); }, json_encode($struct));
+    function toJsonRemoveUnicodeSequences($struct)
+    {
+        return preg_replace_callback("/\\\\u([a-f0-9]{4})/", function($matches) { return iconv('UCS-4LE','UTF-8',pack('V', hexdec("U$matches[1]"))); }, json_encode($struct));
     }
 
     /**
@@ -379,24 +343,25 @@ class RaygunClient
     * @param  string $replace Value to be inserted by default (unless specified otherwise by custom transformations).
     * @return RaygunMessage
     */
-    function filterParamsFromMessage($message, $replace = '[filtered]') {
+    function filterParamsFromMessage($message, $replace = '[filtered]')
+    {
         $filterParams = $this->getFilterParams();
 
         // Skip checks if none are defined
-        if(!$filterParams) {
+        if (!$filterParams) {
             return $message;
         }
 
         // Ensure all filters are callable
-        foreach($filterParams as $filterKey => $filterFn) {
-            if(!is_callable($filterFn)) {
+        foreach ($filterParams as $filterKey => $filterFn) {
+            if (!is_callable($filterFn)) {
                 $filterParams[$filterKey] = function($key, $val) use ($replace) {return $replace;};
             }
         }
 
         $walkFn = function(&$val, $key) use ($filterParams) {
-            foreach($filterParams as $filterKey => $filterFn) {
-                if(
+            foreach ($filterParams as $filterKey => $filterFn) {
+                if (
                     (strpos($filterKey, '/') === 0 && preg_match($filterKey, $key))
                     || (strpos($filterKey, '/') === FALSE && strtolower($filterKey) == strtolower($key))
                 ) {
@@ -405,24 +370,24 @@ class RaygunClient
             }
         };
 
-        if($message->Details->Request->Form) {
+        if ($message->Details->Request->Form) {
             array_walk_recursive($message->Details->Request->Form, $walkFn);
         }
 
-        if($message->Details->Request->Headers) {
+        if ($message->Details->Request->Headers) {
             array_walk_recursive($message->Details->Request->Headers, $walkFn);
         }
 
-        if($message->Details->Request->Data) {
+        if ($message->Details->Request->Data) {
             array_walk_recursive($message->Details->Request->Data, $walkFn);
         }
 
-        if($message->Details->UserCustomData) {
+        if ($message->Details->UserCustomData) {
             array_walk_recursive($message->Details->UserCustomData, $walkFn);
         }
 
         // Unset raw HTTP data since we can't accurately filter it
-        if($message->Details->Request->RawData) {
+        if ($message->Details->Request->RawData) {
             $message->Details->Request->RawData = null;
         }
 
@@ -433,7 +398,8 @@ class RaygunClient
     * @param Array $params
     * @return Raygun4php\RaygunClient
     */
-    function setFilterParams($params) {
+    function setFilterParams($params)
+    {
         $this->filterParams = $params;
         return $this;
     }
@@ -441,7 +407,8 @@ class RaygunClient
     /**
     * @return Array
     */
-    function getFilterParams() {
+    function getFilterParams()
+    {
         return $this->filterParams;
     }
 
@@ -451,7 +418,8 @@ class RaygunClient
     * @param String $url URL including protocol and an optional port, e.g. http://myproxy:8080
     * @return Raygun4php\RaygunClient
     */
-    function setProxy($proxy) {
+    function setProxy($proxy)
+    {
         $this->proxy = $proxy;
         return $this;
     }
@@ -459,16 +427,15 @@ class RaygunClient
     /**
     * @return String
     */
-    function getProxy() {
+    function getProxy()
+    {
         return $this->proxy;
     }
 
     public function __destruct()
     {
-        if ($this->httpData)
-        {
+        if ($this->httpData) {
             curl_close($this->httpData);
         }
     }
-
 }

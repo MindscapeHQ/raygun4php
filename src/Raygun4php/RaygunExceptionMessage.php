@@ -15,13 +15,10 @@ class RaygunExceptionMessage
     {
         $exceptionClass = get_class($exception);
 
-        if ($exceptionClass != 'ErrorException')
-        {
+        if ($exceptionClass != 'ErrorException') {
             $this->Message = $exceptionClass.': '.$exception->getMessage();
             $this->BuildStackTrace($exception);
-        }
-        else
-        {
+        } else {
             $this->Message = 'Error: '.$exception->getMessage();
             $this->BuildErrorTrace($exception);
         }
@@ -39,10 +36,8 @@ class RaygunExceptionMessage
 
             $fromManualSendError = false;
             if (array_key_exists('function', $trace) &&
-                array_key_exists('class', $trace))
-            {
-                if ($trace['function'] == 'SendError' && $trace['class'] == 'Raygun4php\RaygunClient')
-                {
+                array_key_exists('class', $trace)) {
+                if ($trace['function'] == 'SendError' && $trace['class'] == 'Raygun4php\RaygunClient') {
                     $fromManualSendError = true;
                 }
             }
@@ -59,9 +54,7 @@ class RaygunExceptionMessage
                 if (count($errorData) >= 4) {
                     $line->LineNumber= $errorData[3];
                 }
-            }
-            else
-            {
+            } else {
                 $line = $this->BuildLine($trace);
             }
 
@@ -76,8 +69,7 @@ class RaygunExceptionMessage
         $traces = $exception->getTrace();
         $lines = array();
 
-        foreach ($traces as $trace)
-        {
+        foreach ($traces as $trace) {
             $lines[] = $this->BuildLine($trace);
         }
 
@@ -88,20 +80,16 @@ class RaygunExceptionMessage
     {
         $line = new RaygunExceptionTraceLineMessage();
 
-        if (array_key_exists('file', $trace))
-        {
+        if (array_key_exists('file', $trace)) {
             $line->FileName = $trace['file'];
         }
-        if (array_key_exists('class', $trace))
-        {
+        if (array_key_exists('class', $trace)) {
             $line->ClassName = $trace['class'];
         }
-        if (array_key_exists('function', $trace))
-        {
+        if (array_key_exists('function', $trace)) {
             $line->MethodName = $trace['function'];
         }
-        if (array_key_exists('line', $trace))
-        {
+        if (array_key_exists('line', $trace)) {
             $line->LineNumber = $trace['line'];
         }
 
@@ -114,20 +102,26 @@ class RaygunExceptionMessage
         $class = $namespace = $buffer = '';
         $i = 0;
         while (!$class) {
-            if (feof($fp)) break;
+            if (feof($fp)) {
+                break;
+            }
 
             $buffer .= fread($fp, 512);
             $tokens = token_get_all($buffer);
 
-            if (strpos($buffer, '{') === false) continue;
+            if (strpos($buffer, '{') === false) {
+                continue;
+            }
 
             for (;$i<count($tokens);$i++) {
                 if ($tokens[$i][0] === T_NAMESPACE) {
                     for ($j=$i+1;$j<count($tokens); $j++) {
                         if ($tokens[$j][0] === T_STRING) {
                             $namespace .= '\\'.$tokens[$j][1];
-                        } else if ($tokens[$j] === '{' || $tokens[$j] === ';') {
-                            break;
+                        } else {
+                            if ($tokens[$j] === '{' || $tokens[$j] === ';') {
+                                break;
+                            }
                         }
                     }
                 }
@@ -141,12 +135,9 @@ class RaygunExceptionMessage
                 }
             }
         }
-        if ($class != '')
-        {
+        if ($class != '') {
             return $class;
-        }
-        else
-        {
+        } else {
             return null;
         }
     }

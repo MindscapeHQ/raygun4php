@@ -7,8 +7,7 @@ class RaygunEnvironmentMessage
 
     public function __construct()
     {
-        if (ini_get('date.timezone'))
-        {
+        if (ini_get('date.timezone')) {
             $this->UtcOffset = @date('Z') / 3600;
         }
 

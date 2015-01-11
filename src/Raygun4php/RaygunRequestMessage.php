@@ -21,13 +21,11 @@ class RaygunRequestMessage
             $this->Url = (isset($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] :  null;
             $this->IpAddress = $this->getRemoteAddr();
 
-            if (array_key_exists('QUERY_STRING', $_SERVER))
-            {
+            if (array_key_exists('QUERY_STRING', $_SERVER)) {
                 parse_str($_SERVER['QUERY_STRING'], $this->QueryString);
 
-                if (empty($this->QueryString))
-                {
-                      $this->QueryString = null;
+                if (empty($this->QueryString)) {
+                    $this->QueryString = null;
                 }
             }
         }
@@ -50,28 +48,24 @@ class RaygunRequestMessage
 
         $this->Data = array_map($utf8_convert_server, $_SERVER);
 
-        if (php_sapi_name() !== 'cli')
-        {
+        if (php_sapi_name() !== 'cli') {
             $contentType = null;
-            if (isset($_SERVER['CONTENT_TYPE']))
-            {
+            if (isset($_SERVER['CONTENT_TYPE'])) {
                 $contentType = $_SERVER['CONTENT_TYPE'];
-            }
-            else if (isset($_SERVER['HTTP_CONTENT_TYPE']))
-            {
-                $contentType = $_SERVER['HTTP_CONTENT_TYPE'];
+            } else {
+                if (isset($_SERVER['HTTP_CONTENT_TYPE'])) {
+                    $contentType = $_SERVER['HTTP_CONTENT_TYPE'];
+                }
             }
 
             if ($_SERVER['REQUEST_METHOD'] != 'GET' &&
                 $contentType != null &&
                 $contentType != 'application/x-www-form-urlencoded' &&
                 $contentType != 'multipart/form-data' &&
-                $contentType != 'text/html')
-            {
+                $contentType != 'text/html') {
                 $raw = file_get_contents('php://input');
 
-                if ($raw != null && strlen($raw) > 4096)
-                {
+                if ($raw != null && strlen($raw) > 4096) {
                     $raw = substr($raw, 0, 4095);
                 }
 
@@ -82,20 +76,15 @@ class RaygunRequestMessage
 
     private function emu_getAllHeaders()
     {
-        if (!function_exists('getallheaders'))
-        {
+        if (!function_exists('getallheaders')) {
             $headers = '';
-            foreach ($_SERVER as $name => $value)
-            {
-                if (substr($name, 0, 5) == 'HTTP_')
-                {
+            foreach ($_SERVER as $name => $value) {
+                if (substr($name, 0, 5) == 'HTTP_') {
                     $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
                 }
             }
             return $headers;
-        }
-        else
-        {
+        } else {
             return getallheaders();
         }
     }
@@ -104,13 +93,12 @@ class RaygunRequestMessage
     {
         $ip = null;
 
-        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
-        {
+        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        }
-        else if (!empty($_SERVER['REMOTE_ADDR']))
-        {
-            $ip = $_SERVER['REMOTE_ADDR'];
+        } else {
+            if (!empty($_SERVER['REMOTE_ADDR'])) {
+                $ip = $_SERVER['REMOTE_ADDR'];
+            }
         }
 
         return $ip;
