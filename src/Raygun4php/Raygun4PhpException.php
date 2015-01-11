@@ -1,7 +1,6 @@
 <?php
-namespace Raygun4php
+namespace Raygun4php;
+
+class Raygun4PhpException extends \Exception
 {
-    class Raygun4PhpException extends \Exception
-    {
-    }
 }
