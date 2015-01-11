@@ -28,7 +28,7 @@ class RaygunClient
   /**
    * @var Array Parameter names to filter out of logged form data. Case insensitive.
    * Accepts regular expressions when the name starts with a forward slash.
-   * Maps either to TRUE, or to a callable with $key and $value arguments.
+   * Maps either to true, or to a callable with $key and $value arguments.
    */
   protected $filterParams = array();
 
@@ -350,7 +350,7 @@ class RaygunClient
       else
       {
         $errMsg = "<br/><br/>" . "<strong>Raygun Warning:</strong> Couldn't send asynchronously. ";
-        $errMsg .= "Try calling new RaygunClient('apikey', FALSE); to use an alternate sending method, or RaygunClient('key', FALSE, TRUE) to echo the HTTP response" . "<br/><br/>";
+        $errMsg .= "Try calling new RaygunClient('apikey', false); to use an alternate sending method, or RaygunClient('key', false, true) to echo the HTTP response" . "<br/><br/>";
         echo $errMsg;
         trigger_error('httpPost error: ' . $errstr);
         return null;
@@ -396,7 +396,7 @@ class RaygunClient
       foreach($filterParams as $filterKey => $filterFn) {
         if(
           (strpos($filterKey, '/') === 0 && preg_match($filterKey, $key))
-          || (strpos($filterKey, '/') === FALSE && strtolower($filterKey) == strtolower($key))
+          || (strpos($filterKey, '/') === false && strtolower($filterKey) == strtolower($key))
         ) {
           $val = $filterFn($key, $val);
         }
