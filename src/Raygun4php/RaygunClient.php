@@ -364,8 +364,11 @@ class RaygunClient
     }
   }
 
-  function toJsonRemoveUnicodeSequences($struct) {
-    return preg_replace_callback("/\\\\u([a-f0-9]{4})/", function($matches){ return iconv('UCS-4LE','UTF-8',pack('V', hexdec("U$matches[1]"))); }, json_encode($struct));
+  function toJsonRemoveUnicodeSequences($struct)
+  {
+    return preg_replace_callback("/\\\\u([a-f0-9]{4})/", function($matches) {
+      return iconv('UCS-4LE','UTF-8',pack('V', hexdec("U$matches[1]")));
+    }, json_encode($struct));
   }
 
   /**
@@ -379,7 +382,8 @@ class RaygunClient
    * @param  string $replace Value to be inserted by default (unless specified otherwise by custom transformations).
    * @return RaygunMessage
    */
-  function filterParamsFromMessage($message, $replace = '[filtered]') {
+  function filterParamsFromMessage($message, $replace = '[filtered]')
+  {
     $filterParams = $this->getFilterParams();
 
     // Skip checks if none are defined
@@ -433,7 +437,8 @@ class RaygunClient
    * @param Array $params
    * @return Raygun4php\RaygunClient
    */
-  function setFilterParams($params) {
+  function setFilterParams($params)
+  {
     $this->filterParams = $params;
     return $this;
   }
@@ -441,7 +446,8 @@ class RaygunClient
   /**
    * @return Array
    */
-  function getFilterParams() {
+  function getFilterParams()
+  {
     return $this->filterParams;
   }
 
@@ -451,7 +457,8 @@ class RaygunClient
    * @param String $url URL including protocol and an optional port, e.g. http://myproxy:8080
    * @return Raygun4php\RaygunClient
    */
-  function setProxy($proxy) {
+  function setProxy($proxy)
+  {
     $this->proxy = $proxy;
     return $this;
   }
@@ -459,7 +466,8 @@ class RaygunClient
   /**
    * @return String
    */
-  function getProxy() {
+  function getProxy()
+  {
     return $this->proxy;
   }
 
