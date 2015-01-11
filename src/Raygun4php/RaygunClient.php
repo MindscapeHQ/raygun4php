@@ -329,7 +329,13 @@ class RaygunClient
 
     function toJsonRemoveUnicodeSequences($struct)
     {
-        return preg_replace_callback("/\\\\u([a-f0-9]{4})/", function($matches) { return iconv('UCS-4LE','UTF-8',pack('V', hexdec("U$matches[1]"))); }, json_encode($struct));
+        return preg_replace_callback(
+            "/\\\\u([a-f0-9]{4})/",
+            function($matches) {
+                return iconv('UCS-4LE','UTF-8',pack('V', hexdec("U$matches[1]")));
+            },
+            json_encode($struct)
+        );
     }
 
     /**
@@ -355,7 +361,9 @@ class RaygunClient
         // Ensure all filters are callable
         foreach ($filterParams as $filterKey => $filterFn) {
             if (!is_callable($filterFn)) {
-                $filterParams[$filterKey] = function($key, $val) use ($replace) {return $replace;};
+                $filterParams[$filterKey] = function($key, $val) use ($replace) {
+                    return $replace;
+                };
             }
         }
 

@@ -62,7 +62,9 @@ class RaygunClientTest extends PHPUnit_Framework_TestCase
     {
         $client = new \Raygun4php\RaygunClient("some-api-key", true);
         $client->setFilterParams(array(
-            'MyParam' => function($key, $val) {return strrev($val);},
+            'MyParam' => function($key, $val) {
+                return strrev($val);
+            },
         ));
         $message = $this->getEmptyMessage();
         $message->Details->Request->Form = array(
