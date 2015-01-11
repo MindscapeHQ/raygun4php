@@ -1,12 +1,6 @@
 <?php
 namespace Raygun4php;
 
-require_once realpath(__DIR__.'/RaygunMessageDetails.php');
-require_once realpath(__DIR__.'/RaygunExceptionMessage.php');
-require_once realpath(__DIR__.'/RaygunRequestMessage.php');
-require_once realpath(__DIR__.'/RaygunEnvironmentMessage.php');
-require_once realpath(__DIR__.'/RaygunClientMessage.php');
-
 class RaygunMessage
 {
     public $OccurredOn;
