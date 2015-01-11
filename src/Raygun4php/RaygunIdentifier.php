@@ -1,9 +1,9 @@
 <?php
-namespace Raygun4php
+namespace Raygun4php;
+
+class RaygunIdentifier
 {
-	class RaygunIdentifier
-	{
-		public $Identifier;
+    public $Identifier;
 
     public $FirstName;
 
@@ -23,6 +23,5 @@ namespace Raygun4php
       $this->Email = $email;
       $this->IsAnonymous = $isAnonymous;
       $this->Uuid = $uuid;
-		}
 	}
 }
