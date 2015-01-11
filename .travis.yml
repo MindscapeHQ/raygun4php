@@ -5,6 +5,8 @@ php:
   - 5.4
   - 5.5
 
+sudo: false
+
 install:
   - composer self-update
   - composer install --dev --prefer-source --no-interaction --no-progress
