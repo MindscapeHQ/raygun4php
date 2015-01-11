@@ -15,8 +15,7 @@ class RaygunExceptionMessage
     {
         $exceptionClass = get_class($exception);
 
-        if ($exceptionClass != 'ErrorException')
-        {
+        if ($exceptionClass != 'ErrorException') {
             $this->Message = $exceptionClass.': '.$exception->getMessage();
             $this->BuildStackTrace($exception);
             $this->ClassName = $exceptionClass;
@@ -77,8 +76,7 @@ class RaygunExceptionMessage
         $traces = $exception->getTrace();
         $lines = array();
 
-        foreach ($traces as $trace)
-        {
+        foreach ($traces as $trace) {
             $lines[] = $this->BuildLine($trace);
          }
 
@@ -115,20 +113,26 @@ class RaygunExceptionMessage
         $class = $namespace = $buffer = '';
         $i = 0;
         while (!$class) {
-            if (feof($fp)) break;
+            if (feof($fp)) {
+                break;
+            }
 
             $buffer .= fread($fp, 512);
             $tokens = token_get_all($buffer);
 
-            if (strpos($buffer, '{') === false) continue;
+            if (strpos($buffer, '{') === false) {
+                continue;
+            }
 
             for (;$i<count($tokens);$i++) {
                 if ($tokens[$i][0] === T_NAMESPACE) {
                     for ($j=$i+1;$j<count($tokens); $j++) {
                         if ($tokens[$j][0] === T_STRING) {
                             $namespace .= '\\'.$tokens[$j][1];
-                        } else if ($tokens[$j] === '{' || $tokens[$j] === ';') {
-                            break;
+                        } else {
+                            if ($tokens[$j] === '{' || $tokens[$j] === ';') {
+                                break;
+                            }
                         }
                     }
                 }
@@ -142,12 +146,9 @@ class RaygunExceptionMessage
                 }
             }
         }
-        if ($class != '')
-        {
+        if ($class != '') {
             return $class;
-        }
-        else
-        {
+        } else {
             return null;
         }
     }

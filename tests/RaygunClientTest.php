@@ -125,4 +125,3 @@ class RaygunClientTest extends PHPUnit_Framework_TestCase
     return $message;
   }
 }
-?>

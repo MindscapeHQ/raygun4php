@@ -50,16 +50,14 @@ class RaygunRequestMessage
 
         $this->Data = array_map($utf8_convert_server, $_SERVER);
 
-        if (php_sapi_name() !== 'cli')
-        {
+        if (php_sapi_name() !== 'cli') {
             $contentType = null;
-            if (isset($_SERVER['CONTENT_TYPE']))
-            {
+            if (isset($_SERVER['CONTENT_TYPE'])) {
                 $contentType = $_SERVER['CONTENT_TYPE'];
-            }
-            else if (isset($_SERVER['HTTP_CONTENT_TYPE']))
-            {
-                $contentType = $_SERVER['HTTP_CONTENT_TYPE'];
+            } else {
+                if (isset($_SERVER['HTTP_CONTENT_TYPE'])) {
+                    $contentType = $_SERVER['HTTP_CONTENT_TYPE'];
+                }
             }
 
             if ($_SERVER['REQUEST_METHOD'] != 'GET' &&
@@ -82,20 +80,15 @@ class RaygunRequestMessage
 
     private function emu_getAllHeaders()
     {
-        if (!function_exists('getallheaders'))
-        {
+        if (!function_exists('getallheaders')) {
             $headers = '';
-            foreach ($_SERVER as $name => $value)
-            {
-                if (substr($name, 0, 5) == 'HTTP_')
-                {
+            foreach ($_SERVER as $name => $value) {
+                if (substr($name, 0, 5) == 'HTTP_') {
                     $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
                 }
             }
             return $headers;
-        }
-        else
-        {
+        } else {
             return getallheaders();
         }
     }
