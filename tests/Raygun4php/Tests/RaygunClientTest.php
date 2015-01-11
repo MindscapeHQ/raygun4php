@@ -1,8 +1,9 @@
 <?php
 
-class RaygunClientTest extends PHPUnit_Framework_TestCase
-{
+namespace Raygun4php\Tests;
 
+class RaygunClientTest extends \PHPUnit_Framework_TestCase
+{
   /**
    * @expectedException \Raygun4php\Raygun4PhpException
    * @expectedExceptionMessage API not valid, cannot send message to Raygun
@@ -10,7 +11,7 @@ class RaygunClientTest extends PHPUnit_Framework_TestCase
   public function testSendReturns403WithInvalidApiKey()
   {
     $client = new \Raygun4php\RaygunClient("", true);
-    $client->SendException(new Exception(''));
+    $client->sendException(new \Exception(''));
   }
 
   public function testGetFilteredParamsRemovesByKey()
@@ -115,7 +116,7 @@ class RaygunClientTest extends PHPUnit_Framework_TestCase
 
   protected function getEmptyMessage()
   {
-    $requestMessage = new Raygun4php\RaygunRequestMessage();
+    $requestMessage = new \Raygun4php\RaygunRequestMessage();
     $requestMessage->HostName = null;
     $requestMessage->Url = null;
     $requestMessage->HttpMethod = null;
@@ -125,7 +126,7 @@ class RaygunClientTest extends PHPUnit_Framework_TestCase
     $requestMessage->Data = null;
     $requestMessage->RawData = null;
     $requestMessage->Form = null;
-    $message = new Raygun4php\RaygunMessage(0);
+    $message = new \Raygun4php\RaygunMessage(0);
     $message->Details->Request = $requestMessage;
 
     return $message;
