@@ -358,7 +358,7 @@ class RaygunClient
         return preg_replace_callback(
             "/\\\\u([a-f0-9]{4})/",
             function($matches) {
-                return iconv('UCS-4LE','UTF-8',pack('V', hexdec("U$matches[1]")));
+                return iconv('UCS-4LE', 'UTF-8', pack('V', hexdec("U$matches[1]")));
             },
             json_encode($struct)
         );
