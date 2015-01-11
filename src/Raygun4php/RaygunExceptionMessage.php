@@ -1,8 +1,6 @@
 <?php
 namespace Raygun4php;
 
-require_once realpath(__DIR__.'/RaygunExceptionTraceLineMessage.php');
-
 class RaygunExceptionMessage
 {
     public $Message;
