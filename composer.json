@@ -20,8 +20,8 @@
         "ext-curl": "*"
     },
     "autoload": {
-        "psr-0": {
-            "Raygun4php": "src/"
-        }
+        "classmap": [
+          "src/"
+        ]
     }
 }
