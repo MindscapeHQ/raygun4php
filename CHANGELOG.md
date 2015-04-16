@@ -1,0 +1,23 @@
+- 1.7.0: Added SendRawException() for transmitting exception in logging scenario
+- 1.6.0: Added HTTP proxy support, support X-Forwarded-For, null server var guards
+- 1.5.3: Unify property casing (internal change)
+- 1.5.2: Prevent error when query_string isn't present in $_SERVER
+- 1.5.1: Guard against intermittent user id cookie being null; overload for disabling user tracking
+- 1.5.0: Add enhanced user data support; fix null backtrace frames that could occur in 1.4
+- 1.4.0: Added Sensitive Data Filtering; improved Error backtraces; Travis CI enabled
+- 1.3.6: Move included Rhumsaa\Uuid lib into this namespace to prevent collisions if already included
+- 1.3.5: Fixed possible bug in async curl logic
+- 1.3.4: Bugfix in request message for testing
+- 1.3.3: Hotfix for script error in v1.3.2
+- 1.3.2: UTF-8 encoding routine from previous version updated to remove PHP 5.5 deprecated function
+- 1.3.1: Request data, specifically $_SERVER variables, are now correctly encoded in UTF-8
+- 1.3: Added debug mode to output HTTP response code when in socket mode
+- 1.2.6: Fixed a bug in previous release rendering the UTC offset fix ineffective (thanks @mrardon for spotting this)
+- 1.2.5: Request rawData (php://input) limited to 4096 bytes in line with other providers; clamp UTC offset to sane values as API was seeing some entries with max int offsets
+- 1.2.4: Merged in unit tests
+- 1.2.3: Fixed a bug where OccurredOn wasn't in correct ISO 8601 representation
+- 1.2.2: Minor formatting refactor
+- 1.2.1: Several bugfixes for user tracking and request processing
+- 1.2: Added new async sending function; removed cURL dependency
+- 1.1: Added user tracking support; improved experience in CLI mode; add user-specified timestamp support; fixed user data encoding error
+- 1.0: Initial commit
