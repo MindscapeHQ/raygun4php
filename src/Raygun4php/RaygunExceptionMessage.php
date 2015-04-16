@@ -30,6 +30,17 @@ namespace Raygun4php
             $this->FileName = baseName($exception->getFile());
         }
 
+        public static function ConstructFromRaw($exception, $file, $line, $message, $className)
+        {
+          $instance = new self($exception);
+          $instance->ClassName = $className;
+          $instance->FileName = $file;
+          $instance->Message = $message;
+          $instance->Data = $line;
+
+          return $instance;
+        }
+
         private function BuildErrorTrace($error)
         {
           $traces = $error->getTrace();

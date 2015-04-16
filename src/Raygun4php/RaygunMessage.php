@@ -23,11 +23,22 @@ namespace Raygun4php
 
         public function Build($exception)
         {
-            $this->Details->MachineName = gethostname();
+            $this->BuildInternal();
             $this->Details->Error = new RaygunExceptionMessage($exception);
-            $this->Details->Request = new RaygunRequestMessage();
-            $this->Details->Environment = new RaygunEnvironmentMessage();
-            $this->Details->Client = new RaygunClientMessage();
+        }
+
+        public function BuildFromRaw($exception, $file, $line, $message, $className)
+        {
+            $this->BuildInternal();
+            $this->Details->Error = RaygunExceptionMessage::ConstructFromRaw($exception, $file, $line, $message, $className);
+        }
+
+        private function BuildInternal()
+        {
+          $this->Details->MachineName = gethostname();
+          $this->Details->Request = new RaygunRequestMessage();
+          $this->Details->Environment = new RaygunEnvironmentMessage();
+          $this->Details->Client = new RaygunClientMessage();
         }
     }
 }

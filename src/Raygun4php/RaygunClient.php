@@ -113,6 +113,32 @@ namespace Raygun4php {
     }
 
     /*
+     * Transmits a raw error as represented by an exception and originating location.
+     * @param \Exception $exception The exception which will have its backtrace sent
+     * @param string $file The originating file
+     * @param int $line The originating line number
+     * @param string $message The error message
+     * @param string $className The class name of the error
+     * @return The HTTP status code of the result when transmitting the message to Raygun.io
+     */
+    public function SendRawException($exception, $file, $line, $message, $className, $tags = null, $userCustomData = null, $timestamp = null)
+    {
+      $payload = $this->BuildMessageFromRaw($exception, $file, $line, $message, $className);
+
+      if ($tags != null)
+      {
+        $this->AddTags($payload, $tags);
+      }
+
+      if ($userCustomData != null)
+      {
+        $this->AddUserCustomData($payload, $userCustomData);
+      }
+
+      return $this->Send($payload);
+    }
+
+    /*
      * Sets the version number of your project that will be transmitted
      * to Raygun.io.
      * @param string $version The version number in the form of x.x.x.x,
@@ -213,6 +239,24 @@ namespace Raygun4php {
     {
       $message = new RaygunMessage($timestamp);
       $message->Build($errorException);
+
+      $message = $this->BuildMessageInternal($message);
+
+      return $message;
+    }
+
+    private function BuildMessageFromRaw($exception, $file, $line, $message, $className, $timestamp = null)
+    {
+      $raygunMessage = new RaygunMessage($timestamp);
+
+      $raygunMessage->BuildFromRaw($exception, $file, $line, $message, $className);
+      $raygunMessage = $this->BuildMessageInternal($raygunMessage);
+
+      return $raygunMessage;
+    }
+
+    private function BuildMessageInternal($message)
+    {
       $message->Details->Version = $this->version;
       $message->Details->Context = new RaygunIdentifier(session_id());
 
