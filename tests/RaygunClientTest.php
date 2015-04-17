@@ -82,6 +82,7 @@ class RaygunClientTest extends PHPUnit_Framework_TestCase
     $message->Details->Request->RawData = 'some-data';
 
     $filteredMessage = $client->filterParamsFromMessage($message);
+
     $this->assertEquals($filteredMessage->Details->Request->RawData, 'some-data');
 
     $client->setFilterParams(array('MySensitiveParam' => true));

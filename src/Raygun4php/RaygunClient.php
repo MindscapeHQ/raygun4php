@@ -438,8 +438,6 @@ namespace Raygun4php {
         $filterParams = $this->getFilterParams();
       }
 
-        print_r($filterParams);
-
       // Skip checks if none are defined
       if(!$filterParams) {
         return $message;
@@ -480,7 +478,7 @@ namespace Raygun4php {
       }
 
       // Unset raw HTTP data since we can't accurately filter it
-      if($message->Details->Request->RawData) {
+      if($message->Details->Request->RawData && $this->getFilterParams()) {
         $message->Details->Request->RawData = null;
       }
 
