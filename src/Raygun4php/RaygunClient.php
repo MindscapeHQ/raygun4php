@@ -22,6 +22,7 @@ namespace Raygun4php {
     protected $useAsyncSending;
     protected $debugSending;
     protected $disableUserTracking;
+    protected $disableBasicAuthFiltering;
     protected $proxy;
 
     /**
@@ -44,11 +45,17 @@ namespace Raygun4php {
     * @param bool $debugSending If true, and $useAsyncSending is true, this will output the HTTP response code from posting
     * error messages. See the GitHub documentation for code meaning. This param does nothing if useAsyncSending is set to true.
     */
-    public function __construct($key, $useAsyncSending = true, $debugSending = false, $disableUserTracking = false)
+    public function __construct(
+      $key,
+      $useAsyncSending = true,
+      $debugSending = false,
+      $disableUserTracking = false,
+      $disableBasicAuthFiltering = false)
     {
       $this->apiKey = $key;
       $this->useAsyncSending = $useAsyncSending;
       $this->debugSending = $debugSending;
+      $this->disableBasicAuthFiltering = $disableBasicAuthFiltering;
 
       if (!$disableUserTracking) {
         $this->SetUser();
@@ -423,7 +430,11 @@ namespace Raygun4php {
      * @return RaygunMessage
      */
     function filterParamsFromMessage($message, $replace = '[filtered]') {
-      $filterParams = $this->getFilterParams();
+      if (!$this->disableBasicAuthFiltering) {
+        $filterParams = array_merge($this->getFilterParams(), array('PHP_AUTH_USER' => true, 'PHP_AUTH_PW' => true));
+      } else {
+        $filterParams = $this->getFilterParams();
+      }
 
       // Skip checks if none are defined
       if(!$filterParams) {
@@ -474,7 +485,7 @@ namespace Raygun4php {
 
     /**
      * @param Array $params
-     * @return Raygun4php\RaygunClient
+     * @return \Raygun4php\RaygunClient
      */
     function setFilterParams($params) {
       $this->filterParams = $params;
@@ -490,9 +501,8 @@ namespace Raygun4php {
 
     /**
      * Use a proxy for sending HTTP requests to Raygun.
-     * 
-     * @param String $url URL including protocol and an optional port, e.g. http://myproxy:8080
-     * @return Raygun4php\RaygunClient
+     * @param String $proxy URL including protocol and an optional port, e.g. http://myproxy:8080
+     * @return \Raygun4php\RaygunClient
      */
     function setProxy($proxy) {
       $this->proxy = $proxy;
