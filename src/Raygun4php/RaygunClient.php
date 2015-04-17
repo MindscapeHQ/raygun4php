@@ -264,7 +264,7 @@ namespace Raygun4php {
       {
         $message->Details->User = new RaygunIdentifier($this->user, $this->firstName, $this->fullName, $this->email, $this->isAnonymous, $this->uuid);
       }
-      else if (!$this->disableUserTracking)
+      else if (!$this->disableUserTracking && array_key_exists('rguserid', $_COOKIE))
       {
         $message->Details->User = new RaygunIdentifier($_COOKIE['rguserid']);
       }
