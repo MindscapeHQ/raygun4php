@@ -22,7 +22,7 @@ namespace Raygun4php {
     protected $useAsyncSending;
     protected $debugSending;
     protected $disableUserTracking;
-    protected $disableBasicAuthFiltering;
+    protected $disableDefaultFiltering;
     protected $proxy;
 
     /**
@@ -37,6 +37,8 @@ namespace Raygun4php {
     private $transport = 'ssl';
     private $port = 443;
 
+    private $defaultFilterFields = array('PHP_AUTH_USER' => true, 'PHP_AUTH_PW' => true);
+
     /*
     * Creates a new RaygunClient instance.
     * @param bool $useAsyncSending If true, attempts to post rapidly and asynchronously the script by forking a cURL process.
@@ -50,12 +52,12 @@ namespace Raygun4php {
       $useAsyncSending = true,
       $debugSending = false,
       $disableUserTracking = false,
-      $disableBasicAuthFiltering = false)
+      $disableDefaultFiltering = false)
     {
       $this->apiKey = $key;
       $this->useAsyncSending = $useAsyncSending;
       $this->debugSending = $debugSending;
-      $this->disableBasicAuthFiltering = $disableBasicAuthFiltering;
+      $this->disableDefaultFiltering = $disableDefaultFiltering;
 
       if (!$disableUserTracking) {
         $this->SetUser();
@@ -430,11 +432,13 @@ namespace Raygun4php {
      * @return RaygunMessage
      */
     function filterParamsFromMessage($message, $replace = '[filtered]') {
-      if (!$this->disableBasicAuthFiltering) {
-        $filterParams = array_merge($this->getFilterParams(), array('PHP_AUTH_USER' => true, 'PHP_AUTH_PW' => true));
+      if (!$this->disableDefaultFiltering) {
+        $filterParams = array_merge($this->getFilterParams(), $this->defaultFilterFields);
       } else {
         $filterParams = $this->getFilterParams();
       }
+
+        print_r($filterParams);
 
       // Skip checks if none are defined
       if(!$filterParams) {
