@@ -19,6 +19,7 @@ namespace Raygun4php
             {
                 $this->Message = $exceptionClass.': '.$exception->getMessage();
                 $this->BuildStackTrace($exception);
+                $this->ClassName = $exceptionClass;
             }
             else
             {
