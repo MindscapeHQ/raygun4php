@@ -138,6 +138,27 @@ If true is passed in, and **$useAsyncSending** is set to *false*, client->SendEx
 
 You can transmit the version number of your PHP project along with the message by calling `SetVersion()` on your RaygunClient after it is instantiated - this is optional but recommended as the version number is considered to be first-class data for a message.
 
+### Adding Tags
+
+Tags can be added to error data to provide extra information and to help filtering errors within Raygun.
+They are provided as an array of strings or numbers passed as the `5th argument to the SendError function` and as the `2nd argument to the SendException function`.
+
+The declaration of the exception and error handlers using tags could look something like this:
+
+```php
+$tags = array("testing-enviroment", "machine-4");
+
+function error_handler($errno, $errstr, $errfile, $errline) {
+	global $client, $tags;
+  	$client->SendError($errno, $errstr, $errfile, $errline, $tags);
+}
+
+function exception_handler($exception) {
+	global $client, $tags;
+	$client->SendException($exception, $tags);
+}
+```
+
 ### Affected user tracking
 
 **New in 1.5: additional data support**
