@@ -149,13 +149,12 @@ The declaration of the exception and error handlers using tags could look someth
 $tags = array("testing-enviroment", "machine-4");
 
 function error_handler($errno, $errstr, $errfile, $errline) {
-	global $client;
+	global $client, $tags;
   	$client->SendError($errno, $errstr, $errfile, $errline, $tags);
 }
 
-function exception_handler($exception)
-{
-	global $client;
+function exception_handler($exception) {
+	global $client, $tags;
 	$client->SendException($exception, $tags);
 }
 ```
