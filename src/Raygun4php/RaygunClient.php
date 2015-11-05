@@ -23,6 +23,7 @@ namespace Raygun4php {
     protected $debugSending;
     protected $disableUserTracking;
     protected $proxy;
+    protected $cookieTimestamp;
 
     /**
      * @var Array Parameter names to filter out of logged form data. Case insensitive.
@@ -135,8 +136,6 @@ namespace Raygun4php {
     */
     public function SetUser($user = null, $firstName = null, $fullName = null, $email = null, $isAnonymous = null, $uuid = null)
     {
-      $timestamp = time() + 60 * 60 * 24 * 30;
-
       $this->firstName = $this->StoreOrRetrieveUserCookie('rgfirstname', $firstName);
       $this->fullName = $this->StoreOrRetrieveUserCookie('rgfullname', $fullName);
       $this->email = $this->StoreOrRetrieveUserCookie('rgemail', $email);
@@ -150,8 +149,8 @@ namespace Raygun4php {
 
         if (php_sapi_name() != 'cli' && !headers_sent())
         {
-          setcookie('rguserid', $user, $timestamp);
-          setcookie('rguuid', 'false', $timestamp);
+          $this->SetCookie('rguserid', $user);
+          $this->SetCookie('rguuid', 'false');
         }
       }
       else
@@ -162,8 +161,8 @@ namespace Raygun4php {
 
           if (php_sapi_name() != 'cli' && !headers_sent())
           {
-            setcookie('rguserid', $this->user, $timestamp);
-            setcookie('rguuid', 'true', $timestamp);
+            $this->SetCookie('rguserid', $this->user);
+            $this->SetCookie('rguuid', 'true');
           }
         }
         else if (array_key_exists('rguserid', $_COOKIE))
@@ -177,13 +176,11 @@ namespace Raygun4php {
 
     private function StoreOrRetrieveUserCookie($key, $value)
     {
-      $timestamp = time() + 60 * 60 * 24 * 30;
-
       if (is_string($value))
       {
         if (php_sapi_name() != 'cli' && !headers_sent())
         {
-          setcookie($key, $value, $timestamp);
+          $this->SetCookie($key, $value);
         }
 
         return $value;
@@ -194,13 +191,26 @@ namespace Raygun4php {
         {
           if ($_COOKIE[$key] != $value && php_sapi_name() != 'cli' && !headers_sent())
           {
-            setcookie($key, $value, $timestamp);
+            $this->SetCookie($key, $value);
           }
           return $_COOKIE[$key];
         }
       }
 
       return null;
+    }
+
+    /**
+     * @param string $key
+     * @param string $value
+     */
+    private function SetCookie($key, $value)
+    {
+        if (!$this->cookieTimestamp) {
+            $this->cookieTimestamp = time() + 60 * 60 * 24 * 30;
+        }
+
+        setcookie($key, $value, $this->cookieTimestamp);
     }
 
     /*
