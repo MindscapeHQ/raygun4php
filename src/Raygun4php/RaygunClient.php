@@ -210,7 +210,7 @@ namespace Raygun4php {
             $this->cookieTimestamp = time() + 60 * 60 * 24 * 30;
         }
 
-        setcookie($key, $value, $this->cookieTimestamp);
+        setcookie($key, $value, $this->cookieTimestamp, '/');
     }
 
     /*
