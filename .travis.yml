@@ -1,9 +1,12 @@
 language: php
-
-php: [5.3, 5.4, 5.5]
-
+php:
+- 5.3
+- 5.4
+- 5.5
 before_script:
-  - composer self-update
-  - composer install --dev --prefer-source --no-interaction --no-progress
-
-script: 'vendor/bin/phpunit tests'
+- composer self-update
+- composer install --dev --prefer-source --no-interaction --no-progress
+script: vendor/bin/phpunit tests
+env:
+  global:
+    secure: 0758od7Fwr9+eMqOaWgeHsXW+xOs9O1+BmRk5z5jbRKG175llpi5aym5lOvT8lrLtm1GTibATFwu0Z4n9eO3hpk28+XfxbBRmu7XKGLathWyO/C4ncIFp/5Jy3S7NIqKOD1Bf3MMxD/04H7KNj8xKJfqFhfs0jPkYvPloZ5ehGzXcgaFpM7uj5q0oCTCMEvOtzm1tmoQ3g/aStOEp47VbUgVlWjLKEym9hWYcG6aEASYmaiDQ0WoHwU+DPXVJ6xZ428cFxZxX1/y1fbpFsMfpWfhnc/CvthMBOB5TxdffIY0QpbIHAaRs61ixqSg4JW00r2NKznwAkQVhAWd2kjeLkHTyt2iS5v7IX60l3RMDCERt0P3WRh54d4SmXJaDKvBk3w6Qt7EtWFiI5k9AkuEmYdnYlbHUNfXgPmPitQZtmNdv2hc+rFf/EGoSqO+kuWsqYZzEEA/9hCuMnho+Gxs2y4iFZdwj8URghxY3fEYoa1gVimKeMEiGSb/OdFQd8IXcs05NMZznZxI78v+DHH4U0VvR+YoTDTEBtc9wdjMZuvcPBfFQkPyouFkiYE2nu6HFrW9QkpY8ALNMR6OWWOwO2YvPmxH6ogI5HrWuyPVpusH4pLZALIa37CJdgCHb1/myhv7WQ4gwNbgizNzrzvz+n3DKvHWQbA7/NLmvaamhh0=
