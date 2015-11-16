@@ -124,5 +124,61 @@ class RaygunClientTest extends PHPUnit_Framework_TestCase
 
     return $message;
   }
+
+  public function testToJsonRemoveUnicodeSequences()
+  {
+    $client = new \Raygun4php\RaygunClient('foo');
+
+    $data = array(
+      'bar' => 'baz',
+    );
+
+    $this->assertJson(
+      json_encode($data),
+      $client->toJsonRemoveUnicodeSequences($data)
+    );
+  }
+
+  public function testFilterParamsFromMessage()
+  {
+    $client = new \Raygun4php\RaygunClient('foo');
+
+    $message = $this->getMockBuilder('Raygun4php\RagunMessage')->getMock();
+
+    $this->assertSame(
+      $message,
+      $client->filterParamsFromMessage($message)
+    );
+  }
+
+  public function testCanSetAndFilterParams()
+  {
+    $client = new \Raygun4php\RaygunClient('foo');
+
+    $params = array(
+      'bar' => 'baz',
+    );
+
+    $client->setFilterParams($params);
+
+    $this->assertSame(
+      $params,
+      $client->getFilterParams()
+    );
+  }
+
+  public function testCanSetAndGetProxy()
+  {
+    $client = new \Raygun4php\RaygunClient('foo');
+
+    $proxy = 'bar';
+
+    $client->setProxy($proxy);
+
+    $this->assertSame(
+      $proxy,
+      $client->getProxy()
+    );
+  }
 }
 ?>

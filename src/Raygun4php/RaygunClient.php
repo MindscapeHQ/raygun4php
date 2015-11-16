@@ -363,6 +363,9 @@ namespace Raygun4php {
       }
     }
 
+    /**
+     * @todo Method should be private.
+     */
     function toJsonRemoveUnicodeSequences($struct) {
       return preg_replace_callback("/\\\\u([a-f0-9]{4})/", function($matches){ return iconv('UCS-4LE','UTF-8',pack('V', hexdec("U$matches[1]"))); }, json_encode($struct));
     }
@@ -373,6 +376,8 @@ namespace Raygun4php {
      * anonymous functions. Applies to form data, environment data, HTTP headers.
      * Does not apply to GET parameters in the request URI.
      * Filters out raw HTTP data in case any filters are defined, since we can't accurately filter it.
+     *
+     * @todo Method should be private.
      *
      * @param RaygunMessage $message
      * @param  string $replace Value to be inserted by default (unless specified otherwise by custom transformations).
