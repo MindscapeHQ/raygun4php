@@ -37,8 +37,8 @@ namespace Raygun4php {
 
     /**
      * @var array Parameter names to filter out of logged form data. Case insensitive.
-     * Accepts regular expressions when the name starts with a forward slash.
-     * Maps either to TRUE, or to a callable with $key and $value arguments.
+     *   Accepts regular expressions when the name starts with a forward slash.
+     *   Maps either to TRUE, or to a callable with $key and $value arguments.
      */
     protected $filterParams = array();
 
@@ -47,14 +47,19 @@ namespace Raygun4php {
     private $transport = 'ssl';
     private $port = 443;
 
-    /*
-    * Creates a new RaygunClient instance.
-    * @param bool $useAsyncSending If true, attempts to post rapidly and asynchronously the script by forking a cURL process.
-    * RaygunClient cannot return the HTTP result when in async mode, however. If false, sends using a blocking socket connection.
-    * This is the only method available on Windows.
-    * @param bool $debug If true, and $useAsyncSending is true, this will output the HTTP response code from posting. Will also emit errors if the socket connection fails to send through errors.
-    * error messages. See the GitHub documentation for code meaning. This param does nothing if useAsyncSending is set to true.
-    */
+    /**
+     * Creates a new RaygunClient instance.
+     *
+     * @param bool $useAsyncSending     If true, attempts to post rapidly and asynchronously the script by forking a
+     *                                  cURL process. RaygunClient cannot return the HTTP result when in async mode,
+     *                                  however. If false, sends using a blocking socket connection. This is the only
+     *                                  method available on Windows.
+     * @param bool $debug               If true, and $useAsyncSending is true, this will output the HTTP response code
+     *                                  from posting. Will also emit errors if the socket connection fails to send
+     *                                  through error messages. See the GitHub documentation for code meaning. This
+     *                                  param does nothing if useAsyncSending is set to true.
+     * @param bool $disableUserTracking
+     */
     public function __construct($key, $useAsyncSending = true, $debug = false, $disableUserTracking = false)
     {
       $this->apiKey = $key;
@@ -68,18 +73,19 @@ namespace Raygun4php {
       $this->disableUserTracking = $disableUserTracking;
     }
 
-    /*
-    * Transmits an error to the Raygun.io API
-    * @param int $errorno The error number
-    * @param string $errstr The error string
-    * @param string $errfile The file the error occurred in
-    * @param int $errline The line the error occurred on
-    * @param array $tags An optional array of string tags used to provide metadata for the message
-    * @param array $userCustomData An optional associative array that can be used to place custom key-value
-    * @param int $timestamp Current Unix timestamp in the local timezone, used to set when an error occurred.
-    * data in the message payload
-    * @return The HTTP status code of the result when transmitting the message to Raygun.io
-    */
+    /**
+     * Transmits an error to the Raygun.io API
+     *
+     * @param int    $errno          The error number
+     * @param string $errstr         The error string
+     * @param string $errfile        The file the error occurred in
+     * @param int    $errline        The line the error occurred on
+     * @param array  $tags           An optional array of string tags used to provide metadata for the message
+     * @param array  $userCustomData An optional associative array that can be used to place custom key-value
+     * @param int    $timestamp      Current Unix timestamp in the local timezone, used to set when an error occurred.
+     *                               data in the message payload
+     * @return The HTTP status code of the result when transmitting the message to Raygun.io
+     */
     public function SendError($errno, $errstr, $errfile, $errline, $tags = null, $userCustomData = null, $timestamp = null)
     {
       $message = $this->BuildMessage(new \ErrorException($errstr, $errno, 0, $errfile, $errline), $timestamp);
@@ -99,15 +105,17 @@ namespace Raygun4php {
       return $this->Send($message);
     }
 
-    /*
-    * Transmits an exception to the Raygun.io API
-    * @param \Exception $exception An exception object to transmit
-    * @param array $tags An optional array of string tags used to provide metadata for the message
-    * @param array $userCustomData An optional associative array that can be used to place custom key-value
-    * data in the message payload
-    * @param int $timestamp Current Unix timestamp in the local timezone, used to set when an exception occurred.
-    * @return The HTTP status code of the result when transmitting the message to Raygun.io
-    */
+    /**
+     * Transmits an exception to the Raygun.io API
+     *
+     * @param \Exception $exception      An exception object to transmit
+     * @param array      $tags           An optional array of string tags used to provide metadata for the message
+     * @param array      $userCustomData An optional associative array that can be used to place custom key-value
+     *                                   data in the message payload
+     * @param int        $timestamp      Current Unix timestamp in the local timezone, used to set when an exception
+     *                                   occurred.
+     * @return The HTTP status code of the result when transmitting the message to Raygun.io
+     */
     public function SendException($exception, $tags = null, $userCustomData = null, $timestamp = null)
     {
       $message = $this->BuildMessage($exception, $timestamp);
@@ -127,27 +135,25 @@ namespace Raygun4php {
       return $this->Send($message);
     }
 
-    /*
-     * Sets the version number of your project that will be transmitted
-     * to Raygun.com.
-     * @param string $version The version number in the form of x.x.x.x,
-     * where x is a positive integer.
+    /**
+     * Sets the version number of your project that will be transmitted to Raygun.com.
      *
+     * @param string $version The version number in the form of x.x.x.x, where x is a positive integer.
      */
     public function SetVersion($version)
     {
       $this->version = $version;
     }
 
-    /*
-    *  Stores the current user of the calling application. This will be added to any messages sent
-    *  by this provider. It is used in the dashboard to provide unique user tracking.
-    *  If it is an email address, the user's Gravatar can be displayed. This method is optional,
-    *  if it is not used a random identifier will be assigned to the current user.
-    *  @param string $user A username, email address or other identifier for the current user
-    *  of the calling application.
-    *
-    */
+    /**
+     * Stores the current user of the calling application. This will be added to any messages sent
+     * by this provider. It is used in the dashboard to provide unique user tracking.
+     * If it is an email address, the user's Gravatar can be displayed. This method is optional,
+     * if it is not used a random identifier will be assigned to the current user.
+     *
+     * @param string $user A username, email address or other identifier for the current user
+     *                     of the calling application.
+     */
     public function SetUser($user = null, $firstName = null, $fullName = null, $email = null, $isAnonymous = null, $uuid = null)
     {
       $this->firstName = $this->StoreOrRetrieveUserCookie('rgfirstname', $firstName);
@@ -240,12 +246,12 @@ namespace Raygun4php {
       }
     }
 
-    /*
-     * Sets a string array of tags relating to the message,
-     * used for identification. These will be transmitted along with messages that
-     * are sent.
+    /**
+     * Sets a string array of tags relating to the message, used for identification. These will be transmitted along
+     * with messages that are sent.
+     *
      * @param array $tags The tags relating to your project's version
-    */
+     */
     private function BuildMessage($errorException, $timestamp = null)
     {
       $message = new RaygunMessage($timestamp);
@@ -304,14 +310,16 @@ namespace Raygun4php {
       return (bool)count(array_filter(array_keys($array), 'is_string'));
     }
 
-    /*
+    /**
      * Transmits a RaygunMessage to the Raygun.io API. The default attempts to transmit asynchronously.
      * To disable this and transmit sync (blocking), pass false in as the 2nd parameter in RaygunClient's
      * constructor. This may be necessary on some Windows installations where the implementation is broken.
      * This is a lower level function used by SendException and SendError and one of those should be used preferrably.
-     * @param Raygun4php\RaygunMessage $message A populated message to be posted to the Raygun API
-     * @return The HTTP status code of the result after transmitting the message to Raygun.io
-     * 202 if accepted, 403 if invalid JSON payload
+     *
+     * @param \Raygun4php\RaygunMessage $message A populated message to be posted to the Raygun API
+     * @return int The HTTP status code of the result after transmitting the message to Raygun.io
+     *                                          202 if accepted, 403 if invalid JSON payload
+     * @throws Raygun4PhpException
      */
     public function Send($message)
     {
@@ -490,7 +498,7 @@ namespace Raygun4php {
 
     /**
      * @param array $params
-     * @return Raygun4php\RaygunClient
+     * @return $this
      */
     function setFilterParams($params) {
       $this->filterParams = $params;
@@ -508,7 +516,7 @@ namespace Raygun4php {
      * Use a proxy for sending HTTP requests to Raygun.
      *
      * @param String $url URL including protocol and an optional port, e.g. http://myproxy:8080
-     * @return Raygun4php\RaygunClient
+     * @return $this
      */
     function setProxy($proxy) {
       $this->proxy = $proxy;
