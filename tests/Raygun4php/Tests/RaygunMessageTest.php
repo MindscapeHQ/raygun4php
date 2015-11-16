@@ -1,6 +1,8 @@
 <?php
 
-class RaygunMessageTest extends PHPUnit_Framework_TestCase
+namespace Raygun4php\Tests;
+
+class RaygunMessageTest extends \PHPUnit_Framework_TestCase
 {
   public function testDefaultConstructorGeneratesValid8601()
   {
@@ -22,9 +24,8 @@ class RaygunMessageTest extends PHPUnit_Framework_TestCase
   {
     $msg = new \Raygun4php\RaygunMessage();
 
-    $msg->Build(new Exception('test'));
+    $msg->build(new \Exception('test'));
 
     $this->assertEquals($msg->Details->Error->Message, 'Exception: test');
   }
 }
-?>

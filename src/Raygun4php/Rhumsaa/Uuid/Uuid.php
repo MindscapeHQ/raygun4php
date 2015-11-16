@@ -330,12 +330,9 @@ final class Uuid
 
 
         if (self::is64BitSystem()) {
-
             $unixTime = ($this->getTimestamp() - 0x01b21dd213814000) / 1e7;
             $unixTime = number_format($unixTime, 0, '', '');
-
         } elseif (self::hasBigNumber()) {
-
             $time = \Moontoast\Math\BigNumber::baseConvert($this->getTimestampHex(), 16, 10);
 
             $ts = new \Moontoast\Math\BigNumber($time, 20);
@@ -343,15 +340,12 @@ final class Uuid
             $ts->divide('10000000.0');
             $ts->round();
             $unixTime = $ts->getValue();
-
         } else {
-
             throw new Exception\UnsatisfiedDependencyException(
                 'When calling ' . __METHOD__ . ' on a 32-bit system, '
                 . 'Moontoast\Math\BigNumber must be present in order '
                 . 'to extract DateTime from version 1 UUIDs'
             );
-
         }
 
         return new \DateTime("@{$unixTime}");
@@ -1013,7 +1007,6 @@ final class Uuid
     protected static function calculateUuidTime($sec, $usec)
     {
         if (self::is64BitSystem()) {
-
             // 0x01b21dd213814000 is the number of 100-ns intervals between the
             // UUID epoch 1582-10-15 00:00:00 and the Unix epoch 1970-01-01 00:00:00.
             $uuidTime = ($sec * 10000000) + ($usec * 10) + 0x01b21dd213814000;
@@ -1026,7 +1019,6 @@ final class Uuid
         }
 
         if (self::hasBigNumber()) {
-
             $uuidTime = new \Moontoast\Math\BigNumber('0');
 
             $sec = new \Moontoast\Math\BigNumber($sec);

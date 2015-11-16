@@ -1,8 +1,9 @@
 <?php
 
-class RaygunClientTest extends PHPUnit_Framework_TestCase
-{
+namespace Raygun4php\Tests;
 
+class RaygunClientTest extends \PHPUnit_Framework_TestCase
+{
   /**
    * @expectedException \Raygun4php\Raygun4PhpException
    * @expectedExceptionMessage API not valid, cannot send message to Raygun
@@ -10,10 +11,11 @@ class RaygunClientTest extends PHPUnit_Framework_TestCase
   public function testSendReturns403WithInvalidApiKey()
   {
     $client = new \Raygun4php\RaygunClient("", true);
-    $client->SendException(new Exception(''));
+    $client->sendException(new \Exception(''));
   }
 
-  public function testGetFilteredParamsRemovesByKey() {
+  public function testGetFilteredParamsRemovesByKey()
+  {
     $client = new \Raygun4php\RaygunClient("some-api-key", true);
     $client->setFilterParams(array(
         'MyParam' => true
@@ -44,7 +46,8 @@ class RaygunClientTest extends PHPUnit_Framework_TestCase
     );
   }
 
-  public function testGetFilteredParamsIgnoresCase() {
+  public function testGetFilteredParamsIgnoresCase()
+  {
     $client = new \Raygun4php\RaygunClient("some-api-key", true);
     $client->setFilterParams(array('myparam' => true));
     $message = $this->getEmptyMessage();
@@ -57,7 +60,8 @@ class RaygunClientTest extends PHPUnit_Framework_TestCase
     );
   }
 
-  public function testGetFilteredParamsAcceptsCustomFunctions() {
+  public function testGetFilteredParamsAcceptsCustomFunctions()
+  {
     $client = new \Raygun4php\RaygunClient("some-api-key", true);
     $client->setFilterParams(array(
         'MyParam' => function($key, $val) {return strrev($val);},
@@ -76,7 +80,8 @@ class RaygunClientTest extends PHPUnit_Framework_TestCase
     );
   }
 
-  public function testGetFilteredParamsRemovesRawData() {
+  public function testGetFilteredParamsRemovesRawData()
+  {
     $client = new \Raygun4php\RaygunClient("some-api-key", true);
     $message = $this->getEmptyMessage();
     $message->Details->Request->RawData = 'some-data';
@@ -89,7 +94,8 @@ class RaygunClientTest extends PHPUnit_Framework_TestCase
     $this->assertNull($filteredMessage->Details->Request->RawData);
   }
 
-  public function testGetFilteredParamsParsesRegex() {
+  public function testGetFilteredParamsParsesRegex()
+  {
     $client = new \Raygun4php\RaygunClient("some-api-key", true);
     $client->setFilterParams(array('/MyRegex.*/' => true,));
     $message = $this->getEmptyMessage();
@@ -108,8 +114,9 @@ class RaygunClientTest extends PHPUnit_Framework_TestCase
     );
   }
 
-  protected function getEmptyMessage() {
-    $requestMessage = new Raygun4php\RaygunRequestMessage();
+  protected function getEmptyMessage()
+  {
+    $requestMessage = new \Raygun4php\RaygunRequestMessage();
     $requestMessage->HostName = null;
     $requestMessage->Url = null;
     $requestMessage->HttpMethod = null;
@@ -119,10 +126,65 @@ class RaygunClientTest extends PHPUnit_Framework_TestCase
     $requestMessage->Data = null;
     $requestMessage->RawData = null;
     $requestMessage->Form = null;
-    $message = new Raygun4php\RaygunMessage(0);
+    $message = new \Raygun4php\RaygunMessage(0);
     $message->Details->Request = $requestMessage;
 
     return $message;
   }
+
+  public function testToJsonRemoveUnicodeSequences()
+  {
+    $client = new \Raygun4php\RaygunClient('foo');
+
+    $data = array(
+      'bar' => 'baz',
+    );
+
+    $this->assertJson(
+      json_encode($data),
+      $client->toJsonRemoveUnicodeSequences($data)
+    );
+  }
+
+  public function testFilterParamsFromMessage()
+  {
+    $client = new \Raygun4php\RaygunClient('foo');
+
+    $message = $this->getMockBuilder('Raygun4php\RagunMessage')->getMock();
+
+    $this->assertSame(
+      $message,
+      $client->filterParamsFromMessage($message)
+    );
+  }
+
+  public function testCanSetAndFilterParams()
+  {
+    $client = new \Raygun4php\RaygunClient('foo');
+
+    $params = array(
+      'bar' => 'baz',
+    );
+
+    $client->setFilterParams($params);
+
+    $this->assertSame(
+      $params,
+      $client->getFilterParams()
+    );
+  }
+
+  public function testCanSetAndGetProxy()
+  {
+    $client = new \Raygun4php\RaygunClient('foo');
+
+    $proxy = 'bar';
+
+    $client->setProxy($proxy);
+
+    $this->assertSame(
+      $proxy,
+      $client->getProxy()
+    );
+  }
 }
-?>
