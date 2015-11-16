@@ -12,6 +12,10 @@ class IntegrationTest extends PHPUnit_Framework_TestCase
     {
         if (isset($_SERVER['RAYGUN_API_KEY'])) {
             $this->client = new RaygunClient($_SERVER['RAYGUN_API_KEY'], true);
+
+            $this->client->setFilterParams(array(
+                'RAYGUN_API_KEY' => false
+            ));
         }
     }
 
