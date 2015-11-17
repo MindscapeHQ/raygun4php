@@ -23,7 +23,15 @@ namespace Raygun4php {
     protected $debugSending;
     protected $disableUserTracking;
     protected $proxy;
-    protected $cookieTimestamp;
+
+    protected $cookieOptions = array(
+      'use'      => true,
+      'expire'   => 2592000, // 30 * 24 * 60 * 60
+      'path'     => '/',
+      'domain'   => '',
+      'secure'   => false,
+      'httponly' => false
+    );
 
     /**
      * @var Array Parameter names to filter out of logged form data. Case insensitive.
@@ -149,8 +157,8 @@ namespace Raygun4php {
 
         if (php_sapi_name() != 'cli' && !headers_sent())
         {
-          $this->SetCookie('rguserid', $user);
-          $this->SetCookie('rguuid', 'false');
+          $this->setCookie('rguserid', $user);
+          $this->setCookie('rguuid', 'false');
         }
       }
       else
@@ -161,8 +169,8 @@ namespace Raygun4php {
 
           if (php_sapi_name() != 'cli' && !headers_sent())
           {
-            $this->SetCookie('rguserid', $this->user);
-            $this->SetCookie('rguuid', 'true');
+            $this->setCookie('rguserid', $this->user);
+            $this->setCookie('rguuid', 'true');
           }
         }
         else if (array_key_exists('rguserid', $_COOKIE))
@@ -180,7 +188,7 @@ namespace Raygun4php {
       {
         if (php_sapi_name() != 'cli' && !headers_sent())
         {
-          $this->SetCookie($key, $value);
+          $this->setCookie($key, $value);
         }
 
         return $value;
@@ -191,7 +199,7 @@ namespace Raygun4php {
         {
           if ($_COOKIE[$key] != $value && php_sapi_name() != 'cli' && !headers_sent())
           {
-            $this->SetCookie($key, $value);
+            $this->setCookie($key, $value);
           }
           return $_COOKIE[$key];
         }
@@ -201,16 +209,16 @@ namespace Raygun4php {
     }
 
     /**
-     * @param string $key
+     * @param string $name
      * @param string $value
      */
-    private function SetCookie($key, $value)
+    protected function setCookie($name, $value)
     {
-        if (!$this->cookieTimestamp) {
-            $this->cookieTimestamp = time() + 60 * 60 * 24 * 30;
-        }
+      $options = $this->cookieOptions;
 
-        setcookie($key, $value, $this->cookieTimestamp, '/');
+      if (!empty($options['use'])) {
+        setcookie($name, $value, $options['expiry'], $options['path'], $options['domain'], $options['secure'], $options['httponly']);
+      }
     }
 
     /*
@@ -463,6 +471,22 @@ namespace Raygun4php {
     function setProxy($proxy) {
       $this->proxy = $proxy;
       return $this;
+    }
+
+    /**
+     * Sets the given cookie options
+     *
+     * Existing values will be overridden. Values that are missing from the array being set will keep their current
+     * values.
+     *
+     * The key names match the argument names on setcookie() (e.g. 'expire' or 'path'). Pass the default value according
+     * to PHP's setcookie() function to ignore that parameter.
+     *
+     * @param array<string,mixed> $options
+     */
+    public function setCookieOptions(array $options)
+    {
+      $this->cookieOptions = array_merge($this->cookieOptions, $options);
     }
 
     /**
