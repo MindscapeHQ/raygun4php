@@ -247,10 +247,9 @@ namespace Raygun4php {
     }
 
     /**
-     * Sets a string array of tags relating to the message, used for identification. These will be transmitted along
-     * with messages that are sent.
-     *
-     * @param array $tags The tags relating to your project's version
+     * @param \Exception $errorException
+     * @param int $timestamp
+     * @return RaygunMessage
      */
     private function BuildMessage($errorException, $timestamp = null)
     {
@@ -271,6 +270,14 @@ namespace Raygun4php {
       return $message;
     }
 
+    /**
+     * Sets a string array of tags relating to the message, used for identification. These will be transmitted along
+     * with messages that are sent.
+     *
+     * @param RaygunMessage $message
+     * @param array         $tags The tags relating to your project's version
+     * @throws Raygun4PhpException
+     */
     private function AddTags(&$message, $tags)
     {
       if (is_array($tags))
