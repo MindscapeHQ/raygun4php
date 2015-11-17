@@ -1,5 +1,10 @@
 <?php
 
+namespace Raygun4php;
+
+use \PHPUnit_Framework_TestCase;
+use \Exception;
+
 class RaygunClientTest extends PHPUnit_Framework_TestCase
 {
 
@@ -9,12 +14,12 @@ class RaygunClientTest extends PHPUnit_Framework_TestCase
    */
   public function testSendReturns403WithInvalidApiKey()
   {
-    $client = new \Raygun4php\RaygunClient("", true);
+    $client = new RaygunClient("", true);
     $client->SendException(new Exception(''));
   }
 
   public function testGetFilteredParamsRemovesByKey() {
-    $client = new \Raygun4php\RaygunClient("some-api-key", true);
+    $client = new RaygunClient("some-api-key", true);
     $client->setFilterParams(array(
         'MyParam' => true
     ));
@@ -45,7 +50,7 @@ class RaygunClientTest extends PHPUnit_Framework_TestCase
   }
 
   public function testGetFilteredParamsIgnoresCase() {
-    $client = new \Raygun4php\RaygunClient("some-api-key", true);
+    $client = new RaygunClient("some-api-key", true);
     $client->setFilterParams(array('myparam' => true));
     $message = $this->getEmptyMessage();
     $message->Details->Request->Form = array('MyParam' => 'secret',);
@@ -58,7 +63,7 @@ class RaygunClientTest extends PHPUnit_Framework_TestCase
   }
 
   public function testGetFilteredParamsAcceptsCustomFunctions() {
-    $client = new \Raygun4php\RaygunClient("some-api-key", true);
+    $client = new RaygunClient("some-api-key", true);
     $client->setFilterParams(array(
         'MyParam' => function($key, $val) {return strrev($val);},
     ));
@@ -77,7 +82,7 @@ class RaygunClientTest extends PHPUnit_Framework_TestCase
   }
 
   public function testGetFilteredParamsRemovesRawData() {
-    $client = new \Raygun4php\RaygunClient("some-api-key", true);
+    $client = new RaygunClient("some-api-key", true);
     $message = $this->getEmptyMessage();
     $message->Details->Request->RawData = 'some-data';
 
@@ -90,7 +95,7 @@ class RaygunClientTest extends PHPUnit_Framework_TestCase
   }
 
   public function testGetFilteredParamsParsesRegex() {
-    $client = new \Raygun4php\RaygunClient("some-api-key", true);
+    $client = new RaygunClient("some-api-key", true);
     $client->setFilterParams(array('/MyRegex.*/' => true,));
     $message = $this->getEmptyMessage();
     $message->Details->Request->Form = array(
@@ -109,7 +114,7 @@ class RaygunClientTest extends PHPUnit_Framework_TestCase
   }
 
   protected function getEmptyMessage() {
-    $requestMessage = new Raygun4php\RaygunRequestMessage();
+    $requestMessage = new RaygunRequestMessage();
     $requestMessage->HostName = null;
     $requestMessage->Url = null;
     $requestMessage->HttpMethod = null;
@@ -119,10 +124,9 @@ class RaygunClientTest extends PHPUnit_Framework_TestCase
     $requestMessage->Data = null;
     $requestMessage->RawData = null;
     $requestMessage->Form = null;
-    $message = new Raygun4php\RaygunMessage(0);
+    $message = new RaygunMessage(0);
     $message->Details->Request = $requestMessage;
 
     return $message;
   }
 }
-?>

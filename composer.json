@@ -23,5 +23,10 @@
         "psr-0": {
             "Raygun4php": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Raygun4php\\": "tests"
+        }
     }
 }
