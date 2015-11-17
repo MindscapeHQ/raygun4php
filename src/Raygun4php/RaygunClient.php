@@ -12,6 +12,7 @@ namespace Raygun4php {
     protected $apiKey;
     protected $version;
     protected $tags;
+    protected $userIdentifier;
     protected $user;
     protected $firstName;
     protected $fullName;
@@ -164,6 +165,24 @@ namespace Raygun4php {
     }
 
     /**
+     * Sets an identifier for the current user of the application into the context
+     *
+     * When using this method, the user identifier is not persisted internally by this library. It's up to the caller to:
+     *   - use a long-lived identifier (like an immutable database ID for the user, not just a session ID)
+     *   - persist the values in some sort of cross-request storage (like a user database)
+     *   - construct a RaygunIdentifier and pass it in
+     *
+     * If you'd like this library to manage the lifetime of the user token, use $this->setUser() instead, which emits
+     * cookies, but doesn't require a identifier value object.
+     *
+     * @param RaygunIdentifier $identifier
+     */
+    public function setUserIdentifier(RaygunIdentifier $identifier)
+    {
+      $this->userIdentifier = $identifier;
+    }
+
+    /**
      * Stores the current user of the calling application. This will be added to any messages sent
      * by this provider. It is used in the dashboard to provide unique user tracking.
      * If it is an email address, the user's Gravatar can be displayed. This method is optional,
@@ -276,12 +295,11 @@ namespace Raygun4php {
       $message->Details->Version = $this->version;
       $message->Details->Context = new RaygunIdentifier(session_id());
 
-      if ($this->user != null)
-      {
+      if (!empty($this->userIdentifier)) {
+        $message->Details->User = $this->userIdentifier;
+      } elseif ($this->user != null) {
         $message->Details->User = new RaygunIdentifier($this->user, $this->firstName, $this->fullName, $this->email, $this->isAnonymous, $this->uuid);
-      }
-      else if (!$this->disableUserTracking && array_key_exists('rguserid', $_COOKIE))
-      {
+      } else if (!$this->disableUserTracking && array_key_exists('rguserid', $_COOKIE)) {
         $message->Details->User = new RaygunIdentifier($_COOKIE['rguserid']);
       }
 
