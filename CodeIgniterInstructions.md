@@ -1,16 +1,16 @@
-# Raygun4PHP CodeIgniter installation instructions
+## Raygun4PHP CodeIgniter installation instructions
 
-## Step 1: Install Raygun4PHP with Composer (see README.md)
+### Step 1: Install Raygun4PHP with Composer (see README.md)
 
-## Step 2: Enable hooks
+### Step 2: Enable hooks
 
-In `/application/config/config.php` set:
+In `/application/config/config.php` set *enable_hooks* to true:
 
 ```
 $config['enable_hooks'] = TRUE;
 ```
 
-## Step 3: Create the file: `/application/hooks/RaygunSetup.php` with the following content:
+### Step 3: Create the file: `/application/hooks/RaygunSetup.php` with the following content:
 
 ```
 namespace
@@ -45,7 +45,7 @@ namespace
 
 **Important:** Make sure you change *apiKey* to your Raygun API key.
 
-## Step 4: In `/config/hooks.php`:
+### Step 4: In `/config/hooks.php`:
 
 ```
 $hook['pre_controller'][] = array(
