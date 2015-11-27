@@ -31,11 +31,11 @@ namespace
             set_error_handler( array( $this, "error_handler" ) );
         }
 
-        private function exception_handler($exception) {
+        function exception_handler($exception) {
             $this->client->SendException($exception);
         }
 
-        private function error_handler( $errno, $errstr, $errfile, $errline) {
+        function error_handler( $errno, $errstr, $errfile, $errline) {
             $this->client->SendError($errno, $errstr, $errfile, $errline);
         }
 
