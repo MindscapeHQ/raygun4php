@@ -11,12 +11,18 @@ namespace Raygun4php
         public $FileName;
         public $Data;
 
+        /**
+         * RaygunExceptionMessage constructor.
+         *
+         * @param \Exception $exception
+         */
         public function __construct($exception)
         {
             $exceptionClass = get_class($exception);
 
             if ($exceptionClass != 'ErrorException')
             {
+                /** @var \ErrorException $exception */
                 $this->Message = $exceptionClass.': '.$exception->getMessage();
                 $this->BuildStackTrace($exception);
                 $this->ClassName = $exceptionClass;
@@ -30,6 +36,9 @@ namespace Raygun4php
             $this->FileName = basename($exception->getFile());
         }
 
+        /**
+         * @param \Exception $error
+         */
         private function BuildErrorTrace($error)
         {
           $traces = $error->getTrace();
@@ -72,6 +81,9 @@ namespace Raygun4php
           $this->StackTrace = $lines;
         }
 
+        /**
+         * @param \Exception $exception
+         */
         private function BuildStackTrace($exception)
         {
             $traces = $exception->getTrace();

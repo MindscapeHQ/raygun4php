@@ -5,9 +5,9 @@ namespace Raygun4php {
   require_once realpath(__DIR__ . '/Raygun4PhpException.php');
   require_once realpath(__DIR__ . '/Uuid.php');
 
-  use Raygun4Php\Rhumsaa\Uuid\Uuid;
+    use Raygun4Php\Rhumsaa\Uuid\Uuid;
 
-  class RaygunClient
+    class RaygunClient
   {
     protected $apiKey;
     protected $version;
@@ -39,13 +39,15 @@ namespace Raygun4php {
     /**
      * Creates a new RaygunClient instance.
      *
-     * @param bool $useAsyncSending If true, attempts to post rapidly and asynchronously the script by forking a cURL
-     *                              process. RaygunClient cannot return the HTTP result when in async mode, however. If
-     *                              false, sends using a blocking socket connection. This is the only method available
-     *                              on Windows.
-     * @param bool $debugSending    If true, and $useAsyncSending is true, this will output the HTTP response code from
-     *                              posting error messages. See the GitHub documentation for code meaning. This param
-     *                              does nothing if useAsyncSending is set to true.
+     * @param string $key                 API key
+     * @param bool   $useAsyncSending     If true, attempts to post rapidly and asynchronously the script by forking a cURL
+     *                                    process. RaygunClient cannot return the HTTP result when in async mode, however. If
+     *                                    false, sends using a blocking socket connection. This is the only method available
+     *                                    on Windows.
+     * @param bool   $debugSending        If true, and $useAsyncSending is true, this will output the HTTP response code from
+     *                                    posting error messages. See the GitHub documentation for code meaning. This param
+     *                                    does nothing if useAsyncSending is set to true.
+     * @param bool   $disableUserTracking
      */
     public function __construct($key, $useAsyncSending = true, $debugSending = false, $disableUserTracking = false)
     {
@@ -71,7 +73,8 @@ namespace Raygun4php {
      * @param array  $userCustomData An optional associative array that can be used to place custom key-value
      * @param int    $timestamp      Current Unix timestamp in the local timezone, used to set when an error occurred.
      *                               data in the message payload
-     * @return The HTTP status code of the result when transmitting the message to Raygun.io
+     * 
+     * @return int The HTTP status code of the result when transmitting the message to Raygun.io
      */
     public function SendError($errno, $errstr, $errfile, $errline, $tags = null, $userCustomData = null, $timestamp = null)
     {
@@ -99,7 +102,8 @@ namespace Raygun4php {
      *                                   data in the message payload
      * @param int        $timestamp      Current Unix timestamp in the local timezone, used to set when an exception
      *                                   occurred.
-     * @return The HTTP status code of the result when transmitting the message to Raygun.io
+     * 
+     * @return int The HTTP status code of the result when transmitting the message to Raygun.io
      */
     public function SendException($exception, $tags = null, $userCustomData = null, $timestamp = null)
     {
@@ -136,8 +140,13 @@ namespace Raygun4php {
      * If it is an email address, the user's Gravatar can be displayed. This method is optional,
      * if it is not used a random identifier will be assigned to the current user.
      *
-     * @param string $user A username, email address or other identifier for the current user
-     *                     of the calling application.
+     * @param string $user A username, email address or other identifier for the current user of the calling
+     *                     application.
+     * @param string $firstName
+     * @param string $fullName
+     * @param string $email
+     * @param string $isAnonymous
+     * @param string $uuid
      */
     public function SetUser($user = null, $firstName = null, $fullName = null, $email = null, $isAnonymous = null, $uuid = null)
     {
@@ -457,7 +466,8 @@ namespace Raygun4php {
     /**
      * Use a proxy for sending HTTP requests to Raygun.
      * 
-     * @param String $url URL including protocol and an optional port, e.g. http://myproxy:8080
+     * @param String $proxy URL including protocol and an optional port, e.g. http://myproxy:8080
+     * 
      * @return self
      */
     function setProxy($proxy) {
