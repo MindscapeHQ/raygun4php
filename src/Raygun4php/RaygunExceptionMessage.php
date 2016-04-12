@@ -27,7 +27,7 @@ namespace Raygun4php
                 $this->BuildErrorTrace($exception);
             }
 
-            $this->FileName = baseName($exception->getFile());
+            $this->FileName = basename($exception->getFile());
         }
 
         private function BuildErrorTrace($error)
