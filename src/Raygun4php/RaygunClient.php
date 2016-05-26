@@ -356,7 +356,6 @@ namespace Raygun4php {
         {
           $errMsg = "<br/><br/>" . "<strong>Raygun Warning:</strong> Couldn't send asynchronously. ";
           $errMsg .= "Try calling new RaygunClient('apikey', FALSE); to use an alternate sending method, or RaygunClient('key', FALSE, TRUE) to echo the HTTP response" . "<br/><br/>";
-          echo $errMsg;
           trigger_error('httpPost error: ' . $errstr);
           return null;
         }
