@@ -34,10 +34,10 @@ and the library will be imported ready for use.
 
 ### Manually with Git
 
-Clone this repository and copy src/Raygun4php into an appropriate subdirectory in your project, such as /vendor/Raygun4php. Add `requires` definitions for RaygunClient.php where you want to make a call to Send().
+Clone this repository and copy src/Raygun4php into an appropriate subdirectory in your project, such as /vendor/Raygun4php. Add a `requires` definition that references the location of RaygunClient.php where you want to make a call to Send().
 
 ```php
-require (dirname(dirname(__FILE__)).'/vendor/Raygun4php/RaygunClient.php');
+require __DIR__ . '/vendor/raygun4php/src/Raygun4php/RaygunClient.php';
 ```
 ## Usage
 
