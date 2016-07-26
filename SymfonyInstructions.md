@@ -37,7 +37,7 @@ class RaygunExceptionListener
 ### Step 3: Register the hook service in `app/config/services.yml`
 ```
 app.exception_listener:
-    class: AppBundle\EventListener\RaygunExceptionHandler
+    class: AppBundle\EventListener\RaygunExceptionListener
     tags:
         - { name: kernel.event_listener, event: kernel.exception }
 ```
