@@ -23,6 +23,7 @@ namespace Raygun4php {
     protected $debugSending;
     protected $disableUserTracking;
     protected $proxy;
+
     protected $groupingKeyCallback;
 
     /**
@@ -119,7 +120,7 @@ namespace Raygun4php {
 
     /*
      * Sets the version number of your project that will be transmitted
-     * to Raygun.io.
+     * to Raygun.com.
      * @param string $version The version number in the form of x.x.x.x,
      * where x is a positive integer.
      *
@@ -180,6 +181,15 @@ namespace Raygun4php {
       }
     }
 
+    /*
+    * Sets a callback to control how error instances are grouped together. The callback
+    * is provided with the payload and stack trace of the error upon execution. If the
+    * callback returns a string then error instances with a matching key will grouped together.
+    * If the callback doesn't return a value, or the value is not a string, then automatic
+    * grouping will be used.
+    * @param function $callback
+    *
+    */
     public function SetGroupingKey($callback) {
       $this->groupingKeyCallback = $callback;
     }
