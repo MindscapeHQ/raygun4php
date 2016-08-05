@@ -23,6 +23,7 @@ namespace Raygun4php {
     protected $debugSending;
     protected $disableUserTracking;
     protected $proxy;
+    protected $groupingKeyCallback;
 
     /**
      * @var Array Parameter names to filter out of logged form data. Case insensitive.
@@ -83,6 +84,8 @@ namespace Raygun4php {
         $this->AddUserCustomData($message, $userCustomData);
       }
 
+      $this->AddGroupingKey($message);
+
       return $this->Send($message);
     }
 
@@ -108,6 +111,8 @@ namespace Raygun4php {
       {
         $this->AddUserCustomData($message, $userCustomData);
       }
+
+      $this->AddGroupingKey($message);
 
       return $this->Send($message);
     }
@@ -173,6 +178,10 @@ namespace Raygun4php {
 
         $this->isAnonymous = $this->StoreOrRetrieveUserCookie('rgisanonymous', 'true') == 'true';
       }
+    }
+
+    public function SetGroupingKey($callback) {
+      $this->groupingKeyCallback = $callback;
     }
 
     private function StoreOrRetrieveUserCookie($key, $value)
@@ -249,6 +258,16 @@ namespace Raygun4php {
       else
       {
         throw new \Raygun4php\Raygun4PhpException("UserCustomData must be an associative array");
+      }
+    }
+
+    private function AddGroupingKey(&$message) {
+      if( is_callable( $this->groupingKeyCallback ) ) {
+        $groupingKey = call_user_func( $this->groupingKeyCallback, $message, $message->Details->Error->StackTrace );
+
+        if( $groupingKey ) {
+          $message->Details->GroupingKey = $groupingKey;
+        }
       }
     }
 
@@ -446,7 +465,7 @@ namespace Raygun4php {
 
     /**
      * Use a proxy for sending HTTP requests to Raygun.
-     * 
+     *
      * @param String $url URL including protocol and an optional port, e.g. http://myproxy:8080
      * @return Raygun4php\RaygunClient
      */
