@@ -265,7 +265,7 @@ namespace Raygun4php {
       if( is_callable( $this->groupingKeyCallback ) ) {
         $groupingKey = call_user_func( $this->groupingKeyCallback, $message, $message->Details->Error->StackTrace );
 
-        if( $groupingKey ) {
+        if( is_string( $groupingKey ) ) {
           $message->Details->GroupingKey = $groupingKey;
         }
       }

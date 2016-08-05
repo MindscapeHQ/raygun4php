@@ -1,7 +1,7 @@
 Raygun4PHP
 ==========
 
-[Raygun.io](http://raygun.io) provider for PHP 5.3+
+[Raygun.com](http://raygun.com) provider for PHP 5.3+
 
 [![Build
 Status](https://secure.travis-ci.org/MindscapeHQ/raygun4php.png?branch=master)](http://travis-ci.org/MindscapeHQ/raygun4php)
@@ -176,6 +176,19 @@ This feature and values are optional if you wish to disable it for privacy conce
 Note that this data is stored as cookies. If you do not call SetUser the default is to store a random UUID to represent the user.
 
 This feature can be used in CLI mode by calling SetUser() at the start of your session.
+
+### Custom error grouping
+
+Control of how error instances are grouped together can achieved by passing a callback to the `SetGroupingKey` method on the client. If the callback returns a string, ideally 100 characters or less, errors matching that key will grouped together. Overriding the default automatic grouping. If the callback returns a non-string value then that error will be grouped automatically.  
+
+```php
+$client = new \Raygun4php\RaygunClient("apiKey");
+$client->SetGroupingKey(function($payload, $stackTrace) {
+  // Inspect the above parameters and return a hash from the properties
+
+  return $payload->Details->Error->Message; // Naive message-based grouping only
+});
+```
 
 ### Filtering Sensitive Data
 
