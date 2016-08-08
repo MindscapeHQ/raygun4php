@@ -246,6 +246,7 @@ If, when running a PHP script from the command line on *nix operating systems, y
 
 ## Changelog
 
+- 1.7.0: Added custom error grouping
 -	1.6.1: Assign ClassName as exceptionClass
 - 1.6.0: Added HTTP proxy support, support X-Forwarded-For, null server var guards
 - 1.5.3: Unify property casing (internal change)
