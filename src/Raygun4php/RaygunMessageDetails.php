@@ -13,5 +13,6 @@ namespace Raygun4php
         public $UserCustomData;
         public $User;
         public $Context;
+        public $GroupingKey;
     }
 }

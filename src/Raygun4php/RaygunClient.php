@@ -24,6 +24,8 @@ namespace Raygun4php {
     protected $disableUserTracking;
     protected $proxy;
 
+    protected $groupingKeyCallback;
+
     /**
      * @var Array Parameter names to filter out of logged form data. Case insensitive.
      * Accepts regular expressions when the name starts with a forward slash.
@@ -83,6 +85,8 @@ namespace Raygun4php {
         $this->AddUserCustomData($message, $userCustomData);
       }
 
+      $this->AddGroupingKey($message);
+
       return $this->Send($message);
     }
 
@@ -109,12 +113,14 @@ namespace Raygun4php {
         $this->AddUserCustomData($message, $userCustomData);
       }
 
+      $this->AddGroupingKey($message);
+
       return $this->Send($message);
     }
 
     /*
      * Sets the version number of your project that will be transmitted
-     * to Raygun.io.
+     * to Raygun.com.
      * @param string $version The version number in the form of x.x.x.x,
      * where x is a positive integer.
      *
@@ -173,6 +179,19 @@ namespace Raygun4php {
 
         $this->isAnonymous = $this->StoreOrRetrieveUserCookie('rgisanonymous', 'true') == 'true';
       }
+    }
+
+    /*
+    * Sets a callback to control how error instances are grouped together. The callback
+    * is provided with the payload and stack trace of the error upon execution. If the
+    * callback returns a string then error instances with a matching key will grouped together.
+    * If the callback doesn't return a value, or the value is not a string, then automatic
+    * grouping will be used.
+    * @param function $callback
+    *
+    */
+    public function SetGroupingKey($callback) {
+      $this->groupingKeyCallback = $callback;
     }
 
     private function StoreOrRetrieveUserCookie($key, $value)
@@ -249,6 +268,16 @@ namespace Raygun4php {
       else
       {
         throw new \Raygun4php\Raygun4PhpException("UserCustomData must be an associative array");
+      }
+    }
+
+    private function AddGroupingKey(&$message) {
+      if( is_callable( $this->groupingKeyCallback ) ) {
+        $groupingKey = call_user_func( $this->groupingKeyCallback, $message, $message->Details->Error->StackTrace );
+
+        if( is_string( $groupingKey ) ) {
+          $message->Details->GroupingKey = $groupingKey;
+        }
       }
     }
 
@@ -446,7 +475,7 @@ namespace Raygun4php {
 
     /**
      * Use a proxy for sending HTTP requests to Raygun.
-     * 
+     *
      * @param String $url URL including protocol and an optional port, e.g. http://myproxy:8080
      * @return Raygun4php\RaygunClient
      */
