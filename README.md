@@ -275,9 +275,10 @@ If, when running a PHP script from the command line on *nix operating systems, y
 
 ## Changelog
 
+- 1.8.0: Bugfix with multiple cookies being set. Cookie options can be set via the setCookieOptions method
 - 1.7.1: Fixed illegal string offset
 - 1.7.0: Added custom error grouping
--	1.6.1: Assign ClassName as exceptionClass
+- 1.6.1: Assign ClassName as exceptionClass
 - 1.6.0: Added HTTP proxy support, support X-Forwarded-For, null server var guards
 - 1.5.3: Unify property casing (internal change)
 - 1.5.2: Prevent error when query_string isn't present in $_SERVER
