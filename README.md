@@ -259,6 +259,21 @@ $client->setFilterParams(array(
 
 Note that when any filters are defined, the Raygun error will no longer contain the raw HTTP data, since there's no effective way to filter it.
 
+### Updating Cookie options
+
+Cookies are used for the user tracking functionality of the Raygun4Php provider. In version 1.8 of the provider, the options passed to the `setcookie` method can now be customized to your needs.
+
+```php
+$client = new \Raygun4php\RaygunClient("apiKey");
+$client->SetCookieOptions(array(
+    'expire'   => 2592000, // 30 * 24 * 60 * 60
+    'path'     => '/',
+    'domain'   => '',
+    'secure'   => false,
+    'httponly' => false
+));
+```
+
 ## Troubleshooting
 
 As above, enable debug mode by instantiating the client with
@@ -275,9 +290,10 @@ If, when running a PHP script from the command line on *nix operating systems, y
 
 ## Changelog
 
+- 1.8.0: Bugfix with multiple cookies being set. Cookie options can be set via the setCookieOptions method
 - 1.7.1: Fixed illegal string offset
 - 1.7.0: Added custom error grouping
--	1.6.1: Assign ClassName as exceptionClass
+- 1.6.1: Assign ClassName as exceptionClass
 - 1.6.0: Added HTTP proxy support, support X-Forwarded-For, null server var guards
 - 1.5.3: Unify property casing (internal change)
 - 1.5.2: Prevent error when query_string isn't present in $_SERVER
