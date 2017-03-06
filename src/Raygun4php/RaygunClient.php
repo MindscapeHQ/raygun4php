@@ -236,7 +236,7 @@ namespace Raygun4php {
       $options = $this->cookieOptions;
 
       if (!empty($options['use'])) {
-        setcookie($name, $value, $options['expiry'], $options['path'], $options['domain'], $options['secure'], $options['httponly']);
+        setcookie($name, $value, time() + $options['expire'], $options['path'], $options['domain'], $options['secure'], $options['httponly']);
       }
     }
 
