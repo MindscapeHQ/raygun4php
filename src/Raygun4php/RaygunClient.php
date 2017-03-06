@@ -235,7 +235,7 @@ namespace Raygun4php {
     {
       $options = $this->cookieOptions;
 
-      if (!empty($options['use'])) {
+      if ($options['use'] === true) {
         setcookie($name, $value, time() + $options['expire'], $options['path'], $options['domain'], $options['secure'], $options['httponly']);
       }
     }
@@ -513,7 +513,7 @@ namespace Raygun4php {
      *
      * @param array<string,mixed> $options
      */
-    public function setCookieOptions(array $options)
+    public function SetCookieOptions($options)
     {
       $this->cookieOptions = array_merge($this->cookieOptions, $options);
     }
