@@ -3,6 +3,7 @@ namespace Raygun4php {
   require_once realpath(__DIR__ . '/RaygunMessage.php');
   require_once realpath(__DIR__ . '/RaygunIdentifier.php');
   require_once realpath(__DIR__ . '/Raygun4PhpException.php');
+  require_once realpath(__DIR__ . '/RaygunErrorBundler.php');
   require_once realpath(__DIR__ . '/Uuid.php');
 
   use Raygun4Php\Rhumsaa\Uuid\Uuid;
@@ -46,6 +47,8 @@ namespace Raygun4php {
     private $path = '/entries';
     private $transport = 'ssl';
     private $port = 443;
+    private $bundleErrors = false;
+    private $maxBundleSize = 100;
 
     /*
     * Creates a new RaygunClient instance.
@@ -53,13 +56,27 @@ namespace Raygun4php {
     * RaygunClient cannot return the HTTP result when in async mode, however. If false, sends using a blocking socket connection.
     * This is the only method available on Windows.
     * @param bool $debugSending If true, and $useAsyncSending is true, this will output the HTTP response code from posting
+    * @param bool $disableUserTracking If true, no user data is sent to the API
+    * @param bool $bundleErrors If true, errors will be bundled before sending, useful for high traffic
+    * @param int $maxBundleSize The maximum number of errors to include in a bundle before sending. Maximum value is 100
     * error messages. See the GitHub documentation for code meaning. This param does nothing if useAsyncSending is set to true.
     */
-    public function __construct($key, $useAsyncSending = true, $debugSending = false, $disableUserTracking = false)
+    public function __construct($key, $useAsyncSending = true, $debugSending = false, $disableUserTracking = false, $bundleErrors = false, $maxBundleSize = 100)
     {
       $this->apiKey = $key;
       $this->useAsyncSending = $useAsyncSending;
       $this->debugSending = $debugSending;
+      $this->bundleErrors = $bundleErrors;
+
+      $maxBundleSize = min(100, $maxBundleSize);
+
+      if($this->bundleErrors) {
+        $this->path = '/bulk/entries';
+
+        $this->bundler = new \Raygun4php\RaygunErrorBundler(array(
+          "maxBundleSize" => $maxBundleSize
+        ));
+      }
 
       if (!$disableUserTracking) {
         $this->SetUser();
@@ -322,6 +339,18 @@ namespace Raygun4php {
 
       $message = $this->filterParamsFromMessage($message);
       $message = $this->toJsonRemoveUnicodeSequences($message);
+
+      if($this->bundleErrors) {
+        $this->bundler->addMessage($message);
+
+        if($this->bundler->isReadyToSend()) {
+          $dataToSend = $this->bundler->getJson();
+          $this->bundler->reset();
+          return $this->post($dataToSend, realpath(__DIR__ . '/cacert.crt'));
+        }
+
+        return;
+      }
 
       return $this->post($message, realpath(__DIR__ . '/cacert.crt'));
     }
