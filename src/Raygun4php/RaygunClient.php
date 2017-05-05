@@ -90,7 +90,7 @@ namespace Raygun4php {
         ));
 
         // Flush any leftover messages stored in the session which weren't bundled
-        if(isset($_SESSION["raygun_error_bundle"])) {
+        if(isset($_SESSION) && isset($_SESSION["raygun_error_bundle"])) {
           $sessionBundle = $_SESSION["raygun_error_bundle"];
 
           if(is_array($sessionBundle) && count($sessionBundle) > 0) {
