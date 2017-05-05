@@ -4,13 +4,19 @@ namespace Raygun4php
 {
   class RaygunErrorBundler {
     private $bundle = array();
+    private $settings = array();
     private $startTime;
-    private $maxBundleSize;
-    private $expiryInSeconds;
 
     public function __construct($options = array()) {
-      $this->maxBundleSize = isset($options["maxBundleSize"]) ? $options["maxBundleSize"] : 100;
-      $this->expiryInSeconds = isset($options["expiryInSeconds"]) ? $options["expiryInSeconds"] : 60;
+      $defaults = array(
+        "maxBundleSize" => 100,
+        "expiryInSeconds" => 60,
+        "gzipBundle" => false,
+        "gzipLevel" => 6
+      );
+
+      $this->settings = array_merge($defaults, $options);
+
       $this->startTime = time();
     }
 
@@ -28,7 +34,13 @@ namespace Raygun4php
     }
 
     public function getJson() {
-      return json_encode($this->bundle);
+      $json = json_encode($this->getBundle());
+
+      if($this->settings["gzipBundle"]) {
+        $json = gzcompress($json, $this->settings["gzipLevel"]);
+      }
+
+      return $json;
     }
 
     public function reset() {
@@ -38,13 +50,11 @@ namespace Raygun4php
     }
 
     public function isReadyToSend() {
-      return count($this->bundle) >= $this->maxBundleSize || $this->isBundleExpired();
+      return count($this->getBundle()) >= $this->settings["maxBundleSize"] || $this->isBundleExpired();
     }
 
     private function isBundleExpired() {
-      $currentTimestamp = time();
-
-      return ($currentTimestamp - $this->startTime) > $this->expiryInSeconds;
+      return (time() - $this->startTime) > $this->settings["expiryInSeconds"];
     }
 
   }
