@@ -421,7 +421,11 @@ namespace Raygun4php {
         if ($this->proxy) {
           $curlOpts[] = "--proxy '" . $this->proxy . "'";
         }
-        $cmd = "curl " . implode(' ', $curlOpts) . " 'https://api.raygun.io:443/entries' > /dev/null 2>&1 &";
+
+        $transport = $this->transport === "ssl" ? "https" : "http";
+        $endpoint = "{$transport}://{$this->host}:{$this->port}{$this->path}";
+
+        $cmd = "curl " . implode(' ', $curlOpts) . " '{$endpoint}' > /dev/null 2>&1 &";
         exec($cmd, $output, $exit);
         return $exit;
       }
