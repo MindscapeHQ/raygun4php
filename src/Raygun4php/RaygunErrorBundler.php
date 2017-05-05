@@ -14,8 +14,17 @@ namespace Raygun4php
       $this->startTime = time();
     }
 
+    public function getBundle() {
+      return $this->bundle;
+    }
+
+    public function setBundle($bundle = array()) {
+      $this->bundle = $bundle;
+    }
+
     public function addMessage($message) {
       $this->bundle[] = $message;
+      $_SESSION["raygun_error_bundle"] = $this->bundle;
     }
 
     public function getJson() {
@@ -24,7 +33,8 @@ namespace Raygun4php
 
     public function reset() {
       $this->startTime = time();
-      $this->bundle = array();
+      $this->setBundle(array());
+      $_SESSION["raygun_error_bundle"] = array();
     }
 
     public function isReadyToSend() {

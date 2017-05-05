@@ -1,5 +1,6 @@
 <?php
 namespace Raygun4php {
+  session_start();
   require_once realpath(__DIR__ . '/RaygunMessage.php');
   require_once realpath(__DIR__ . '/RaygunIdentifier.php');
   require_once realpath(__DIR__ . '/Raygun4PhpException.php');
@@ -48,7 +49,6 @@ namespace Raygun4php {
     private $transport = 'ssl';
     private $port = 443;
     private $bundleErrors = false;
-    private $maxBundleSize = 100;
 
     /*
     * Creates a new RaygunClient instance.
@@ -57,25 +57,53 @@ namespace Raygun4php {
     * This is the only method available on Windows.
     * @param bool $debugSending If true, and $useAsyncSending is true, this will output the HTTP response code from posting
     * @param bool $disableUserTracking If true, no user data is sent to the API
-    * @param bool $bundleErrors If true, errors will be bundled before sending, useful for high traffic
+    * ---
+    * @array $options 
+    * @param bool $bundleErrors If true, errors will be bundled and sent as a JSON object, useful for high traffic
     * @param int $maxBundleSize The maximum number of errors to include in a bundle before sending. Maximum value is 100
-    * error messages. See the GitHub documentation for code meaning. This param does nothing if useAsyncSending is set to true.
+    * @param bool $gzipBundle Gzip compress the JSON bundle before sending
     */
-    public function __construct($key, $useAsyncSending = true, $debugSending = false, $disableUserTracking = false, $bundleErrors = false, $maxBundleSize = 100)
+    public function __construct($key, $useAsyncSending = true, $debugSending = false, $disableUserTracking = false, $options = array())
     {
       $this->apiKey = $key;
       $this->useAsyncSending = $useAsyncSending;
       $this->debugSending = $debugSending;
-      $this->bundleErrors = $bundleErrors;
 
-      $maxBundleSize = min(100, $maxBundleSize);
+      $defaults = array(
+        "bundleErrors" => false,
+        "maxBundleSize" => 100,
+        "gzipBundle" => false
+      );
+
+      $settings = array_merge($defaults, $options);
+
+      $this->bundleErrors = $settings["bundleErrors"];
+
+      $maxBundleSize = min(100, $settings["maxBundleSize"]);
 
       if($this->bundleErrors) {
         $this->path = '/bulk/entries';
 
         $this->bundler = new \Raygun4php\RaygunErrorBundler(array(
-          "maxBundleSize" => $maxBundleSize
+          "maxBundleSize" => $maxBundleSize,
+          "gzipBundle" => $settings["gzipBundle"]
         ));
+
+        // Flush any leftover messages stored in the session which weren't bundled
+        if(isset($_SESSION["raygun_error_bundle"])) {
+          $sessionBundle = $_SESSION["raygun_error_bundle"];
+
+          if(is_array($sessionBundle) && count($sessionBundle) > 0) {
+            $this->bundler->setBundle($sessionBundle);
+
+            if(count($sessionBundle) === 1) {
+              $this->Send($sessionBundle[0]);
+            }
+            else {
+              $this->SendBundle($sessionBundle);
+            }
+          }
+        }
       }
 
       if (!$disableUserTracking) {
@@ -321,6 +349,12 @@ namespace Raygun4php {
       return (bool)count(array_filter(array_keys($array), 'is_string'));
     }
 
+    private function SendBundle() {
+      $dataToSend = $this->bundler->getJson();
+      $this->bundler->reset();
+      return $this->post($dataToSend, realpath(__DIR__ . '/cacert.crt'));
+    }
+
     /*
      * Transmits a RaygunMessage to the Raygun.io API. The default attempts to transmit asynchronously.
      * To disable this and transmit sync (blocking), pass false in as the 2nd parameter in RaygunClient's
@@ -344,9 +378,7 @@ namespace Raygun4php {
         $this->bundler->addMessage($message);
 
         if($this->bundler->isReadyToSend()) {
-          $dataToSend = $this->bundler->getJson();
-          $this->bundler->reset();
-          return $this->post($dataToSend, realpath(__DIR__ . '/cacert.crt'));
+          return $this->SendBundle();
         }
 
         return;
