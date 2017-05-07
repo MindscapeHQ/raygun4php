@@ -82,7 +82,7 @@ namespace Raygun4php {
       $maxBundleSize = min(100, $settings["maxBundleSize"]);
 
       if($this->bundleErrors) {
-        $this->path = '/bulk/entries';
+        $this->path = '/entries/bulk';
 
         $this->bundler = new \Raygun4php\RaygunErrorBundler(array(
           "maxBundleSize" => $maxBundleSize,
