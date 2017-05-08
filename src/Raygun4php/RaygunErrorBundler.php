@@ -44,7 +44,7 @@ namespace Raygun4php
         $bundleString = gzcompress($bundleString, $this->settings["gzipLevel"]);
       }
 
-      return $bundleString;
+      return base64_encode($bundleString);
     }
 
     public function reset() {
