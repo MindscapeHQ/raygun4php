@@ -12,7 +12,8 @@ namespace Raygun4php
         "maxBundleSize" => 100,
         "expiryInSeconds" => 60,
         "gzipBundle" => false,
-        "gzipLevel" => 6
+        "gzipLevel" => 6,
+        "encodeData" => true
       );
 
       $this->settings = array_merge($defaults, $options);
@@ -44,7 +45,11 @@ namespace Raygun4php
         $bundleString = gzencode($bundleString, $this->settings["gzipLevel"]);
       }
 
-      return base64_encode($bundleString);
+      if($this->settings["encodeData"]) {
+        $bundleString = base64_encode($bundleString);
+      }
+
+      return $bundleString;
     }
 
     public function reset() {
