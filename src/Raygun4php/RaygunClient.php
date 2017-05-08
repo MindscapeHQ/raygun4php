@@ -454,13 +454,31 @@ namespace Raygun4php {
 
       if ($this->useAsyncSending && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN')
       {
-        $curlOpts = array(
-          "-X POST",
-          "-H 'Content-Type: application/json'",
-          "-H 'X-ApiKey: " . $this->apiKey . "'",
-          "-d " . escapeshellarg($data_to_send),
-          "--cacert '" . realpath(__DIR__ . '/cacert.crt') . "'"
-        );
+        $curlOpts = array();
+
+        if($this->settings["gzipBundle"]) {
+
+          $curlOpts = array(
+            "-v",
+            "-X POST", 
+            "-d \"{$data_to_send}\"",
+            "-H 'Content-Encoding: gzip'", 
+            "-H 'Content-Type: application/gzip'",
+            "-H 'X-ApiKey: {$this->apiKey}'",
+          );
+
+        }
+        else {
+          $curlOpts = array(
+            "-X POST",
+            "-H 'Content-Type: application/json'",
+            "-H 'X-ApiKey: {$this->apiKey}'",
+            "-d " . escapeshellarg($data_to_send),
+          );
+        }
+
+        $curlOpts[] = "--cacert '" . realpath(__DIR__ . '/cacert.crt') . "'";
+
         if ($this->proxy) {
           $curlOpts[] = "--proxy '" . $this->proxy . "'";
         }
