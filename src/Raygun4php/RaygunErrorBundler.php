@@ -57,6 +57,17 @@ namespace Raygun4php
       return count($this->getBundle()) >= $this->settings["maxBundleSize"] || $this->isBundleExpired();
     }
 
+    public function getFromStorage() {
+      if(isset($_SESSION) && isset($_SESSION["raygun_error_bundle"])) {
+        $sessionBundle = $_SESSION["raygun_error_bundle"];
+
+        if(is_array($sessionBundle) && !empty($sessionBundle)) {
+          return $sessionBundle;
+        }
+      }
+
+      return false;
+    }
     private function isBundleExpired() {
       return (time() - $this->startTime) > $this->settings["expiryInSeconds"];
     }

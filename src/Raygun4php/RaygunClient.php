@@ -344,18 +344,16 @@ namespace Raygun4php {
      */
 
     private function flushBundle() {
-      if(isset($_SESSION) && isset($_SESSION["raygun_error_bundle"])) {
-        $sessionBundle = $_SESSION["raygun_error_bundle"];
+      $bundle = $this->bundler->getFromStorage();
 
-        if(is_array($sessionBundle) && !empty($sessionBundle)) {
-          $this->bundler->setBundle($sessionBundle);
+      if(!empty($bundle)) {
+        $this->bundler->setBundle($bundle);
 
-          if(count($sessionBundle) === 1) {
-            $this->Send($sessionBundle[0]);
-          }
-          else {
-            $this->SendBundle($sessionBundle);
-          }
+        if(count($bundle) === 1) {
+          $this->Send($bundle[0]);
+        }
+        else {
+          $this->SendBundle($bundle);
         }
       }
     }
