@@ -459,7 +459,6 @@ namespace Raygun4php {
         if($this->settings["gzipBundle"]) {
 
           $curlOpts = array(
-            "-v",
             "-X POST", 
             "-d '{$data_to_send}'",
             "-H 'Content-Encoding: gzip'", 
