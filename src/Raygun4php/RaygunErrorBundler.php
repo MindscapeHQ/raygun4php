@@ -34,13 +34,17 @@ namespace Raygun4php
     }
 
     public function getJson() {
-      $json = json_encode($this->getBundle());
+      $bundle = $this->getBundle();
+
+      // Manually convert to JSON to prevent double-encoding
+      $bundleString = implode(",", $bundle);
+      $bundleString = "[{$bundleString}]";
 
       if($this->settings["gzipBundle"]) {
-        $json = gzcompress($json, $this->settings["gzipLevel"]);
+        $bundleString = gzcompress($bundleString, $this->settings["gzipLevel"]);
       }
 
-      return $json;
+      return $bundleString;
     }
 
     public function reset() {
