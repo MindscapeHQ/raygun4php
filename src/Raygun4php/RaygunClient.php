@@ -59,8 +59,9 @@ namespace Raygun4php {
     * @param bool $disableUserTracking If true, no user data is sent to the API
     * ---
     * @array $options 
+    * @param callable $beforeSendCallback A callable method to run before the error is sent to the API, with $message as a parameter
     * @param bool $bundleErrors If true, errors will be bundled and sent as a JSON object, useful for high traffic
-    * @param int $maxBundleSize The maximum number of errors to include in a bundle before sending. Maximum value is 100
+    * @param int $maxBundleSize The maximum number of errors to include in a bundle before sending. Maximum value is 100 if gzip is enabled, 10 if not enabled
     * @param bool $gzipBundle Gzip compress the JSON bundle before sending
     */
     public function __construct($key, $useAsyncSending = true, $debugSending = false, $disableUserTracking = false, $options = array())
@@ -78,7 +79,13 @@ namespace Raygun4php {
 
       $this->settings = array_merge($defaults, $options);
 
-      $maxBundleSize = min(100, $this->settings["maxBundleSize"]);
+      // If gzip is not enabled, set the maximum bundle size to 10 to avoid curl error (i.e. command becomes too large)
+      if($this->settings["gzipBundle"]) {
+        $this->settings["maxBundleSize"] = min(100, $this->settings["maxBundleSize"]);
+      }
+      else {
+        $this->settings["maxBundleSize"] = min(10, $this->settings["maxBundleSize"]);
+      }
 
       if($this->settings["bundleErrors"]) {
         $this->path = '/entries/bulk';
