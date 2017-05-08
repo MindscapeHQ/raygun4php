@@ -77,19 +77,16 @@ namespace Raygun4php {
         "gzipBundle" => false
       );
 
-      $settings = array_merge($defaults, $options);
+      $this->settings = array_merge($defaults, $options);
 
-      $this->beforeSendCallback = $settings["beforeSendCallback"];
-      $this->bundleErrors = $settings["bundleErrors"];
+      $maxBundleSize = min(100, $this->settings["maxBundleSize"]);
 
-      $maxBundleSize = min(100, $settings["maxBundleSize"]);
-
-      if($this->bundleErrors) {
+      if($this->settings["bundleErrors"]) {
         $this->path = '/entries/bulk';
 
         $this->bundler = new \Raygun4php\RaygunErrorBundler(array(
           "maxBundleSize" => $maxBundleSize,
-          "gzipBundle" => $settings["gzipBundle"]
+          "gzipBundle" => $this->settings["gzipBundle"]
         ));
 
         $this->flushBundle();
@@ -420,7 +417,7 @@ namespace Raygun4php {
       $message = $this->filterParamsFromMessage($message);
       $message = $this->toJsonRemoveUnicodeSequences($message);
 
-      if($this->bundleErrors) {
+      if($this->settings["bundleErrors"]) {
         $this->bundler->addMessage($message);
 
         if($this->bundler->isReadyToSend()) {
