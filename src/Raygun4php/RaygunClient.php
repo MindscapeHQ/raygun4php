@@ -63,6 +63,7 @@ namespace Raygun4php {
     * @param bool $bundleErrors If true, errors will be bundled and sent as a JSON object, useful for high traffic
     * @param int $maxBundleSize The maximum number of errors to include in a bundle before sending. Maximum value is 100 if gzip is enabled, 10 if not enabled
     * @param bool $gzipBundle Gzip compress the JSON bundle before sending
+    * @param bool $encodeData Whether to base64 encode data sent to the API
     * @param bool $writeToDisk Whether to write the bundle overflow to disk, if false, will use session storage if available
     */
     public function __construct($key, $useAsyncSending = true, $debugSending = false, $disableUserTracking = false, $options = array())
@@ -76,6 +77,7 @@ namespace Raygun4php {
         "bundleErrors" => false,
         "maxBundleSize" => 100,
         "gzipBundle" => true,
+        "encodeData" => true,
         "writeToDisk" => false
       );
 
@@ -479,7 +481,10 @@ namespace Raygun4php {
           );
         }
 
-        $curlOpts[] = "-H X-Base64Encoded: true";
+        if($this->settings["encodeData"]) {
+          $curlOpts[] = "-H 'X-Base64Encoded: true'";
+        }
+
         $curlOpts[] = "--cacert '" . realpath(__DIR__ . '/cacert.crt') . "'";
 
         if ($this->proxy) {
