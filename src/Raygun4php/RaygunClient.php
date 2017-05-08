@@ -492,10 +492,12 @@ namespace Raygun4php {
         }
 
         $transport = $this->transport === "ssl" ? "https" : "http";
-        $endpoint = "{$transport}://{$this->host}:{$this->port}{$this->path}";
+        $endpoint = "{$transport}://{$this->host}{$this->path}";
 
         $cmd = "curl " . implode(' ', $curlOpts) . " '{$endpoint}' > /dev/null 2>&1 &";
+
         exec($cmd, $output, $exit);
+        
         return $exit;
       }
       else
