@@ -476,6 +476,7 @@ namespace Raygun4php {
           );
         }
 
+        $curlOpts[] = "-H X-Base64Encoded: true";
         $curlOpts[] = "--cacert '" . realpath(__DIR__ . '/cacert.crt') . "'";
 
         if ($this->proxy) {
