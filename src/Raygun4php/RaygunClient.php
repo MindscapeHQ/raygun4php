@@ -462,7 +462,7 @@ namespace Raygun4php {
             "-X POST", 
             "-d '{$data_to_send}'",
             "-H 'Content-Encoding: gzip'", 
-            "-H 'Content-Type: application/gzip'",
+            "-H 'Content-Type: application/x-www-form-urlencoded'",
             "-H 'X-ApiKey: {$this->apiKey}'",
           );
 
