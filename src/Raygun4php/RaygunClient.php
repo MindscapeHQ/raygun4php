@@ -63,6 +63,7 @@ namespace Raygun4php {
     * @param bool $bundleErrors If true, errors will be bundled and sent as a JSON object, useful for high traffic
     * @param int $maxBundleSize The maximum number of errors to include in a bundle before sending. Maximum value is 100 if gzip is enabled, 10 if not enabled
     * @param bool $gzipBundle Gzip compress the JSON bundle before sending
+    * @param bool $writeToDisk Whether to write the bundle overflow to disk, if false, will use session storage if available
     */
     public function __construct($key, $useAsyncSending = true, $debugSending = false, $disableUserTracking = false, $options = array())
     {
@@ -74,7 +75,8 @@ namespace Raygun4php {
         "beforeSendCallback" => null,
         "bundleErrors" => false,
         "maxBundleSize" => 100,
-        "gzipBundle" => true
+        "gzipBundle" => true,
+        "writeToDisk" => false
       );
 
       $this->settings = array_merge($defaults, $options);

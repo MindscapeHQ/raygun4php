@@ -6,6 +6,8 @@ namespace Raygun4php
     private $bundle = array();
     private $settings = array();
     private $startTime;
+    private $storageFile;
+    private $writeToDisk;
 
     public function __construct($options = array()) {
       $defaults = array(
@@ -14,12 +16,15 @@ namespace Raygun4php
         "expiryInSeconds" => 60,
         "gzipBundle" => false,
         "gzipLevel" => 6,
-        "encodeData" => true
+        "encodeData" => true,
+        "writeToDisk" => false
       );
 
       $this->settings = array_merge($defaults, $options);
 
       $this->startTime = time();
+      $this->storageFile = $this->settings["storageFile"];
+      $this->writeToDisk = $this->settings["writeToDisk"];
     }
 
     public function getBundle() {
@@ -65,10 +70,10 @@ namespace Raygun4php
     }
 
     public function getFromStorage() {
-      $storageFile = $this->settings["storageFile"];
+      $storageFile = $this->storageFile;
       $sessionBundle = array();
 
-      if(file_exists($storageFile) && is_readable($storageFile)) {
+      if($this->writeToDisk && file_exists($storageFile) && is_readable($storageFile)) {
         $contents = file_get_contents($storageFile);
 
         if(!empty($contents)) {
@@ -86,11 +91,11 @@ namespace Raygun4php
     }
 
     private function setInStorage($message) {
-      // Save to disk to disk if possible
-      $storageFile = $this->settings["storageFile"];
+      $storageFile = $this->storageFile;
 
-      if(file_exists($storageFile) && is_writable($storageFile)) {
-        return file_put_contents($storageFile, "{$message}\n", FILE_APPEND | LOCK_EX);
+      // Save to disk to disk if possible
+      if($this->writeToDisk && file_exists($storageFile) && is_writable($storageFile)) {
+        return file_put_contents($storageFile, "{$message}\n", FILE_APPEND);
       }
       // Else store in session global
       else if(isset($_SESSION)){
@@ -105,13 +110,14 @@ namespace Raygun4php
     }
 
     private function resetStorage() {
-      $storageFile = $this->settings["storageFile"];
+      $storageFile = $this->storageFile;
 
-      if(file_exists($storageFile) && is_writable($storageFile)) {
+      if($this->writeToDisk && file_exists($storageFile) && is_writable($storageFile)) {
         return file_put_contents($storageFile, "");
       }
       else if(isset($_SESSION)) {
         $_SESSION["raygun_error_bundle"] = array();
+        return true;
       }
     }
 
