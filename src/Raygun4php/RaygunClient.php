@@ -461,7 +461,7 @@ namespace Raygun4php {
           $curlOpts = array(
             "-v",
             "-X POST", 
-            "-d \"{$data_to_send}\"",
+            "-d '{$data_to_send}'",
             "-H 'Content-Encoding: gzip'", 
             "-H 'Content-Type: application/gzip'",
             "-H 'X-ApiKey: {$this->apiKey}'",
