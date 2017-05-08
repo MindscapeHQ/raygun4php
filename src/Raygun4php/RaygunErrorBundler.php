@@ -9,6 +9,7 @@ namespace Raygun4php
 
     public function __construct($options = array()) {
       $defaults = array(
+        "storageFile" => realpath(__DIR__ . '/raygun_error_bundle.txt'),
         "maxBundleSize" => 100,
         "expiryInSeconds" => 60,
         "gzipBundle" => false,
@@ -31,7 +32,7 @@ namespace Raygun4php
 
     public function addMessage($message) {
       $this->bundle[] = $message;
-      $_SESSION["raygun_error_bundle"] = $this->bundle;
+      $this->setInStorage($message);
     }
 
     public function getJson() {
@@ -55,7 +56,8 @@ namespace Raygun4php
     public function reset() {
       $this->startTime = time();
       $this->setBundle(array());
-      $_SESSION["raygun_error_bundle"] = array();
+      $this->resetStorage();
+
     }
 
     public function isReadyToSend() {
@@ -63,19 +65,58 @@ namespace Raygun4php
     }
 
     public function getFromStorage() {
-      if(isset($_SESSION) && isset($_SESSION["raygun_error_bundle"])) {
-        $sessionBundle = $_SESSION["raygun_error_bundle"];
+      $storageFile = $this->settings["storageFile"];
+      $sessionBundle = array();
 
-        if(is_array($sessionBundle) && !empty($sessionBundle)) {
-          return $sessionBundle;
+      if(file_exists($storageFile) && is_readable($storageFile)) {
+        $contents = file_get_contents($storageFile);
+
+        if(!empty($contents)) {
+          $sessionBundle = explode("\n", $contents);
         }
       }
+      else if(isset($_SESSION) && !empty($_SESSION["raygun_error_bundle"])) {
+        $sessionBundle = $_SESSION["raygun_error_bundle"];
+      }
 
-      return false;
+      // Remove empty items from array
+      $sessionBundle = array_filter($sessionBundle);
+
+      return $sessionBundle;
     }
+
+    private function setInStorage($message) {
+      // Save to disk to disk if possible
+      $storageFile = $this->settings["storageFile"];
+
+      if(file_exists($storageFile) && is_writable($storageFile)) {
+        return file_put_contents($storageFile, "{$message}\n", FILE_APPEND | LOCK_EX);
+      }
+      // Else store in session global
+      else if(isset($_SESSION)){
+        if(!isset($_SESSION["raygun_error_bundle"])) {
+          $_SESSION["raygun_error_bundle"] = array();
+        }
+
+        $_SESSION["raygun_error_bundle"][] = $message;
+
+        return true;
+      }
+    }
+
+    private function resetStorage() {
+      $storageFile = $this->settings["storageFile"];
+
+      if(file_exists($storageFile) && is_writable($storageFile)) {
+        return file_put_contents($storageFile, "");
+      }
+      else if(isset($_SESSION)) {
+        $_SESSION["raygun_error_bundle"] = array();
+      }
+    }
+
     private function isBundleExpired() {
       return (time() - $this->startTime) > $this->settings["expiryInSeconds"];
     }
-
   }
 }

@@ -1,6 +1,5 @@
-<?php
+<?php 
 namespace Raygun4php {
-  session_start();
   require_once realpath(__DIR__ . '/RaygunMessage.php');
   require_once realpath(__DIR__ . '/RaygunIdentifier.php');
   require_once realpath(__DIR__ . '/Raygun4PhpException.php');
@@ -84,10 +83,7 @@ namespace Raygun4php {
       if($this->settings["bundleErrors"]) {
         $this->path = '/entries/bulk';
 
-        $this->bundler = new \Raygun4php\RaygunErrorBundler(array(
-          "maxBundleSize" => $maxBundleSize,
-          "gzipBundle" => $this->settings["gzipBundle"]
-        ));
+        $this->bundler = new \Raygun4php\RaygunErrorBundler($this->settings);
 
         $this->flushBundle();
       }
