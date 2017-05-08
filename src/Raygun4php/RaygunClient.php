@@ -74,7 +74,7 @@ namespace Raygun4php {
         "beforeSendCallback" => null,
         "bundleErrors" => false,
         "maxBundleSize" => 100,
-        "gzipBundle" => false
+        "gzipBundle" => true
       );
 
       $this->settings = array_merge($defaults, $options);
