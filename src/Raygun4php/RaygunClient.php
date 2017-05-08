@@ -49,6 +49,7 @@ namespace Raygun4php {
     private $transport = 'ssl';
     private $port = 443;
     private $bundleErrors = false;
+    private $settings;
 
     /*
     * Creates a new RaygunClient instance.
@@ -70,6 +71,7 @@ namespace Raygun4php {
       $this->debugSending = $debugSending;
 
       $defaults = array(
+        "beforeSendCallback" => null,
         "bundleErrors" => false,
         "maxBundleSize" => 100,
         "gzipBundle" => false
@@ -77,6 +79,7 @@ namespace Raygun4php {
 
       $settings = array_merge($defaults, $options);
 
+      $this->beforeSendCallback = $settings["beforeSendCallback"];
       $this->bundleErrors = $settings["bundleErrors"];
 
       $maxBundleSize = min(100, $settings["maxBundleSize"]);
@@ -89,21 +92,7 @@ namespace Raygun4php {
           "gzipBundle" => $settings["gzipBundle"]
         ));
 
-        // Flush any leftover messages stored in the session which weren't bundled
-        if(isset($_SESSION) && isset($_SESSION["raygun_error_bundle"])) {
-          $sessionBundle = $_SESSION["raygun_error_bundle"];
-
-          if(is_array($sessionBundle) && count($sessionBundle) > 0) {
-            $this->bundler->setBundle($sessionBundle);
-
-            if(count($sessionBundle) === 1) {
-              $this->Send($sessionBundle[0]);
-            }
-            else {
-              $this->SendBundle($sessionBundle);
-            }
-          }
-        }
+        $this->flushBundle();
       }
 
       if (!$disableUserTracking) {
@@ -349,10 +338,61 @@ namespace Raygun4php {
       return (bool)count(array_filter(array_keys($array), 'is_string'));
     }
 
+    /**
+     * flushBundle
+     *
+     * Flush any leftover messages stored in the global session which weren't bundled
+     *
+     * @return [void]
+     */
+
+    private function flushBundle() {
+      if(isset($_SESSION) && isset($_SESSION["raygun_error_bundle"])) {
+        $sessionBundle = $_SESSION["raygun_error_bundle"];
+
+        if(is_array($sessionBundle) && !empty($sessionBundle)) {
+          $this->bundler->setBundle($sessionBundle);
+
+          if(count($sessionBundle) === 1) {
+            $this->Send($sessionBundle[0]);
+          }
+          else {
+            $this->SendBundle($sessionBundle);
+          }
+        }
+      }
+    }
+
+    /**
+     * SendBundle
+     *
+     * - Get the current bundled data in memory as a JSON object
+     * - Reset the bundle in memory
+     * - Post data to the API
+     *
+     * @return [mixed] [Result of the post() method]
+     */
+
     private function SendBundle() {
       $dataToSend = $this->bundler->getJson();
       $this->bundler->reset();
       return $this->post($dataToSend, realpath(__DIR__ . '/cacert.crt'));
+    }
+
+    /**
+     * OnBeforeSend 
+     *
+     * Allow a callback to be called to manipulate the message before it gets sent to the API. 
+     *
+     * @param [RaygunMessage] $message [The message object]
+     * @param [string] $callback [User defined callable]
+     */
+    private function OnBeforeSend($message, $callback = null) {
+      if(is_callable($callback)) {
+        $message = $callback($message);
+      }
+
+      return $message;
     }
 
     /*
@@ -366,6 +406,12 @@ namespace Raygun4php {
      */
     public function Send($message)
     {
+      $message = $this->OnBeforeSend($message, $this->settings["beforeSendCallback"]);
+
+      if($message === false || empty($message)) {
+        return;
+      }
+
       if (empty($this->apiKey))
       {
         throw new \Raygun4php\Raygun4PhpException("API not valid, cannot send message to Raygun");
