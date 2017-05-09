@@ -274,6 +274,83 @@ $client->SetCookieOptions(array(
 ));
 ```
 
+## Error bundling
+
+Error bundling is useful for high traffic and high volumes of errors occurring. Rather than being sent immediately, errors will be sent only after a user-defined threshold has been reached.
+
+The maximum bundle size defaults to 100 with gzip enabled, or 10 with gzip disabled. This can be changed using the `maximumBundleSize` option.
+
+Any errors not sent during the current request can be stored either in session storage (if supported) or on disk to be sent immediately on the next request.
+
+Writing to disk can be toggled using the `writeToDisk` option. Default is false.
+
+### Enable error bundling
+
+```php
+$client = new \Raygun4php\RaygunClient(
+  $key = "API_KEY",
+  $useAsyncSending = true, 
+  $debugSending = true, 
+  $disableUserTracking = false, 
+  $options = array(
+    "bundleErrors" => true,     // Enable error bundling
+    "maximumBundleSize" => 20,  // Set maximum bundle size
+    "gzipBundle" => true,       // Set whether to gzip compress the bundle
+    "writeToDisk" => false      // Write any error messages which didn't send in the previous request to disk
+  )
+);
+```
+
+## Before send callback
+
+Specify a method to be called before the error message data is sent to the API. This method takes one required parameter `RaygunMessage $message`. The $message must be returned.
+
+### Procedural context
+
+```php
+function before_send_callback($message) {
+  // Manipulate the error message data ...
+  return $message;
+}
+
+$client = new \Raygun4php\RaygunClient(
+  $key = "API_KEY",
+  $useAsyncSending = true, 
+  $debugSending = true, 
+  $disableUserTracking = false, 
+  $options = array(
+    "beforeSendCallback" => "before_send_callback"
+  )
+);
+```
+
+### Class context
+
+```php 
+require_once 'vendor/autoload.php';
+
+class RaygunSetup {
+  private $client;
+
+  public function __construct() {
+    $this->client = new \Raygun4php\RaygunClient(
+      $key = "API_KEY",
+      $useAsyncSending = true, 
+      $debugSending = true, 
+      $disableUserTracking = false, 
+      $options = array(
+        "beforeSendCallback" => array($this, "before_send_callback")
+      )
+    );
+  }
+
+  function before_send_callback($message) {
+    // Manipulate the error message data ...
+    return $message;
+  }
+}
+```
+
 ## Troubleshooting
 
 As above, enable debug mode by instantiating the client with
