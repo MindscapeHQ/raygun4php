@@ -61,25 +61,25 @@ namespace
 	{
 		global $client;
 		$client->SendException($exception);
-	}
-
-  function fatal_error()
-  {
-    global $client;
-    $last_error = error_get_last();
-
-    if (!is_null($last_error)) {
-      $errno = $last_error['type'];
-      $errstr = $last_error['message'];
-      $errfile = $last_error['file'];
-      $errline = $last_error['line'];
-      $client->SendError($errno, $errstr, $errfile, $errline);
     }
-  }
 
-	set_exception_handler('exception_handler');
-	set_error_handler("error_handler");
-  register_shutdown_function("fatal_error");
+    function fatal_error()
+    {
+        global $client;
+        $last_error = error_get_last();
+
+        if (!is_null($last_error)) {
+          $errno = $last_error['type'];
+          $errstr = $last_error['message'];
+          $errfile = $last_error['file'];
+          $errline = $last_error['line'];
+          $client->SendError($errno, $errstr, $errfile, $errline);
+        }
+    }
+
+    set_exception_handler('exception_handler');
+    set_error_handler("error_handler");
+    register_shutdown_function("fatal_error");
 }
 ```
 
@@ -287,6 +287,23 @@ This will echo the HTTP response code. Check the list above, and create an issue
 ### 400 from command-line Posix environments
 
 If, when running a PHP script from the command line on *nix operating systems, you receive a '400 Bad Request' error (when debug mode is enabled), check to see if you have any LESS_TERMCAP environment variables set. These are not compatible with the current version of Raygun4PHP. As a workaround, unset these variables before your script runs, then reset them afterwards.
+
+
+### Error Control Operators (@)
+
+If you are using the setup as described above errors will be send to Raygun regardless of any lines prepended with an error control operator (the @ symbol). To stop these errors from being sent to Raygun you can call PHP's [error_reporting](http://php.net/manual/en/function.error-reporting.php) method which return 0 if the triggered error was preceded by an @ symbol.
+
+_Error handler example:_
+```php
+function error_handler($errno, $errstr, $errfile, $errline ) {
+    global $client;
+    if(error_reporting() !== 0) {
+        $client->SendError($errno, $errstr, $errfile, $errline);
+    }
+}
+```
+
+See the [Error Control Operators section on PHP.net](http://php.net/manual/en/language.operators.errorcontrol.php) for more information  
 
 ## Changelog
 
