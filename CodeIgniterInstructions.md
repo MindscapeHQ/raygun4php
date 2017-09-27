@@ -13,7 +13,7 @@ $config['enable_hooks'] = TRUE;
 ### Step 3: Create the file: `/application/hooks/RaygunSetup.php` with the following content:
 
 ```
-namespace
+<?php namespace
 {
     require_once 'vendor/autoload.php';
 
