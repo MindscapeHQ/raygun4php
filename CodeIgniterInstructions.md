@@ -15,7 +15,7 @@ $config['enable_hooks'] = TRUE;
 ```
 <?php namespace
 {
-    require_once 'vendor/autoload.php';
+    require_once FCPATH . 'vendor/autoload.php';
 
     class RaygunSetup {
         private $client;
