@@ -322,8 +322,13 @@ namespace Raygun4php {
 
       $message = $this->filterParamsFromMessage($message);
       $message = $this->toJsonRemoveUnicodeSequences($message);
+      $message = str_replace("\0", '', $message);
 
-      return $this->post($message, realpath(__DIR__ . '/cacert.crt'));
+      if(strlen($message) <= 0) {
+        return null;
+      }
+
+      return $this->post($filtered_message, realpath(__DIR__ . '/cacert.crt'));
     }
 
     private function post($data_to_send, $cert_path)
