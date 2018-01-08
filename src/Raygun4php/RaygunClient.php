@@ -328,7 +328,7 @@ namespace Raygun4php {
         return null;
       }
 
-      return $this->post($filtered_message, realpath(__DIR__ . '/cacert.crt'));
+      return $this->post($message, realpath(__DIR__ . '/cacert.crt'));
     }
 
     private function post($data_to_send, $cert_path)
