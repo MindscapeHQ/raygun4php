@@ -322,6 +322,11 @@ namespace Raygun4php {
 
       $message = $this->filterParamsFromMessage($message);
       $message = $this->toJsonRemoveUnicodeSequences($message);
+      $message = $this->removeNullBytes($message);
+
+      if(strlen($message) <= 0) {
+        return null;
+      }
 
       return $this->post($message, realpath(__DIR__ . '/cacert.crt'));
     }
@@ -412,6 +417,10 @@ namespace Raygun4php {
 
     function toJsonRemoveUnicodeSequences($struct) {
       return preg_replace_callback("/\\\\u([a-f0-9]{4})/", function($matches){ return iconv('UCS-4LE','UTF-8',pack('V', hexdec("U$matches[1]"))); }, json_encode($struct));
+    }
+
+    function removeNullBytes($string) {
+      return str_replace("\0", '', $string);
     }
 
     /**
