@@ -20,7 +20,7 @@ namespace Raygun4php {
     protected $uuid;
     protected $httpData;
     protected $useAsyncSending;
-    protected $debugSending;
+    protected $debug;
     protected $disableUserTracking;
     protected $proxy;
 
@@ -52,14 +52,14 @@ namespace Raygun4php {
     * @param bool $useAsyncSending If true, attempts to post rapidly and asynchronously the script by forking a cURL process.
     * RaygunClient cannot return the HTTP result when in async mode, however. If false, sends using a blocking socket connection.
     * This is the only method available on Windows.
-    * @param bool $debugSending If true, and $useAsyncSending is true, this will output the HTTP response code from posting
+    * @param bool $debug If true, and $useAsyncSending is true, this will output the HTTP response code from posting. Will also emit errors if the socket connection fails to send through errors.
     * error messages. See the GitHub documentation for code meaning. This param does nothing if useAsyncSending is set to true.
     */
-    public function __construct($key, $useAsyncSending = true, $debugSending = false, $disableUserTracking = false)
+    public function __construct($key, $useAsyncSending = true, $debug = false, $disableUserTracking = false)
     {
       $this->apiKey = $key;
       $this->useAsyncSending = $useAsyncSending;
-      $this->debugSending = $debugSending;
+      $this->debug = $debug;
 
       if (!$disableUserTracking) {
         $this->SetUser();
@@ -333,25 +333,6 @@ namespace Raygun4php {
 
     private function post($data_to_send, $cert_path)
     {
-      $headers = 0;
-      $remote = $this->transport . '://' . $this->host . ':' . $this->port;
-
-      $context = stream_context_create();
-      $result = stream_context_set_option($context, 'ssl', 'verify_host', true);
-
-      if (!empty($cert_path))
-      {
-        $result = stream_context_set_option($context, 'ssl', 'cafile', $cert_path);
-        $result = stream_context_set_option($context, 'ssl', 'verify_peer', true);
-      }
-      else
-      {
-        $result = stream_context_set_option($context, 'ssl', 'allow_self_signed', true);
-      }
-
-      if ($this->proxy) {
-        $result = stream_context_set_option($context, 'http', 'proxy', $this->proxy);
-      }
 
       if ($this->useAsyncSending && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN')
       {
@@ -371,6 +352,24 @@ namespace Raygun4php {
       }
       else
       {
+        $remote = $this->transport . '://' . $this->host . ':' . $this->port;
+        $context = stream_context_create();
+        $result = stream_context_set_option($context, 'ssl', 'verify_host', true);
+
+        if (!empty($cert_path))
+        {
+          $result = stream_context_set_option($context, 'ssl', 'cafile', $cert_path);
+          $result = stream_context_set_option($context, 'ssl', 'verify_peer', true);
+        }
+        else
+        {
+          $result = stream_context_set_option($context, 'ssl', 'allow_self_signed', true);
+        }
+
+        if ($this->proxy) {
+          $result = stream_context_set_option($context, 'http', 'proxy', $this->proxy);
+        }
+
         $fp = stream_socket_client($remote, $err, $errstr, 10, STREAM_CLIENT_CONNECT, $context);
 
         if ($fp)
@@ -386,7 +385,7 @@ namespace Raygun4php {
           fwrite($fp, $data_to_send);
 
           $response = "";
-          if ($this->debugSending)
+          if ($this->debug)
           {
             while(!preg_match("/^HTTP\/[\d\.]* (\d{3})/", $response))
             {
@@ -406,9 +405,11 @@ namespace Raygun4php {
         }
         else
         {
-          $errMsg = "<br/><br/>" . "<strong>Raygun Warning:</strong> Couldn't send asynchronously. ";
-          $errMsg .= "Try calling new RaygunClient('apikey', FALSE); to use an alternate sending method, or RaygunClient('key', FALSE, TRUE) to echo the HTTP response" . "<br/><br/>";
-          echo $errMsg;
+          if($this->debug) {
+            $errMsg = "<br/><br/>" . "<strong>Raygun Warning:</strong> Couldn't send asynchronously. ";
+            $errMsg .= "Try calling new RaygunClient('apikey', FALSE); to use an alternate sending method, or RaygunClient('key', FALSE, TRUE) to echo the HTTP response" . "<br/><br/>";
+            echo $errMsg;
+          }
           trigger_error('httpPost error: ' . $errstr);
           return null;
         }
