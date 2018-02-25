@@ -347,6 +347,8 @@ namespace Raygun4php {
           $curlOpts[] = "--proxy '" . $this->proxy . "'";
         }
         $cmd = "curl " . implode(' ', $curlOpts) . " 'https://api.raygun.io:443/entries' > /dev/null 2>&1 &";
+        $output = array();
+        $exit;
         exec($cmd, $output, $exit);
         return $exit;
       }
