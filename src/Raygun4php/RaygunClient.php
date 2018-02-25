@@ -408,8 +408,9 @@ namespace Raygun4php {
         else
         {
           if($this->debug) {
-            $errMsg = "<br/><br/>" . "<strong>Raygun Warning:</strong> Couldn't send asynchronously. ";
-            $errMsg .= "Try calling new RaygunClient('apikey', FALSE); to use an alternate sending method, or RaygunClient('key', FALSE, TRUE) to echo the HTTP response" . "<br/><br/>";
+            $errMsg = "<br/><br/>" . "<strong>Raygun Warning:</strong> Couldn't send error. ";
+            $errMsg .= "Error number: " . $errno . "<br/><br/>";
+            $errMsg .= "Error string: " . $errstr . "<br/><br/>";
             echo $errMsg;
           }
           trigger_error('httpPost error: ' . $errstr);
