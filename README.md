@@ -306,8 +306,8 @@ function error_handler($errno, $errstr, $errfile, $errline ) {
 See the [Error Control Operators section on PHP.net](http://php.net/manual/en/language.operators.errorcontrol.php) for more information  
 
 ## Changelog
-
-- 1.8.1: Fix issue with error being raised with null bytes send with escapeshellarg method 
+- 1.8.2: No longer output warning when a socket connection fails 
+- 1.8.1: Fix issue with error being raised with null bytes send with escapeshellarg method
 - 1.8.0: Bugfix with multiple cookies being set. Cookie options can be set via the setCookieOptions method
 - 1.7.1: Fixed illegal string offset
 - 1.7.0: Added custom error grouping
