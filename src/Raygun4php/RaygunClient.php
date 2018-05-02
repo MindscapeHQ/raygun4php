@@ -74,6 +74,24 @@ namespace Raygun4php {
     }
 
     /**
+     * @param bool $disableUserTracking True to disable user tracking
+     * @return $this
+     */
+    public function setDisableUserTracking($disableUserTracking)
+    {
+        $this->disableUserTracking = $disableUserTracking;
+        return $this;
+    }
+
+    /**
+     * @return bool Returns true if user tracking is disabled
+     */
+    public function getDisableUserTracking()
+    {
+        return $this->disableUserTracking;
+    }
+
+    /**
      * Transmits an error to the Raygun.io API
      *
      * @param int    $errno          The error number
