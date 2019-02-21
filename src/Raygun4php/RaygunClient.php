@@ -36,7 +36,7 @@ namespace Raygun4php {
     );
 
     /**
-     * @var Array Parameter names to filter out of logged form data. Case insensitive.
+     * @var array Parameter names to filter out of logged form data. Case insensitive.
      * Accepts regular expressions when the name starts with a forward slash.
      * Maps either to TRUE, or to a callable with $key and $value arguments.
      */
@@ -489,7 +489,7 @@ namespace Raygun4php {
     }
 
     /**
-     * @param Array $params
+     * @param array $params
      * @return Raygun4php\RaygunClient
      */
     function setFilterParams($params) {
@@ -498,7 +498,7 @@ namespace Raygun4php {
     }
 
     /**
-     * @return Array
+     * @return array
      */
     function getFilterParams() {
       return $this->filterParams;
