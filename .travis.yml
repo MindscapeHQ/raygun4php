@@ -5,7 +5,7 @@ php:
   - 5.5
   - 7.0
 
-before_script:
+install:
   - composer install --prefer-source --no-interaction --no-progress
 
 script: 'vendor/bin/phpunit tests'
