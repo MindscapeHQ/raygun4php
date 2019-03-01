@@ -1,9 +1,10 @@
 <?php
-namespace Raygun4php
+
+namespace Raygun4php;
+
+class RaygunIdentifier
 {
-	class RaygunIdentifier
-	{
-		public $Identifier;
+    public $Identifier;
 
     public $FirstName;
 
@@ -15,14 +16,19 @@ namespace Raygun4php
 
     public $Uuid;
 
-		public function __construct($id, $firstName = null, $fullName = null, $email = null, $isAnonymous = null, $uuid = null)
-		{
-			$this->Identifier = $id;
-      $this->FirstName = $firstName;
-      $this->FullName = $fullName;
-      $this->Email = $email;
-      $this->IsAnonymous = $isAnonymous;
-      $this->Uuid = $uuid;
-		}
-	}
+    public function __construct(
+        $id,
+        $firstName = null,
+        $fullName = null,
+        $email = null,
+        $isAnonymous = null,
+        $uuid = null
+    ) {
+        $this->Identifier = $id;
+        $this->FirstName = $firstName;
+        $this->FullName = $fullName;
+        $this->Email = $email;
+        $this->IsAnonymous = $isAnonymous;
+        $this->Uuid = $uuid;
+    }
 }

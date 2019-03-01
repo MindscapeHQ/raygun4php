@@ -1,184 +1,199 @@
 <?php
 
-class RaygunClientTest extends PHPUnit_Framework_TestCase
+namespace Raygun4php\Tests;
+
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use Raygun4php\RaygunClient;
+use Raygun4php\RaygunMessage;
+use Raygun4php\RaygunRequestMessage;
+
+class RaygunClientTest extends TestCase
 {
+    /**
+     * @expectedException \Raygun4php\Raygun4PhpException
+     * @expectedExceptionMessage API not valid, cannot send message to Raygun
+     */
+    public function testSendReturns403WithInvalidApiKey()
+    {
+        $client = new RaygunClient("", true);
+        $client->SendException(new \Exception(''));
+    }
 
-  /**
-   * @expectedException \Raygun4php\Raygun4PhpException
-   * @expectedExceptionMessage API not valid, cannot send message to Raygun
-   */
-  public function testSendReturns403WithInvalidApiKey()
-  {
-    $client = new \Raygun4php\RaygunClient("", true);
-    $client->SendException(new Exception(''));
-  }
+    public function testGetFilteredParamsRemovesByKey()
+    {
+        $client = new RaygunClient("some-api-key", true);
+        $client->setFilterParams(array(
+            'MyParam' => true
+        ));
+        $message = $this->getEmptyMessage();
+        $message->Details->Request->Form = array(
+            'MyParam' => 'secret',
+        );
+        $message->Details->Request->Headers = array(
+            'MyParam' => 'secret',
+        );
+        $message->Details->Request->Data = array(
+            'MyParam' => 'secret',
+        );
 
-  public function testGetFilteredParamsRemovesByKey() {
-    $client = new \Raygun4php\RaygunClient("some-api-key", true);
-    $client->setFilterParams(array(
-        'MyParam' => true
-    ));
-    $message = $this->getEmptyMessage();
-    $message->Details->Request->Form = array(
-        'MyParam' => 'secret',
-    );
-    $message->Details->Request->Headers = array(
-        'MyParam' => 'secret',
-    );
-    $message->Details->Request->Data = array(
-        'MyParam' => 'secret',
-    );
+        $filteredMessage = $client->filterParamsFromMessage($message);
+        $this->assertEquals(
+            $filteredMessage->Details->Request->Form,
+            array('MyParam' => '[filtered]',)
+        );
+        $this->assertEquals(
+            $filteredMessage->Details->Request->Headers,
+            array('MyParam' => '[filtered]',)
+        );
+        $this->assertEquals(
+            $filteredMessage->Details->Request->Data,
+            array('MyParam' => '[filtered]',)
+        );
+    }
 
-    $filteredMessage = $client->filterParamsFromMessage($message);
-    $this->assertEquals(
-        $filteredMessage->Details->Request->Form,
-        array('MyParam' => '[filtered]',)
-    );
-    $this->assertEquals(
-        $filteredMessage->Details->Request->Headers,
-        array('MyParam' => '[filtered]',)
-    );
-    $this->assertEquals(
-        $filteredMessage->Details->Request->Data,
-        array('MyParam' => '[filtered]',)
-    );
-  }
+    public function testGetFilteredParamsIgnoresCase()
+    {
+        $client = new RaygunClient("some-api-key", true);
+        $client->setFilterParams(array('myparam' => true));
+        $message = $this->getEmptyMessage();
+        $message->Details->Request->Form = array('MyParam' => 'secret',);
 
-  public function testGetFilteredParamsIgnoresCase() {
-    $client = new \Raygun4php\RaygunClient("some-api-key", true);
-    $client->setFilterParams(array('myparam' => true));
-    $message = $this->getEmptyMessage();
-    $message->Details->Request->Form = array('MyParam' => 'secret',);
+        $filteredMessage = $client->filterParamsFromMessage($message);
+        $this->assertEquals(
+            $filteredMessage->Details->Request->Form,
+            array('MyParam' => '[filtered]',)
+        );
+    }
 
-    $filteredMessage = $client->filterParamsFromMessage($message);
-    $this->assertEquals(
-        $filteredMessage->Details->Request->Form,
-        array('MyParam' => '[filtered]',)
-    );
-  }
+    public function testGetFilteredParamsAcceptsCustomFunctions()
+    {
+        $client = new RaygunClient("some-api-key", true);
+        $client->setFilterParams(array(
+            'MyParam' => function ($key, $val) {
+                return strrev($val);
+            },
+        ));
+        $message = $this->getEmptyMessage();
+        $message->Details->Request->Form = array(
+            'MyParam' => 'secret',
+        );
 
-  public function testGetFilteredParamsAcceptsCustomFunctions() {
-    $client = new \Raygun4php\RaygunClient("some-api-key", true);
-    $client->setFilterParams(array(
-        'MyParam' => function($key, $val) {return strrev($val);},
-    ));
-    $message = $this->getEmptyMessage();
-    $message->Details->Request->Form = array(
-        'MyParam' => 'secret',
-    );
+        $filteredMessage = $client->filterParamsFromMessage($message);
+        $this->assertEquals(
+            $filteredMessage->Details->Request->Form,
+            array(
+                'MyParam' => 'terces',
+            )
+        );
+    }
 
-    $filteredMessage = $client->filterParamsFromMessage($message);
-    $this->assertEquals(
-        $filteredMessage->Details->Request->Form,
-        array(
-            'MyParam' => 'terces',
-        )
-    );
-  }
+    public function testGetFilteredParamsRemovesRawData()
+    {
+        $client = new RaygunClient("some-api-key", true);
+        $message = $this->getEmptyMessage();
+        $message->Details->Request->RawData = 'some-data';
 
-  public function testGetFilteredParamsRemovesRawData() {
-    $client = new \Raygun4php\RaygunClient("some-api-key", true);
-    $message = $this->getEmptyMessage();
-    $message->Details->Request->RawData = 'some-data';
+        $filteredMessage = $client->filterParamsFromMessage($message);
+        $this->assertEquals($filteredMessage->Details->Request->RawData, 'some-data');
 
-    $filteredMessage = $client->filterParamsFromMessage($message);
-    $this->assertEquals($filteredMessage->Details->Request->RawData, 'some-data');
+        $client->setFilterParams(array('MySensitiveParam' => true));
+        $filteredMessage = $client->filterParamsFromMessage($message);
+        $this->assertNull($filteredMessage->Details->Request->RawData);
+    }
 
-    $client->setFilterParams(array('MySensitiveParam' => true));
-    $filteredMessage = $client->filterParamsFromMessage($message);
-    $this->assertNull($filteredMessage->Details->Request->RawData);
-  }
-
-  public function testGetFilteredParamsParsesRegex() {
-    $client = new \Raygun4php\RaygunClient("some-api-key", true);
-    $client->setFilterParams(array('/MyRegex.*/' => true,));
-    $message = $this->getEmptyMessage();
-    $message->Details->Request->Form = array(
-        'MyParam' => 'some val',
-        'MyRegexParam' => 'secret',
-    );
-
-    $filteredMessage = $client->filterParamsFromMessage($message);
-    $this->assertEquals(
-        $filteredMessage->Details->Request->Form,
-        array(
+    public function testGetFilteredParamsParsesRegex()
+    {
+        $client = new RaygunClient("some-api-key", true);
+        $client->setFilterParams(array('/MyRegex.*/' => true,));
+        $message = $this->getEmptyMessage();
+        $message->Details->Request->Form = array(
             'MyParam' => 'some val',
-            'MyRegexParam' => '[filtered]',
-        )
-    );
-  }
+            'MyRegexParam' => 'secret',
+        );
 
-  protected function getEmptyMessage() {
-    $requestMessage = new Raygun4php\RaygunRequestMessage();
-    $requestMessage->HostName = null;
-    $requestMessage->Url = null;
-    $requestMessage->HttpMethod = null;
-    $requestMessage->IpAddress = null;
-    $requestMessage->QueryString = null;
-    $requestMessage->Headers = null;
-    $requestMessage->Data = null;
-    $requestMessage->RawData = null;
-    $requestMessage->Form = null;
-    $message = new Raygun4php\RaygunMessage(0);
-    $message->Details->Request = $requestMessage;
+        $filteredMessage = $client->filterParamsFromMessage($message);
+        $this->assertEquals(
+            $filteredMessage->Details->Request->Form,
+            array(
+                'MyParam' => 'some val',
+                'MyRegexParam' => '[filtered]',
+            )
+        );
+    }
 
-    return $message;
-  }
+    protected function getEmptyMessage()
+    {
+        $requestMessage = new RaygunRequestMessage();
+        $requestMessage->HostName = null;
+        $requestMessage->Url = null;
+        $requestMessage->HttpMethod = null;
+        $requestMessage->IpAddress = null;
+        $requestMessage->QueryString = null;
+        $requestMessage->Headers = null;
+        $requestMessage->Data = null;
+        $requestMessage->RawData = null;
+        $requestMessage->Form = null;
+        $message = new RaygunMessage(0);
+        $message->Details->Request = $requestMessage;
 
-  public function testToJsonRemoveUnicodeSequences()
-  {
-    $client = new \Raygun4php\RaygunClient('foo');
+        return $message;
+    }
 
-    $data = array(
-      'bar' => 'baz',
-    );
+    public function testToJsonRemoveUnicodeSequences()
+    {
+        $client = new RaygunClient('foo');
 
-    $this->assertJson(
-      json_encode($data),
-      $client->toJsonRemoveUnicodeSequences($data)
-    );
-  }
+        $data = array(
+            'bar' => 'baz',
+        );
 
-  public function testFilterParamsFromMessage()
-  {
-    $client = new \Raygun4php\RaygunClient('foo');
+        $this->assertJson(
+            json_encode($data),
+            $client->toJsonRemoveUnicodeSequences($data)
+        );
+    }
 
-    $message = $this->getMockBuilder('Raygun4php\RagunMessage')->getMock();
+    public function testFilterParamsFromMessage()
+    {
+        $client = new RaygunClient('foo');
 
-    $this->assertSame(
-      $message,
-      $client->filterParamsFromMessage($message)
-    );
-  }
+        /** @var RaygunMessage&MockObject $message */
+        $message = $this->getMockBuilder(RaygunMessage::class)->getMock();
 
-  public function testCanSetAndFilterParams()
-  {
-    $client = new \Raygun4php\RaygunClient('foo');
+        $this->assertSame(
+            $message,
+            $client->filterParamsFromMessage($message)
+        );
+    }
 
-    $params = array(
-      'bar' => 'baz',
-    );
+    public function testCanSetAndFilterParams()
+    {
+        $client = new RaygunClient('foo');
 
-    $client->setFilterParams($params);
+        $params = array(
+            'bar' => 'baz',
+        );
 
-    $this->assertSame(
-      $params,
-      $client->getFilterParams()
-    );
-  }
+        $client->setFilterParams($params);
 
-  public function testCanSetAndGetProxy()
-  {
-    $client = new \Raygun4php\RaygunClient('foo');
+        $this->assertSame(
+            $params,
+            $client->getFilterParams()
+        );
+    }
 
-    $proxy = 'bar';
+    public function testCanSetAndGetProxy()
+    {
+        $client = new RaygunClient('foo');
 
-    $client->setProxy($proxy);
+        $proxy = 'bar';
 
-    $this->assertSame(
-      $proxy,
-      $client->getProxy()
-    );
-  }
+        $client->setProxy($proxy);
+
+        $this->assertSame(
+            $proxy,
+            $client->getProxy()
+        );
+    }
 }
-?>

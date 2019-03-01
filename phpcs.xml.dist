@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="Raygun4php">
+    <!-- base rules are PSR-12 -->
+    <rule ref="PSR12" >
+        <!-- Current exclusions -->
+        <exclude name="PSR1.Methods.CamelCapsMethodName.NotCamelCaps" />
+    </rule>
+</ruleset>
