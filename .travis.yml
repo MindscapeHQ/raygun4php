@@ -5,6 +5,10 @@ php:
   - 5.5
   - 7.0
 
+cache:
+  directories:
+    - $HOME/.composer/cache
+
 install:
   - composer install
 
