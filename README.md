@@ -1,7 +1,7 @@
 Raygun4PHP
 ==========
 
-[Raygun.com](http://raygun.com) provider for PHP 5.3+
+[Raygun.com](http://raygun.com) provider for PHP 5.4+
 
 [![Build
 Status](https://secure.travis-ci.org/MindscapeHQ/raygun4php.png?branch=master)](http://travis-ci.org/MindscapeHQ/raygun4php)
