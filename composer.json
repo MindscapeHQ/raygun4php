@@ -2,14 +2,21 @@
     "name": "mindscape/raygun4php",
     "type": "library",
     "description": "Raygun.io client for sending errors and exceptions automatically.",
-    "authors": [{
-        "name": "Mindscape",
-        "email": "contact@mindscape.co.nz",
-        "homepage": "http://www.mindscapehq.com"
-        }],
+    "keywords": [
+        "raygun",
+        "errors",
+        "exceptions",
+        "logging"
+    ],
     "homepage": "http://raygun.io",
-    "keywords": ["raygun", "errors", "exceptions", "logging"],
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Mindscape",
+            "email": "contact@mindscape.co.nz",
+            "homepage": "http://www.mindscapehq.com"
+        }
+    ],
     "require": {
         "php": ">=5.4.0"
     },
@@ -19,14 +26,14 @@
     "suggest": {
         "ext-curl": "*"
     },
-    "autoload": {
-        "psr-0": {
-            "Raygun4php": "src/"
-        }
-    },
     "extra": {
         "branch-alias": {
             "dev-master": "2.x-dev"
+        }
+    },
+    "autoload": {
+        "psr-0": {
+            "Raygun4php": "src/"
         }
     }
 }
