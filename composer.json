@@ -23,5 +23,10 @@
         "psr-0": {
             "Raygun4php": "src/"
         }
+    },
+    "extra": {
+        "branch-alias": {
+            "1.x-dev": "1.9.x-dev"
+        }
     }
 }
