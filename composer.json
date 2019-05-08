@@ -35,5 +35,8 @@
         "psr-0": {
             "Raygun4php": "src/"
         }
+    },
+    "config": {
+        "preferred-install": "dist"
     }
 }
