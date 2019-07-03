@@ -33,7 +33,7 @@
     },
     "autoload": {
         "psr-0": {
-            "Raygun4php": "src/"
+            "Raygun4php\\": "src/"
         }
     },
     "config": {
