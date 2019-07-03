@@ -102,7 +102,7 @@ namespace Raygun4php {
      * @param array  $userCustomData An optional associative array that can be used to place custom key-value
      * @param int    $timestamp      Current Unix timestamp in the local timezone, used to set when an error occurred.
      *                               data in the message payload
-     * @return The HTTP status code of the result when transmitting the message to Raygun.io
+     * @return int The HTTP status code of the result when transmitting the message to Raygun.io
      */
     public function SendError($errno, $errstr, $errfile, $errline, $tags = null, $userCustomData = null, $timestamp = null)
     {
@@ -132,7 +132,7 @@ namespace Raygun4php {
      *                                   data in the message payload
      * @param int        $timestamp      Current Unix timestamp in the local timezone, used to set when an exception
      *                                   occurred.
-     * @return The HTTP status code of the result when transmitting the message to Raygun.io
+     * @return int The HTTP status code of the result when transmitting the message to Raygun.io
      */
     public function SendException($exception, $tags = null, $userCustomData = null, $timestamp = null)
     {
@@ -298,14 +298,11 @@ namespace Raygun4php {
      */
     private function AddTags(&$message, $tags)
     {
-      if (is_array($tags))
-      {
-        $message->Details->Tags = $tags;
-      }
-      else
+      if (!is_array($tags))
       {
         throw new \Raygun4php\Raygun4PhpException("Tags must be an array");
       }
+      $message->Details->Tags = $tags;
     }
 
     private function AddUserCustomData(&$message, $userCustomData)
@@ -342,7 +339,7 @@ namespace Raygun4php {
      * This is a lower level function used by SendException and SendError and one of those should be used preferrably.
      *
      * @param \Raygun4php\RaygunMessage $message A populated message to be posted to the Raygun API
-     * @return int The HTTP status code of the result after transmitting the message to Raygun.io
+     * @return int|null The HTTP status code of the result after transmitting the message to Raygun.io
      *                                          202 if accepted, 403 if invalid JSON payload
      * @throws Raygun4PhpException
      */
@@ -381,7 +378,7 @@ namespace Raygun4php {
         }
         $cmd = "curl " . implode(' ', $curlOpts) . " 'https://api.raygun.io:443/entries' > /dev/null 2>&1 &";
         $output = array();
-        $exit;
+        $exit = 0;
         exec($cmd, $output, $exit);
         return $exit;
       }
@@ -405,7 +402,7 @@ namespace Raygun4php {
           $result = stream_context_set_option($context, 'http', 'proxy', $this->proxy);
         }
 
-        $fp = stream_socket_client($remote, $err, $errstr, 10, STREAM_CLIENT_CONNECT, $context);
+        $fp = stream_socket_client($remote, $errno, $errstr, 10, STREAM_CLIENT_CONNECT, $context);
 
         if ($fp)
         {
@@ -540,8 +537,8 @@ namespace Raygun4php {
     /**
      * Use a proxy for sending HTTP requests to Raygun.
      *
-     * @param String $url URL including protocol and an optional port, e.g. http://myproxy:8080
-     * @return $this
+     * @param string $proxy URL including protocol and an optional port, e.g. http://myproxy:8080
+     * @return self
      */
     function setProxy($proxy) {
       $this->proxy = $proxy;
