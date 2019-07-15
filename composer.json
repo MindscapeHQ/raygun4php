@@ -34,9 +34,6 @@
     "autoload": {
         "psr-0": {
             "Raygun4php\\": "src/"
-        },
-        "psr-4": {
-            "Raygun4Php\\Rhumsaa\\Uuid\\": "src/Raygun4php/"
         }
     },
     "config": {
