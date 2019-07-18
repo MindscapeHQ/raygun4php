@@ -111,7 +111,7 @@ namespace Raygun4php
 
         private function GetClassName()
         {
-            $fp = fopen($this->fileName, 'r');
+            $fp = fopen($this->FileName, 'r');
             $class = $namespace = $buffer = '';
             $i = 0;
             while (!$class) {
