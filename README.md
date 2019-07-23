@@ -20,7 +20,7 @@ Composer is a package management tool for PHP which automatically fetches depend
 ```json
 {
         "require": {
-            "mindscape/raygun4php": "1.*"
+            "mindscape/raygun4php": "^1.0"
         }
 }
 ```
@@ -306,6 +306,7 @@ function error_handler($errno, $errstr, $errfile, $errline ) {
 See the [Error Control Operators section on PHP.net](http://php.net/manual/en/language.operators.errorcontrol.php) for more information  
 
 ## Changelog
+- 1.8.4: PHPUnit and configuration updates, PHPDoc fixes, and a fixed null pointer exception accessing user ID from cookies
 - 1.8.3: Remove the `--dev` option for composer installations as it's now deprecated
 - 1.8.2: No longer output warning when a socket connection fails
 - 1.8.1: Fix issue with error being raised with null bytes send with escapeshellarg method
