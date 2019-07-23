@@ -75,7 +75,7 @@ namespace Raygun4php
                     $raw = substr($raw, 0, 4095);
                   }
 
-                  $this->RawData = iconv('UTF-8', 'UTF-8//IGNORE', $raw);
+                  $this->RawData = mb_convert_encoding($raw, 'UTF-8', 'UTF-8');
                 }
             }
         }

@@ -26,5 +26,15 @@ class RaygunMessageTest extends PHPUnit_Framework_TestCase
 
     $this->assertEquals($msg->Details->Error->Message, 'Exception: test');
   }
+
+  public function testBuildMessageWithNestedException()
+  {
+    $msg = new \Raygun4php\RaygunMessage();
+
+    $msg->Build(new Exception('outer', 0, new Exception('inner')));
+
+    $this->assertEquals($msg->Details->Error->Message, 'Exception: outer');
+    $this->assertEquals($msg->Details->Error->InnerError->Message, 'Exception: inner');
+  }
 }
 ?>

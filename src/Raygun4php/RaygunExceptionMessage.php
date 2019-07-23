@@ -10,6 +10,7 @@ namespace Raygun4php
         public $StackTrace = array();
         public $FileName;
         public $Data;
+        public $InnerError;
 
         public function __construct($exception)
         {
@@ -28,6 +29,11 @@ namespace Raygun4php
             }
 
             $this->FileName = baseName($exception->getFile());
+
+            if ($prev = $exception->getPrevious())
+            {
+                $this->InnerError = new self($prev);
+            }
         }
 
         private function BuildErrorTrace($error)
