@@ -176,10 +176,12 @@ namespace Raygun4php {
      * cookies, but doesn't require a identifier value object.
      *
      * @param RaygunIdentifier $identifier
+     * @return $this
      */
     public function setUserIdentifier(RaygunIdentifier $identifier)
     {
       $this->userIdentifier = $identifier;
+      return $this;
     }
 
     /**
