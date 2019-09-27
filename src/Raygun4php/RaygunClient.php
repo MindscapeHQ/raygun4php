@@ -361,7 +361,7 @@ namespace Raygun4php {
         if ($this->proxy) {
           $curlOpts[] = "--proxy '" . $this->proxy . "'";
         }
-        $cmd = "curl " . implode(' ', $curlOpts) . " 'https://$this->host:$this->port$this->path' > /dev/null 2>&1 &";
+        $cmd = "curl " . implode(' ', $curlOpts) . " 'https://{$this->host}:{$this->port}{$this->path}' > /dev/null 2>&1 &";
         $output = array();
         $exit;
         exec($cmd, $output, $exit);
