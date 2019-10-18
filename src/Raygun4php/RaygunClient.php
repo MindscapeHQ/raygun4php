@@ -412,7 +412,7 @@ class RaygunClient
             if ($this->proxy) {
                 $curlOpts[] = "--proxy '" . $this->proxy . "'";
             }
-            $cmd = "curl " . implode(' ', $curlOpts) . " 'https://api.raygun.io:443/entries' > /dev/null 2>&1 &";
+            $cmd = "curl " . implode(' ', $curlOpts) . " 'https://{$this->host}:{$this->port}{$this->path}' > /dev/null 2>&1 &";
             $output = array();
             $exit = 0;
             exec($cmd, $output, $exit);
