@@ -57,7 +57,8 @@ class RaygunRequestMessage
                 $contentType = $_SERVER['HTTP_CONTENT_TYPE'];
             }
 
-            if ($_SERVER['REQUEST_METHOD'] !== 'GET' &&
+            if (
+                $_SERVER['REQUEST_METHOD'] !== 'GET' &&
                 $contentType != null &&
                 $contentType !== 'application/x-www-form-urlencoded' &&
                 $contentType !== 'multipart/form-data' &&

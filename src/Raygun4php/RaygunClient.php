@@ -412,7 +412,8 @@ class RaygunClient
             if ($this->proxy) {
                 $curlOpts[] = "--proxy '" . $this->proxy . "'";
             }
-            $cmd = "curl " . implode(' ', $curlOpts) . " 'https://{$this->host}:{$this->port}{$this->path}' > /dev/null 2>&1 &";
+            $cmd = "curl " . implode(' ', $curlOpts)
+                . " 'https://{$this->host}:{$this->port}{$this->path}' > /dev/null 2>&1 &";
             $output = array();
             $exit = 0;
             exec($cmd, $output, $exit);
@@ -514,8 +515,9 @@ class RaygunClient
 
         $walkFn = function (&$val, $key) use ($filterParams) {
             foreach ($filterParams as $filterKey => $filterFn) {
-                if ((strpos($filterKey, '/') === 0 && preg_match($filterKey, $key))
-                || (strpos($filterKey, '/') === false && strtolower($filterKey) == strtolower($key))
+                if (
+                    (strpos($filterKey, '/') === 0 && preg_match($filterKey, $key))
+                    || (strpos($filterKey, '/') === false && strtolower($filterKey) == strtolower($key))
                 ) {
                     $val = $filterFn($key, $val);
                 }

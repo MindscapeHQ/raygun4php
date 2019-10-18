@@ -40,7 +40,8 @@ class RaygunExceptionMessage
             $line = new RaygunExceptionTraceLineMessage();
 
             $fromManualSendError = false;
-            if (array_key_exists('function', $trace)
+            if (
+                array_key_exists('function', $trace)
                 && array_key_exists('class', $trace)
             ) {
                 if ($trace['function'] === 'SendError' && $trace['class'] === RaygunClient::class) {
