@@ -1,7 +1,7 @@
 Raygun4PHP
 ==========
 
-[Raygun.com](http://raygun.com) provider for PHP 5.4+
+[Raygun.com](http://raygun.com) provider for PHP 7.1+
 
 [![Build
 Status](https://secure.travis-ci.org/MindscapeHQ/raygun4php.png?branch=master)](http://travis-ci.org/MindscapeHQ/raygun4php)
@@ -32,13 +32,6 @@ require_once 'vendor/autoload.php';
 ```
 and the library will be imported ready for use.
 
-### Manually with Git
-
-Clone this repository and copy src/Raygun4php into an appropriate subdirectory in your project, such as /vendor/Raygun4php. Add a `requires` definition that references the location of RaygunClient.php where you want to make a call to Send().
-
-```php
-require __DIR__ . '/vendor/raygun4php/src/Raygun4php/RaygunClient.php';
-```
 ## Usage
 
 You can send both PHP errors and object-oriented exceptions to Raygun. An easy way to accomplish this is to create a file containing exception and error handlers which make calls to the appropriate Raygun4PHP functions. As above, import Raygun4PHP - if you're using Composer, just add `require_once 'vendor/autoload.php'`, or if not manually import RaygunClient.php.
