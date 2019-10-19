@@ -5,9 +5,25 @@ namespace Raygun4php\Tests;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use Raygun4php\RaygunMessage;
+use EnricoStahn\JsonAssert\Assert as JsonAssert;
 
 class RaygunMessageTest extends TestCase
 {
+    use JsonAssert;
+
+    /**
+     * json schema used to validate message json.
+     *
+     * @var string
+     */
+    protected $jsonSchema;
+
+    public function setUp()
+    {
+        $this->jsonSchema = file_get_contents('./tests/misc/RaygunSchema.json');
+    }
+    
+
     public function testDefaultConstructorGeneratesValid8601()
     {
         $msg = new RaygunMessage();
@@ -41,5 +57,14 @@ class RaygunMessageTest extends TestCase
 
         $this->assertEquals($msg->Details->Error->Message, 'Exception: outer');
         $this->assertEquals($msg->Details->Error->InnerError->Message, 'Exception: inner');
+    }
+
+    public function testMessageToJsonSchema()
+    {
+        $msg = new RaygunMessage();
+        $msg->Build(new Exception('Test'));
+
+        $msgJson = $msg->toJson();
+        $this->assertJsonMatchesSchemaString($this->jsonSchema, json_decode($msgJson));
     }
 }
