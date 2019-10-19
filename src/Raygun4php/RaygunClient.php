@@ -472,18 +472,6 @@ class RaygunClient
         return null;
     }
 
-    public function toJsonRemoveUnicodeSequences($struct)
-    {
-        return preg_replace_callback("/\\\\u([a-f0-9]{4})/", function ($matches) {
-            return iconv('UCS-4LE', 'UTF-8', pack('V', hexdec("U$matches[1]")));
-        }, json_encode($struct));
-    }
-
-    public function removeNullBytes($string)
-    {
-        return str_replace("\0", '', $string);
-    }
-
     /**
      * Optionally applies a value transformation to every matching key, as defined by {@link FilterParams}.
      * Replaces the value by default, but also supports custom transformations through
