@@ -1,973 +1,288 @@
 {
-    "definitions": {},
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "http://example.com/root.json",
-    "type": "object",
-    "title": "The Root Schema",
-    "required": [
-      "occurredOn",
-      "details"
-    ],
-    "properties": {
-      "occurredOn": {
-        "$id": "#/properties/occurredOn",
-        "type": "string",
-        "title": "The Occurredon Schema",
-        "default": "",
-        "examples": [
-          "2015-09-08T01:55:28Z"
-        ],
-        "pattern": "^(.*)$"
-      },
-      "details": {
-        "$id": "#/properties/details",
-        "type": "object",
-        "title": "The Details Schema",
-        "required": [
-          "machineName",
-          "groupingKey",
-          "version",
-          "client",
-          "error",
-          "environment",
-          "tags",
-          "userCustomData",
-          "request",
-          "response",
-          "user",
-          "breadcrumbs"
-        ],
-        "properties": {
-          "machineName": {
-            "$id": "#/properties/details/properties/machineName",
-            "type": "string",
-            "title": "The Machinename Schema",
-            "default": "",
-            "examples": [
-              "ServerMachine1"
-            ],
-            "pattern": "^(.*)$"
-          },
-          "groupingKey": {
-            "$id": "#/properties/details/properties/groupingKey",
-            "type": "string",
-            "title": "The Groupingkey Schema",
-            "default": "",
-            "examples": [
-              "ErrorGroup"
-            ],
-            "pattern": "^(.*)$"
-          },
-          "version": {
-            "$id": "#/properties/details/properties/version",
-            "type": "string",
-            "title": "The Version Schema",
-            "default": "",
-            "examples": [
-              "1.0.0.1"
-            ],
-            "pattern": "^(.*)$"
-          },
-          "client": {
-            "$id": "#/properties/details/properties/client",
-            "type": "object",
-            "title": "The Client Schema",
-            "required": [
-              "name",
-              "version",
-              "clientUrl"
-            ],
-            "properties": {
-              "name": {
-                "$id": "#/properties/details/properties/client/properties/name",
-                "type": "string",
-                "title": "The Name Schema",
-                "default": "",
-                "examples": [
-                  "Example Raygun Client"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "version": {
-                "$id": "#/properties/details/properties/client/properties/version",
-                "type": "string",
-                "title": "The Version Schema",
-                "default": "",
-                "examples": [
-                  "0.0.0.1"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "clientUrl": {
-                "$id": "#/properties/details/properties/client/properties/clientUrl",
-                "type": "string",
-                "title": "The Clienturl Schema",
-                "default": "",
-                "examples": [
-                  "/documentation/integrations/api"
-                ],
-                "pattern": "^(.*)$"
-              }
-            }
-          },
-          "error": {
-            "$id": "#/properties/details/properties/error",
-            "type": "object",
-            "title": "The Error Schema",
-            "required": [
-              "innerError",
-              "data",
-              "className",
-              "message",
-              "stackTrace"
-            ],
-            "properties": {
-              "innerError": {
-                "$id": "#/properties/details/properties/error/properties/innerError",
-                "type": "object",
-                "title": "The Innererror Schema"
-              },
-              "data": {
-                "$id": "#/properties/details/properties/error/properties/data",
-                "type": "object",
-                "title": "The Data Schema",
-                "required": [
-                  "example"
-                ],
-                "properties": {
-                  "example": {
-                    "$id": "#/properties/details/properties/error/properties/data/properties/example",
-                    "type": "integer",
-                    "title": "The Example Schema",
-                    "default": 0,
-                    "examples": [
-                      5
-                    ]
-                  }
-                }
-              },
-              "className": {
-                "$id": "#/properties/details/properties/error/properties/className",
-                "type": "string",
-                "title": "The Classname Schema",
-                "default": "",
-                "examples": [
-                  "ErrorClass"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "message": {
-                "$id": "#/properties/details/properties/error/properties/message",
-                "type": "string",
-                "title": "The Message Schema",
-                "default": "",
-                "examples": [
-                  "An error occurred"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "stackTrace": {
-                "$id": "#/properties/details/properties/error/properties/stackTrace",
-                "type": "array",
-                "title": "The Stacktrace Schema",
-                "items": {
-                  "$id": "#/properties/details/properties/error/properties/stackTrace/items",
-                  "type": "object",
-                  "title": "The Items Schema",
-                  "required": [
-                    "lineNumber",
-                    "className",
-                    "columnNumber",
-                    "fileName",
-                    "methodName"
-                  ],
-                  "properties": {
-                    "lineNumber": {
-                      "$id": "#/properties/details/properties/error/properties/stackTrace/items/properties/lineNumber",
-                      "type": "integer",
-                      "title": "The Linenumber Schema",
-                      "default": 0,
-                      "examples": [
-                        55
-                      ]
-                    },
-                    "className": {
-                      "$id": "#/properties/details/properties/error/properties/stackTrace/items/properties/className",
-                      "type": "string",
-                      "title": "The Classname Schema",
-                      "default": "",
-                      "examples": [
-                        "BrokenService"
-                      ],
-                      "pattern": "^(.*)$"
-                    },
-                    "columnNumber": {
-                      "$id": "#/properties/details/properties/error/properties/stackTrace/items/properties/columnNumber",
-                      "type": "integer",
-                      "title": "The Columnnumber Schema",
-                      "default": 0,
-                      "examples": [
-                        23
-                      ]
-                    },
-                    "fileName": {
-                      "$id": "#/properties/details/properties/error/properties/stackTrace/items/properties/fileName",
-                      "type": "string",
-                      "title": "The Filename Schema",
-                      "default": "",
-                      "examples": [
-                        "BrokenService.cs"
-                      ],
-                      "pattern": "^(.*)$"
-                    },
-                    "methodName": {
-                      "$id": "#/properties/details/properties/error/properties/stackTrace/items/properties/methodName",
-                      "type": "string",
-                      "title": "The Methodname Schema",
-                      "default": "",
-                      "examples": [
-                        "BreakEverything()"
-                      ],
-                      "pattern": "^(.*)$"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "environment": {
-            "$id": "#/properties/details/properties/environment",
-            "type": "object",
-            "title": "The Environment Schema",
-            "required": [
-              "processorCount",
-              "osVersion",
-              "windowBoundsWidth",
-              "windowBoundsHeight",
-              "browser-Width",
-              "browser-Height",
-              "screen-Width",
-              "screen-Height",
-              "resolutionScale",
-              "color-Depth",
-              "currentOrientation",
-              "cpu",
-              "packageVersion",
-              "architecture",
-              "deviceManufacturer",
-              "model",
-              "totalPhysicalMemory",
-              "availablePhysicalMemory",
-              "totalVirtualMemory",
-              "availableVirtualMemory",
-              "diskSpaceFree",
-              "deviceName",
-              "locale",
-              "utcOffset",
-              "browser",
-              "browserName",
-              "browser-Version",
-              "platform"
-            ],
-            "properties": {
-              "processorCount": {
-                "$id": "#/properties/details/properties/environment/properties/processorCount",
-                "type": "integer",
-                "title": "The Processorcount Schema",
-                "default": 0,
-                "examples": [
-                  4
-                ]
-              },
-              "osVersion": {
-                "$id": "#/properties/details/properties/environment/properties/osVersion",
-                "type": "string",
-                "title": "The Osversion Schema",
-                "default": "",
-                "examples": [
-                  "Windows 10"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "windowBoundsWidth": {
-                "$id": "#/properties/details/properties/environment/properties/windowBoundsWidth",
-                "type": "integer",
-                "title": "The Windowboundswidth Schema",
-                "default": 0,
-                "examples": [
-                  2560
-                ]
-              },
-              "windowBoundsHeight": {
-                "$id": "#/properties/details/properties/environment/properties/windowBoundsHeight",
-                "type": "integer",
-                "title": "The Windowboundsheight Schema",
-                "default": 0,
-                "examples": [
-                  1440
-                ]
-              },
-              "browser-Width": {
-                "$id": "#/properties/details/properties/environment/properties/browser-Width",
-                "type": "integer",
-                "title": "The Browser-width Schema",
-                "default": 0,
-                "examples": [
-                  2560
-                ]
-              },
-              "browser-Height": {
-                "$id": "#/properties/details/properties/environment/properties/browser-Height",
-                "type": "integer",
-                "title": "The Browser-height Schema",
-                "default": 0,
-                "examples": [
-                  1440
-                ]
-              },
-              "screen-Width": {
-                "$id": "#/properties/details/properties/environment/properties/screen-Width",
-                "type": "integer",
-                "title": "The Screen-width Schema",
-                "default": 0,
-                "examples": [
-                  2560
-                ]
-              },
-              "screen-Height": {
-                "$id": "#/properties/details/properties/environment/properties/screen-Height",
-                "type": "integer",
-                "title": "The Screen-height Schema",
-                "default": 0,
-                "examples": [
-                  1440
-                ]
-              },
-              "resolutionScale": {
-                "$id": "#/properties/details/properties/environment/properties/resolutionScale",
-                "type": "integer",
-                "title": "The Resolutionscale Schema",
-                "default": 0,
-                "examples": [
-                  1
-                ]
-              },
-              "color-Depth": {
-                "$id": "#/properties/details/properties/environment/properties/color-Depth",
-                "type": "integer",
-                "title": "The Color-depth Schema",
-                "default": 0,
-                "examples": [
-                  24
-                ]
-              },
-              "currentOrientation": {
-                "$id": "#/properties/details/properties/environment/properties/currentOrientation",
-                "type": "string",
-                "title": "The Currentorientation Schema",
-                "default": "",
-                "examples": [
-                  "Landscape"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "cpu": {
-                "$id": "#/properties/details/properties/environment/properties/cpu",
-                "type": "string",
-                "title": "The Cpu Schema",
-                "default": "",
-                "examples": [
-                  "Intel(R) Core(TM) i5-2500 CPU @ 3.30GHz"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "packageVersion": {
-                "$id": "#/properties/details/properties/environment/properties/packageVersion",
-                "type": "string",
-                "title": "The Packageversion Schema",
-                "default": "",
-                "examples": [
-                  "package version"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "architecture": {
-                "$id": "#/properties/details/properties/environment/properties/architecture",
-                "type": "string",
-                "title": "The Architecture Schema",
-                "default": "",
-                "examples": [
-                  "ARMv7-A"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "deviceManufacturer": {
-                "$id": "#/properties/details/properties/environment/properties/deviceManufacturer",
-                "type": "string",
-                "title": "The Devicemanufacturer Schema",
-                "default": "",
-                "examples": [
-                  "Nokia"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "model": {
-                "$id": "#/properties/details/properties/environment/properties/model",
-                "type": "string",
-                "title": "The Model Schema",
-                "default": "",
-                "examples": [
-                  "Lumia 920"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "totalPhysicalMemory": {
-                "$id": "#/properties/details/properties/environment/properties/totalPhysicalMemory",
-                "type": "integer",
-                "title": "The Totalphysicalmemory Schema",
-                "default": 0,
-                "examples": [
-                  1024
-                ]
-              },
-              "availablePhysicalMemory": {
-                "$id": "#/properties/details/properties/environment/properties/availablePhysicalMemory",
-                "type": "string",
-                "title": "The Availablephysicalmemory Schema",
-                "default": "",
-                "examples": [
-                  "number"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "totalVirtualMemory": {
-                "$id": "#/properties/details/properties/environment/properties/totalVirtualMemory",
-                "type": "string",
-                "title": "The Totalvirtualmemory Schema",
-                "default": "",
-                "examples": [
-                  "number"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "availableVirtualMemory": {
-                "$id": "#/properties/details/properties/environment/properties/availableVirtualMemory",
-                "type": "string",
-                "title": "The Availablevirtualmemory Schema",
-                "default": "",
-                "examples": [
-                  "number"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "diskSpaceFree": {
-                "$id": "#/properties/details/properties/environment/properties/diskSpaceFree",
-                "type": "array",
-                "title": "The Diskspacefree Schema",
-                "items": {
-                  "$id": "#/properties/details/properties/environment/properties/diskSpaceFree/items",
-                  "type": "number",
-                  "title": "The Items Schema",
-                  "default": 0.0,
-                  "examples": [
-                    50000.52,
-                    2000.104
-                  ]
-                }
-              },
-              "deviceName": {
-                "$id": "#/properties/details/properties/environment/properties/deviceName",
-                "type": "string",
-                "title": "The Devicename Schema",
-                "default": "",
-                "examples": [
-                  "Nexus 7"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "locale": {
-                "$id": "#/properties/details/properties/environment/properties/locale",
-                "type": "string",
-                "title": "The Locale Schema",
-                "default": "",
-                "examples": [
-                  "en-nz"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "utcOffset": {
-                "$id": "#/properties/details/properties/environment/properties/utcOffset",
-                "type": "integer",
-                "title": "The Utcoffset Schema",
-                "default": 0,
-                "examples": [
-                  -12
-                ]
-              },
-              "browser": {
-                "$id": "#/properties/details/properties/environment/properties/browser",
-                "type": "string",
-                "title": "The Browser Schema",
-                "default": "",
-                "examples": [
-                  "Mozilla"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "browserName": {
-                "$id": "#/properties/details/properties/environment/properties/browserName",
-                "type": "string",
-                "title": "The Browsername Schema",
-                "default": "",
-                "examples": [
-                  "Netscape"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "browser-Version": {
-                "$id": "#/properties/details/properties/environment/properties/browser-Version",
-                "type": "string",
-                "title": "The Browser-version Schema",
-                "default": "",
-                "examples": [
-                  "5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.65 Safari/537.36"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "platform": {
-                "$id": "#/properties/details/properties/environment/properties/platform",
-                "type": "string",
-                "title": "The Platform Schema",
-                "default": "",
-                "examples": [
-                  "Win32"
-                ],
-                "pattern": "^(.*)$"
-              }
-            }
-          },
-          "tags": {
-            "$id": "#/properties/details/properties/tags",
-            "type": "array",
-            "title": "The Tags Schema",
-            "items": {
-              "$id": "#/properties/details/properties/tags/items",
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/root.json",
+  "type": "object",
+  "title": "The Root Schema",
+  "required": [
+    "OccurredOn",
+    "Details"
+  ],
+  "properties": {
+    "OccurredOn": {
+      "$id": "#/properties/OccurredOn",
+      "type": "string",
+      "title": "The Occurredon Schema",
+      "default": "",
+      "examples": [
+        "2019-10-20T20:33:33Z"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "Details": {
+      "$id": "#/properties/Details",
+      "type": "object",
+      "title": "The Details Schema",
+      "required": [
+        "Error",
+        "MachineName",
+        "Request",
+        "Environment",
+        "Client",
+        "Version",
+        "Tags",
+        "UserCustomData",
+        "User",
+        "Context",
+        "GroupingKey"
+      ],
+      "properties": {
+        "Error": {
+          "$id": "#/properties/Details/properties/Error",
+          "type": "object",
+          "title": "The Error Schema",
+          "required": [
+            "Message",
+            "ClassName",
+            "StackTrace",
+            "FileName",
+            "Data"
+          ],
+          "properties": {
+            "Message": {
+              "$id": "#/properties/Details/properties/Error/properties/Message",
               "type": "string",
-              "title": "The Items Schema",
+              "title": "The Message Schema",
               "default": "",
               "examples": [
-                "tag1",
-                "tag 2",
-                "tag-3"
+                "Exception: test"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "ClassName": {
+              "$id": "#/properties/Details/properties/Error/properties/ClassName",
+              "type": "string",
+              "title": "The Classname Schema",
+              "default": "",
+              "examples": [
+                "Exception"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "StackTrace": {
+              "$id": "#/properties/Details/properties/Error/properties/StackTrace",
+              "type": "array",
+              "title": "The Stacktrace Schema"
+            },
+            "FileName": {
+              "$id": "#/properties/Details/properties/Error/properties/FileName",
+              "type": "string",
+              "title": "The Filename Schema",
+              "default": "",
+              "examples": [
+                "tmp.php"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "Data": {
+              "$id": "#/properties/Details/properties/Error/properties/Data",
+              "type": ["object", "null"],
+              "title": "The Data Schema"
+            }
+          }
+        },
+        "MachineName": {
+          "$id": "#/properties/Details/properties/MachineName",
+          "type": "string",
+          "title": "The Machinename Schema",
+          "default": "",
+          "examples": [
+            "Host 1"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "Request": {
+          "$id": "#/properties/Details/properties/Request",
+          "type": "object",
+          "title": "The Request Schema",
+          "required": [
+            "HostName",
+            "Url",
+            "HttpMethod",
+            "IpAddress",
+            "QueryString",
+            "Headers",
+            "Form",
+            "RawData"
+          ],
+          "properties": {
+            "HostName": {
+              "$id": "#/properties/Details/properties/Request/properties/HostName",
+              "type": ["string", "null"],
+              "title": "The Hostname Schema",
+              "examples": [
+                "https://raygun.io"
+              ]
+            },
+            "Url": {
+              "$id": "#/properties/Details/properties/Request/properties/Url",
+              "type": ["string", "null"],
+              "title": "The Url Schema",
+              "examples": [
+                "/documentation/integrations/api"
+              ]
+            },
+            "HttpMethod": {
+              "$id": "#/properties/Details/properties/Request/properties/HttpMethod",
+              "type": ["string", "null"],
+              "title": "The Httpmethod Schema",
+              "examples": [
+                "POST"
+              ]
+            },
+            "IpAddress": {
+              "$id": "#/properties/Details/properties/Request/properties/IpAddress",
+              "type": ["string", "null"],
+              "title": "The Ipaddress Schema",
+              "examples": [
+                "127.0.0.1"
+              ]
+            },
+            "QueryString": {
+              "$id": "#/properties/Details/properties/Request/properties/QueryString",
+              "type": ["object", "null"],
+              "title": "The Querystring Schema",
+              "examples": [
+                {"q": "searchParams"}
+              ]
+            },
+            "Headers": {
+              "$id": "#/properties/Details/properties/Request/properties/Headers",
+              "type": "array",
+              "title": "The Headers Schema"
+            },
+            "Form": {
+              "$id": "#/properties/Details/properties/Request/properties/Form",
+              "type": "array",
+              "title": "The Form Schema"
+            },
+            "RawData": {
+              "$id": "#/properties/Details/properties/Request/properties/RawData",
+              "type": ["object", "null"],
+              "title": "The Rawdata Schema",
+              "examples": [
+                {"Test": 5}
+              ]
+            }
+          }
+        },
+        "Environment": {
+          "$id": "#/properties/Details/properties/Environment",
+          "type": "object",
+          "title": "The Environment Schema",
+          "required": [
+            "UtcOffset"
+          ],
+          "properties": {
+            "UtcOffset": {
+              "$id": "#/properties/Details/properties/Environment/properties/UtcOffset",
+              "type": "integer",
+              "title": "The Utcoffset Schema",
+              "default": 0,
+              "examples": [
+                0
+              ]
+            }
+          }
+        },
+        "Client": {
+          "$id": "#/properties/Details/properties/Client",
+          "type": "object",
+          "title": "The Client Schema",
+          "required": [
+            "Name",
+            "Version",
+            "ClientUrl"
+          ],
+          "properties": {
+            "Name": {
+              "$id": "#/properties/Details/properties/Client/properties/Name",
+              "type": "string",
+              "title": "The Name Schema",
+              "default": "",
+              "examples": [
+                "Raygun4php"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "Version": {
+              "$id": "#/properties/Details/properties/Client/properties/Version",
+              "type": "string",
+              "title": "The Version Schema",
+              "default": "",
+              "examples": [
+                "1.8.3"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "ClientUrl": {
+              "$id": "#/properties/Details/properties/Client/properties/ClientUrl",
+              "type": "string",
+              "title": "The Clienturl Schema",
+              "default": "",
+              "examples": [
+                "https://github.com/MindscapeHQ/raygun4php"
               ],
               "pattern": "^(.*)$"
             }
-          },
-          "userCustomData": {
-            "$id": "#/properties/details/properties/userCustomData",
-            "type": "object",
-            "title": "The Usercustomdata Schema",
-            "required": [
-              "domain",
-              "area"
-            ],
-            "properties": {
-              "domain": {
-                "$id": "#/properties/details/properties/userCustomData/properties/domain",
-                "type": "string",
-                "title": "The Domain Schema",
-                "default": "",
-                "examples": [
-                  "WORKPLACE"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "area": {
-                "$id": "#/properties/details/properties/userCustomData/properties/area",
-                "type": "string",
-                "title": "The Area Schema",
-                "default": "",
-                "examples": [
-                  "51"
-                ],
-                "pattern": "^(.*)$"
-              }
-            }
-          },
-          "request": {
-            "$id": "#/properties/details/properties/request",
-            "type": "object",
-            "title": "The Request Schema",
-            "required": [
-              "hostName",
-              "httpMethod",
-              "iPAddress",
-              "queryString",
-              "form",
-              "headers",
-              "rawData"
-            ],
-            "properties": {
-              "hostName": {
-                "$id": "#/properties/details/properties/request/properties/hostName",
-                "type": "string",
-                "title": "The Hostname Schema",
-                "default": "",
-                "examples": [
-                  "\"https:\n\t\t\t\n\t\t\t\"url\": \"/documentation/integrations/api\""
-                ],
-                "pattern": "^(.*)$"
-              },
-              "httpMethod": {
-                "$id": "#/properties/details/properties/request/properties/httpMethod",
-                "type": "string",
-                "title": "The Httpmethod Schema",
-                "default": "",
-                "examples": [
-                  "POST"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "iPAddress": {
-                "$id": "#/properties/details/properties/request/properties/iPAddress",
-                "type": "string",
-                "title": "The Ipaddress Schema",
-                "default": "",
-                "examples": [
-                  "127.0.0.1"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "queryString": {
-                "$id": "#/properties/details/properties/request/properties/queryString",
-                "type": "object",
-                "title": "The Querystring Schema",
-                "required": [
-                  "q"
-                ],
-                "properties": {
-                  "q": {
-                    "$id": "#/properties/details/properties/request/properties/queryString/properties/q",
-                    "type": "string",
-                    "title": "The Q Schema",
-                    "default": "",
-                    "examples": [
-                      "searchParams"
-                    ],
-                    "pattern": "^(.*)$"
-                  }
-                }
-              },
-              "form": {
-                "$id": "#/properties/details/properties/request/properties/form",
-                "type": "object",
-                "title": "The Form Schema",
-                "required": [
-                  "firstName",
-                  "lastName",
-                  "newsletter"
-                ],
-                "properties": {
-                  "firstName": {
-                    "$id": "#/properties/details/properties/request/properties/form/properties/firstName",
-                    "type": "string",
-                    "title": "The Firstname Schema",
-                    "default": "",
-                    "examples": [
-                      "Example"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "lastName": {
-                    "$id": "#/properties/details/properties/request/properties/form/properties/lastName",
-                    "type": "string",
-                    "title": "The Lastname Schema",
-                    "default": "",
-                    "examples": [
-                      "Person"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "newsletter": {
-                    "$id": "#/properties/details/properties/request/properties/form/properties/newsletter",
-                    "type": "boolean",
-                    "title": "The Newsletter Schema",
-                    "default": false,
-                    "examples": [
-                      true
-                    ]
-                  }
-                }
-              },
-              "headers": {
-                "$id": "#/properties/details/properties/request/properties/headers",
-                "type": "object",
-                "title": "The Headers Schema",
-                "required": [
-                  "Referer",
-                  "Host"
-                ],
-                "properties": {
-                  "Referer": {
-                    "$id": "#/properties/details/properties/request/properties/headers/properties/Referer",
-                    "type": "string",
-                    "title": "The Referer Schema",
-                    "default": "",
-                    "examples": [
-                      "www.google.com"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "Host": {
-                    "$id": "#/properties/details/properties/request/properties/headers/properties/Host",
-                    "type": "string",
-                    "title": "The Host Schema",
-                    "default": "",
-                    "examples": [
-                      "raygun.io"
-                    ],
-                    "pattern": "^(.*)$"
-                  }
-                }
-              },
-              "rawData": {
-                "$id": "#/properties/details/properties/request/properties/rawData",
-                "type": "string",
-                "title": "The Rawdata Schema",
-                "default": "",
-                "examples": [
-                  "{\"Test\": 5}"
-                ],
-                "pattern": "^(.*)$"
-              }
-            }
-          },
-          "response": {
-            "$id": "#/properties/details/properties/response",
-            "type": "object",
-            "title": "The Response Schema",
-            "required": [
-              "statusCode"
-            ],
-            "properties": {
-              "statusCode": {
-                "$id": "#/properties/details/properties/response/properties/statusCode",
-                "type": "integer",
-                "title": "The Statuscode Schema",
-                "default": 0,
-                "examples": [
-                  500
-                ]
-              }
-            }
-          },
-          "user": {
-            "$id": "#/properties/details/properties/user",
-            "type": "object",
-            "title": "The User Schema",
-            "required": [
-              "identifier",
-              "isAnonymous",
-              "email",
-              "fullName",
-              "firstName",
-              "uuid"
-            ],
-            "properties": {
-              "identifier": {
-                "$id": "#/properties/details/properties/user/properties/identifier",
-                "type": "string",
-                "title": "The Identifier Schema",
-                "default": "",
-                "examples": [
-                  "123456789"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "isAnonymous": {
-                "$id": "#/properties/details/properties/user/properties/isAnonymous",
-                "type": "boolean",
-                "title": "The Isanonymous Schema",
-                "default": false,
-                "examples": [
-                  false
-                ]
-              },
-              "email": {
-                "$id": "#/properties/details/properties/user/properties/email",
-                "type": "string",
-                "title": "The Email Schema",
-                "default": "",
-                "examples": [
-                  "test@example.com"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "fullName": {
-                "$id": "#/properties/details/properties/user/properties/fullName",
-                "type": "string",
-                "title": "The Fullname Schema",
-                "default": "",
-                "examples": [
-                  "Test User"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "firstName": {
-                "$id": "#/properties/details/properties/user/properties/firstName",
-                "type": "string",
-                "title": "The Firstname Schema",
-                "default": "",
-                "examples": [
-                  "Test"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "uuid": {
-                "$id": "#/properties/details/properties/user/properties/uuid",
-                "type": "string",
-                "title": "The Uuid Schema",
-                "default": "",
-                "examples": [
-                  "783491e1-d4a9-46bc-9fde-9b1dd9ef6c6e"
-                ],
-                "pattern": "^(.*)$"
-              }
-            }
-          },
-          "breadcrumbs": {
-            "$id": "#/properties/details/properties/breadcrumbs",
-            "type": "array",
-            "title": "The Breadcrumbs Schema",
-            "items": {
-              "$id": "#/properties/details/properties/breadcrumbs/items",
-              "type": "object",
-              "title": "The Items Schema",
-              "required": [
-                "timeStamp",
-                "level",
-                "type",
-                "category",
-                "message",
-                "className",
-                "methodName",
-                "lineNumber",
-                "customData"
-              ],
-              "properties": {
-                "timeStamp": {
-                  "$id": "#/properties/details/properties/breadcrumbs/items/properties/timeStamp",
-                  "type": "integer",
-                  "title": "The Timestamp Schema",
-                  "default": 0,
-                  "examples": [
-                    1504799959639
-                  ]
-                },
-                "level": {
-                  "$id": "#/properties/details/properties/breadcrumbs/items/properties/level",
-                  "type": "string",
-                  "title": "The Level Schema",
-                  "default": "",
-                  "examples": [
-                    "info"
-                  ],
-                  "pattern": "^(.*)$"
-                },
-                "type": {
-                  "$id": "#/properties/details/properties/breadcrumbs/items/properties/type",
-                  "type": "string",
-                  "title": "The Type Schema",
-                  "default": "",
-                  "examples": [
-                    "navigation"
-                  ],
-                  "pattern": "^(.*)$"
-                },
-                "category": {
-                  "$id": "#/properties/details/properties/breadcrumbs/items/properties/category",
-                  "type": "string",
-                  "title": "The Category Schema",
-                  "default": "",
-                  "examples": [
-                    "checkout"
-                  ],
-                  "pattern": "^(.*)$"
-                },
-                "message": {
-                  "$id": "#/properties/details/properties/breadcrumbs/items/properties/message",
-                  "type": "string",
-                  "title": "The Message Schema",
-                  "default": "",
-                  "examples": [
-                    "User navigated to the shopping cart"
-                  ],
-                  "pattern": "^(.*)$"
-                },
-                "className": {
-                  "$id": "#/properties/details/properties/breadcrumbs/items/properties/className",
-                  "type": "string",
-                  "title": "The Classname Schema",
-                  "default": "",
-                  "examples": [
-                    "ShoppingCart"
-                  ],
-                  "pattern": "^(.*)$"
-                },
-                "methodName": {
-                  "$id": "#/properties/details/properties/breadcrumbs/items/properties/methodName",
-                  "type": "string",
-                  "title": "The Methodname Schema",
-                  "default": "",
-                  "examples": [
-                    "ViewBasket"
-                  ],
-                  "pattern": "^(.*)$"
-                },
-                "lineNumber": {
-                  "$id": "#/properties/details/properties/breadcrumbs/items/properties/lineNumber",
-                  "type": "integer",
-                  "title": "The Linenumber Schema",
-                  "default": 0,
-                  "examples": [
-                    156
-                  ]
-                },
-                "customData": {
-                  "$id": "#/properties/details/properties/breadcrumbs/items/properties/customData",
-                  "type": "object",
-                  "title": "The Customdata Schema",
-                  "required": [
-                    "from",
-                    "to"
-                  ],
-                  "properties": {
-                    "from": {
-                      "$id": "#/properties/details/properties/breadcrumbs/items/properties/customData/properties/from",
-                      "type": "string",
-                      "title": "The From Schema",
-                      "default": "",
-                      "examples": [
-                        "/category/product/123"
-                      ],
-                      "pattern": "^(.*)$"
-                    },
-                    "to": {
-                      "$id": "#/properties/details/properties/breadcrumbs/items/properties/customData/properties/to",
-                      "type": "string",
-                      "title": "The To Schema",
-                      "default": "",
-                      "examples": [
-                        "/cart/view"
-                      ],
-                      "pattern": "^(.*)$"
-                    }
-                  }
-                }
-              }
-            }
           }
+        },
+        "Version": {
+          "$id": "#/properties/Details/properties/Version",
+          "type": ["string", "null"],
+          "title": "The Version Schema",
+          "examples": [
+            "1.8.3"
+          ]
+        },
+        "Tags": {
+          "$id": "#/properties/Details/properties/Tags",
+          "type": ["array", "null"],
+          "title": "The Tags Schema",
+          "examples": [
+            ["tag1", "tag 2", "tag-3"]
+          ]
+        },
+        "UserCustomData": {
+          "$id": "#/properties/Details/properties/UserCustomData",
+          "type": ["object", "null"],
+          "title": "The Usercustomdata Schema",
+          "examples": [
+            {
+              "domain": "WORKPLACE",
+              "area": "51"
+            }
+          ]
+        },
+        "User": {
+          "$id": "#/properties/Details/properties/User",
+          "type": ["object", "null"],
+          "title": "The User Schema"
+        },
+        "Context": {
+          "$id": "#/properties/Details/properties/Context",
+          "type": ["object", "null"],
+          "title": "The Context Schema"
+        },
+        "GroupingKey": {
+          "$id": "#/properties/Details/properties/GroupingKey",
+          "type": ["string", "null"],
+          "title": "The Groupingkey Schema",
+          "examples": [
+            "ErrorGroup"
+          ]
         }
       }
     }
   }
+}
