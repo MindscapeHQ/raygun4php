@@ -389,8 +389,7 @@ class RaygunClient
         }
 
         $message = $this->filterParamsFromMessage($message);
-        $message = $this->toJsonRemoveUnicodeSequences($message);
-        $message = $this->removeNullBytes($message);
+        $message = $message->toJson();
 
         if (strlen($message) <= 0) {
             return null;
