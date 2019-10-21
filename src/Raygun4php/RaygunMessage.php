@@ -37,6 +37,11 @@ class RaygunMessage
         return str_replace("\0", '', $string);
     }
 
+    /**
+     * Returns the JSON representation of the message object
+     *
+     * @return string
+     */
     public function toJson(): string
     {
         $json = $this->toJsonRemoveUnicodeSequences($this);
