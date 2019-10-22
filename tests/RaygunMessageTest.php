@@ -18,7 +18,7 @@ class RaygunMessageTest extends TestCase
      */
     protected $jsonSchema;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->jsonSchema = file_get_contents('./tests/misc/RaygunSchema.json');
     }
