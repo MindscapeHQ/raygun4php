@@ -36,7 +36,8 @@
     "autoload": {
         "psr-4": {
             "Raygun4php\\": "src/Raygun4php/",
-            "Raygun4php\\Tests\\": "tests/"
+            "Raygun4php\\Tests\\": "tests/",
+            "Raygun4php\\Interfaces\\": "src/Raygun4php/interfaces/"
         }
     },
     "config": {
