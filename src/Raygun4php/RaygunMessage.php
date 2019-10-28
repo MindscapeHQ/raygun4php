@@ -1,8 +1,9 @@
 <?php
 
 namespace Raygun4php;
+use Raygun4php\Interfaces\RaygunMessageInterface;
 
-class RaygunMessage
+class RaygunMessage implements RaygunMessageInterface
 {
     public $OccurredOn;
     public $Details;
@@ -16,7 +17,7 @@ class RaygunMessage
         $this->Details = new RaygunMessageDetails();
     }
 
-    public function Build($exception)
+    public function Build(\Exception $exception): void
     {
         $this->Details->MachineName = gethostname();
         $this->Details->Error = new RaygunExceptionMessage($exception);
