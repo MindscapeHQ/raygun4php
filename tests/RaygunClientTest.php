@@ -30,16 +30,7 @@ class RaygunClientTest extends TestCase
 
         $this->client = new RaygunClient($this->transportMock);
     }
-    
-
-    /**
-     * @expectedException \Raygun4php\Raygun4PhpException
-     * @expectedExceptionMessage API not valid, cannot send message to Raygun
-     */
-    public function testSendReturns403WithInvalidApiKey()
-    {
-        $this->client->SendException(new \Exception(''));
-    }
+   
 
     public function testGetFilteredParamsRemovesByKey()
     {
