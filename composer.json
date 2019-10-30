@@ -18,7 +18,8 @@
         }
     ],
     "require": {
-        "php": "^7.1"
+        "php": "^7.1",
+        "guzzlehttp/guzzle": "~6.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.0",
@@ -37,7 +38,8 @@
         "psr-4": {
             "Raygun4php\\": "src/Raygun4php/",
             "Raygun4php\\Tests\\": "tests/",
-            "Raygun4php\\Interfaces\\": "src/Raygun4php/interfaces/"
+            "Raygun4php\\Interfaces\\": "src/Raygun4php/interfaces/",
+            "Raygun4php\\Transports\\": "src/Raygun4php/transports/"
         }
     },
     "config": {
