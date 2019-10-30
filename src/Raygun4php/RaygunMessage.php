@@ -1,6 +1,7 @@
 <?php
 
 namespace Raygun4php;
+
 use Raygun4php\Interfaces\RaygunMessageInterface;
 
 class RaygunMessage implements RaygunMessageInterface

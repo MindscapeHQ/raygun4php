@@ -1,4 +1,5 @@
 <?php
+
 namespace Raygun4php\Interfaces;
 
 interface RaygunMessageInterface

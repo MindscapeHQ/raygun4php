@@ -1,6 +1,7 @@
 <?php
 
 namespace Raygun4php\Transports;
+
 use Raygun4php\Interfaces\RaygunMessageInterface;
 use Raygun4php\Interfaces\TransportInterface;
 use GuzzleHttp\ClientInterface;
