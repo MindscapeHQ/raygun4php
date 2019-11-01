@@ -290,7 +290,7 @@ class RaygunClient
     private function BuildMessage($errorException, $timestamp = null)
     {
         $message = new RaygunMessage($timestamp);
-        $message->Build($errorException);
+        $message->build($errorException);
         $message->Details->Version = $this->version;
         $message->Details->Context = new RaygunIdentifier(session_id());
 

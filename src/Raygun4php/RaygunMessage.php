@@ -18,7 +18,7 @@ class RaygunMessage implements RaygunMessageInterface
         $this->Details = new RaygunMessageDetails();
     }
 
-    public function Build(\Exception $exception): void
+    public function build(\Exception $exception): void
     {
         $this->Details->MachineName = gethostname();
         $this->Details->Error = new RaygunExceptionMessage($exception);
