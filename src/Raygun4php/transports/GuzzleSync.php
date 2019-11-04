@@ -15,13 +15,20 @@ class GuzzleSync implements TransportInterface
     private $httpClient;
 
     /**
-     * @param ClientInterface $httpClient
+     * @param ClientInterface $httpClient Is expected to have the base_uri option -
+     *                                    set and the correct X-ApiKey header set.
      */
     public function __construct(ClientInterface $httpClient)
     {
         $this->httpClient = $httpClient;
     }
 
+    /**
+     * Synchronously transmits the message to the raygun API.
+     *
+     * @param RaygunMessageInterface $message
+     * @return boolean False if request fails or of the response status code is not 202.
+     */
     public function transmit(RaygunMessageInterface $message): bool
     {
         $messageJson = $message->toJson();
@@ -34,7 +41,6 @@ class GuzzleSync implements TransportInterface
         }
 
         $responseCode = $httpResponse->getStatusCode();
-
         return $responseCode === 202;
     }
 }

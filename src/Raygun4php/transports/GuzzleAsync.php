@@ -14,16 +14,28 @@ class GuzzleAsync implements TransportInterface
      * @var ClientInterface
      */
     private $httpClient;
+
+    /**
+     * @var Promise[]
+     */
     private $httpPromises = [];
 
     /**
-     * @param ClientInterface $httpClient
+     * @param ClientInterface $httpClient Is expected to have the base_uri option -
+     *                                    set and the correct X-ApiKey header set.
      */
     public function __construct(ClientInterface $httpClient)
     {
         $this->httpClient = $httpClient;
     }
 
+    /**
+     * Asynchronously transmits the message to the raygun API.
+     * Relies on the destructor of this object to settle any pending requests.
+     *
+     * @param RaygunMessageInterface $message
+     * @return boolean
+     */
     public function transmit(RaygunMessageInterface $message): bool
     {
         $messageJson = $message->toJson();
