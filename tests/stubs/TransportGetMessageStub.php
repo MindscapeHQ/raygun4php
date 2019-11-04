@@ -20,7 +20,7 @@ class TransportGetMessageStub implements TransportInterface
 
     public function getMessage(): RaygunMessageInterface
     {
-        if(!$this->messageIsSet) {
+        if (!$this->messageIsSet) {
             throw new Exception('No message available..');
         };
         return $this->message;
