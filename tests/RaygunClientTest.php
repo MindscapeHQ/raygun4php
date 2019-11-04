@@ -8,9 +8,13 @@ use Raygun4php\RaygunClient;
 use Raygun4php\RaygunMessage;
 use Raygun4php\RaygunRequestMessage;
 use Raygun4php\Interfaces\TransportInterface;
+use Raygun4php\Tests\Stubs\TransportGetMessageStub;
+use EnricoStahn\JsonAssert\Assert as JsonAssert;
 
 class RaygunClientTest extends TestCase
 {
+    use JsonAssert;
+
     /**
      * @var RaygunClient
      */
@@ -21,6 +25,13 @@ class RaygunClientTest extends TestCase
      */
     protected $transportMock;
 
+    /**
+     * json schema used to validate message json.
+     *
+     * @var string
+     */
+    protected $jsonSchema;
+
     protected function setUp()
     {
         $this->transportMock = $this->getMockBuilder(TransportInterface::class)
@@ -29,6 +40,7 @@ class RaygunClientTest extends TestCase
 
 
         $this->client = new RaygunClient($this->transportMock);
+        $this->jsonSchema = file_get_contents('./tests/misc/RaygunSchema.json');
     }
    
 
@@ -196,5 +208,16 @@ class RaygunClientTest extends TestCase
         $this->transportMock->expects($this->once())
                             ->method('transmit');
         $this->client->SendError(0, 'Test', __FILE__, __LINE__);
+    }
+
+    public function testValidateMessageJsonInTransportObj()
+    {
+        $transportStub = new TransportGetMessageStub();
+        $client = new RaygunClient($transportStub);
+
+        $client->SendException(new \Exception('test'));
+        $raygunMessage = $transportStub->getMessage();
+
+        $this->assertJsonMatchesSchemaString($this->jsonSchema, json_decode($raygunMessage->toJson()));
     }
 }
