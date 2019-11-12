@@ -302,6 +302,7 @@ See the [Error Control Operators section on PHP.net](http://php.net/manual/en/la
 - 2.0.0 (unreleased): New major version
   - Increased minimum PHP version to 7.1
   - Added PSR-4 autoloader
+  - Removes `toJsonRemoveUnicodeSequences()` and `removeNullBytes()` methods from the RaygunClient class - use `toJson()` instead
 - 1.8.4: PHPUnit and configuration updates, PHPDoc fixes, and a fixed null pointer exception accessing user ID from cookies
 - 1.8.3: Remove the `--dev` option for composer installations as it's now deprecated
 - 1.8.2: No longer output warning when a socket connection fails

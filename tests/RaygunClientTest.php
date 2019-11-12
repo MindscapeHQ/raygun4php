@@ -140,20 +140,6 @@ class RaygunClientTest extends TestCase
         return $message;
     }
 
-    public function testToJsonRemoveUnicodeSequences()
-    {
-        $client = new RaygunClient('foo');
-
-        $data = array(
-            'bar' => 'baz',
-        );
-
-        $this->assertJson(
-            json_encode($data),
-            $client->toJsonRemoveUnicodeSequences($data)
-        );
-    }
-
     public function testFilterParamsFromMessage()
     {
         $client = new RaygunClient('foo');

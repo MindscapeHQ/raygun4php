@@ -1,0 +1,288 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/root.json",
+  "type": "object",
+  "title": "The Root Schema",
+  "required": [
+    "OccurredOn",
+    "Details"
+  ],
+  "properties": {
+    "OccurredOn": {
+      "$id": "#/properties/OccurredOn",
+      "type": "string",
+      "title": "The Occurredon Schema",
+      "default": "",
+      "examples": [
+        "2019-10-20T20:33:33Z"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "Details": {
+      "$id": "#/properties/Details",
+      "type": "object",
+      "title": "The Details Schema",
+      "required": [
+        "Error",
+        "MachineName",
+        "Request",
+        "Environment",
+        "Client",
+        "Version",
+        "Tags",
+        "UserCustomData",
+        "User",
+        "Context",
+        "GroupingKey"
+      ],
+      "properties": {
+        "Error": {
+          "$id": "#/properties/Details/properties/Error",
+          "type": "object",
+          "title": "The Error Schema",
+          "required": [
+            "Message",
+            "ClassName",
+            "StackTrace",
+            "FileName",
+            "Data"
+          ],
+          "properties": {
+            "Message": {
+              "$id": "#/properties/Details/properties/Error/properties/Message",
+              "type": "string",
+              "title": "The Message Schema",
+              "default": "",
+              "examples": [
+                "Exception: test"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "ClassName": {
+              "$id": "#/properties/Details/properties/Error/properties/ClassName",
+              "type": "string",
+              "title": "The Classname Schema",
+              "default": "",
+              "examples": [
+                "Exception"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "StackTrace": {
+              "$id": "#/properties/Details/properties/Error/properties/StackTrace",
+              "type": "array",
+              "title": "The Stacktrace Schema"
+            },
+            "FileName": {
+              "$id": "#/properties/Details/properties/Error/properties/FileName",
+              "type": "string",
+              "title": "The Filename Schema",
+              "default": "",
+              "examples": [
+                "tmp.php"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "Data": {
+              "$id": "#/properties/Details/properties/Error/properties/Data",
+              "type": ["object", "null"],
+              "title": "The Data Schema"
+            }
+          }
+        },
+        "MachineName": {
+          "$id": "#/properties/Details/properties/MachineName",
+          "type": "string",
+          "title": "The Machinename Schema",
+          "default": "",
+          "examples": [
+            "Host 1"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "Request": {
+          "$id": "#/properties/Details/properties/Request",
+          "type": "object",
+          "title": "The Request Schema",
+          "required": [
+            "HostName",
+            "Url",
+            "HttpMethod",
+            "IpAddress",
+            "QueryString",
+            "Headers",
+            "Form",
+            "RawData"
+          ],
+          "properties": {
+            "HostName": {
+              "$id": "#/properties/Details/properties/Request/properties/HostName",
+              "type": ["string", "null"],
+              "title": "The Hostname Schema",
+              "examples": [
+                "https://raygun.io"
+              ]
+            },
+            "Url": {
+              "$id": "#/properties/Details/properties/Request/properties/Url",
+              "type": ["string", "null"],
+              "title": "The Url Schema",
+              "examples": [
+                "/documentation/integrations/api"
+              ]
+            },
+            "HttpMethod": {
+              "$id": "#/properties/Details/properties/Request/properties/HttpMethod",
+              "type": ["string", "null"],
+              "title": "The Httpmethod Schema",
+              "examples": [
+                "POST"
+              ]
+            },
+            "IpAddress": {
+              "$id": "#/properties/Details/properties/Request/properties/IpAddress",
+              "type": ["string", "null"],
+              "title": "The Ipaddress Schema",
+              "examples": [
+                "127.0.0.1"
+              ]
+            },
+            "QueryString": {
+              "$id": "#/properties/Details/properties/Request/properties/QueryString",
+              "type": ["object", "null"],
+              "title": "The Querystring Schema",
+              "examples": [
+                {"q": "searchParams"}
+              ]
+            },
+            "Headers": {
+              "$id": "#/properties/Details/properties/Request/properties/Headers",
+              "type": "array",
+              "title": "The Headers Schema"
+            },
+            "Form": {
+              "$id": "#/properties/Details/properties/Request/properties/Form",
+              "type": "array",
+              "title": "The Form Schema"
+            },
+            "RawData": {
+              "$id": "#/properties/Details/properties/Request/properties/RawData",
+              "type": ["object", "null"],
+              "title": "The Rawdata Schema",
+              "examples": [
+                {"Test": 5}
+              ]
+            }
+          }
+        },
+        "Environment": {
+          "$id": "#/properties/Details/properties/Environment",
+          "type": "object",
+          "title": "The Environment Schema",
+          "required": [
+            "UtcOffset"
+          ],
+          "properties": {
+            "UtcOffset": {
+              "$id": "#/properties/Details/properties/Environment/properties/UtcOffset",
+              "type": "integer",
+              "title": "The Utcoffset Schema",
+              "default": 0,
+              "examples": [
+                0
+              ]
+            }
+          }
+        },
+        "Client": {
+          "$id": "#/properties/Details/properties/Client",
+          "type": "object",
+          "title": "The Client Schema",
+          "required": [
+            "Name",
+            "Version",
+            "ClientUrl"
+          ],
+          "properties": {
+            "Name": {
+              "$id": "#/properties/Details/properties/Client/properties/Name",
+              "type": "string",
+              "title": "The Name Schema",
+              "default": "",
+              "examples": [
+                "Raygun4php"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "Version": {
+              "$id": "#/properties/Details/properties/Client/properties/Version",
+              "type": "string",
+              "title": "The Version Schema",
+              "default": "",
+              "examples": [
+                "1.8.3"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "ClientUrl": {
+              "$id": "#/properties/Details/properties/Client/properties/ClientUrl",
+              "type": "string",
+              "title": "The Clienturl Schema",
+              "default": "",
+              "examples": [
+                "https://github.com/MindscapeHQ/raygun4php"
+              ],
+              "pattern": "^(.*)$"
+            }
+          }
+        },
+        "Version": {
+          "$id": "#/properties/Details/properties/Version",
+          "type": ["string", "null"],
+          "title": "The Version Schema",
+          "examples": [
+            "1.8.3"
+          ]
+        },
+        "Tags": {
+          "$id": "#/properties/Details/properties/Tags",
+          "type": ["array", "null"],
+          "title": "The Tags Schema",
+          "examples": [
+            ["tag1", "tag 2", "tag-3"]
+          ]
+        },
+        "UserCustomData": {
+          "$id": "#/properties/Details/properties/UserCustomData",
+          "type": ["object", "null"],
+          "title": "The Usercustomdata Schema",
+          "examples": [
+            {
+              "domain": "WORKPLACE",
+              "area": "51"
+            }
+          ]
+        },
+        "User": {
+          "$id": "#/properties/Details/properties/User",
+          "type": ["object", "null"],
+          "title": "The User Schema"
+        },
+        "Context": {
+          "$id": "#/properties/Details/properties/Context",
+          "type": ["object", "null"],
+          "title": "The Context Schema"
+        },
+        "GroupingKey": {
+          "$id": "#/properties/Details/properties/GroupingKey",
+          "type": ["string", "null"],
+          "title": "The Groupingkey Schema",
+          "examples": [
+            "ErrorGroup"
+          ]
+        }
+      }
+    }
+  }
+}
