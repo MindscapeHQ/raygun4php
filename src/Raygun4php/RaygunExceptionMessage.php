@@ -11,6 +11,9 @@ class RaygunExceptionMessage
     public $Data;
     public $InnerError;
 
+    /**
+     * @param \Throwable $exception
+     */
     public function __construct($exception)
     {
         $exceptionClass = get_class($exception);
