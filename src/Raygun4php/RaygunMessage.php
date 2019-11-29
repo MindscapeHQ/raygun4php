@@ -16,6 +16,9 @@ class RaygunMessage
         $this->Details = new RaygunMessageDetails();
     }
 
+    /**
+     * @param \Throwable $exception
+     */
     public function Build($exception)
     {
         $this->Details->MachineName = gethostname();
