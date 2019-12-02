@@ -113,7 +113,7 @@ class RaygunClient
     /**
      * Transmits an exception to the Raygun.io API
      *
-     * @param \Exception $exception      An exception object to transmit
+     * @param \Throwable $throwable      An exception object to transmit
      * @param array      $tags           An optional array of string tags used to provide metadata for the message
      * @param array      $userCustomData An optional associative array that can be used to place custom key-value
      *                                   data in the message payload
@@ -121,9 +121,9 @@ class RaygunClient
      *                                   occurred.
      * @return int The HTTP status code of the result when transmitting the message to Raygun.io
      */
-    public function SendException($exception, $tags = null, $userCustomData = null, $timestamp = null)
+    public function SendException($throwable, $tags = null, $userCustomData = null, $timestamp = null)
     {
-        $message = $this->BuildMessage($exception, $timestamp);
+        $message = $this->BuildMessage($throwable, $timestamp);
 
         if ($tags != null) {
             $this->AddTags($message, $tags);
@@ -273,7 +273,7 @@ class RaygunClient
     }
 
     /**
-     * @param \Exception $errorException
+     * @param \Throwable $errorException
      * @param int $timestamp
      * @return RaygunMessage
      */
