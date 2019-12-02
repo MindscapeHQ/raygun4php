@@ -184,18 +184,6 @@ class RaygunClientTest extends TestCase
         );
     }
 
-    public function testCanSetAndGetProxy()
-    {
-        $proxy = 'bar';
-
-        $this->client->setProxy($proxy);
-
-        $this->assertSame(
-            $proxy,
-            $this->client->getProxy()
-        );
-    }
-
     public function testSendExceptionInvokesTransportTransmit()
     {
         $this->transportMock->expects($this->once())

@@ -17,8 +17,6 @@ class RaygunClient
     protected $email;
     protected $isAnonymous;
     protected $uuid;
-    protected $httpData;
-    protected $debug;
     protected $disableUserTracking;
     protected $transport;
 
@@ -43,19 +41,11 @@ class RaygunClient
     /**
      * Creates a new RaygunClient instance.
      *
-     * @param bool $useAsyncSending     If true, attempts to post rapidly and asynchronously the script by forking a
-     *                                  cURL process. RaygunClient cannot return the HTTP result when in async mode,
-     *                                  however. If false, sends using a blocking socket connection. This is the only
-     *                                  method available on Windows.
-     * @param bool $debug               If true, and $useAsyncSending is true, this will output the HTTP response code
-     *                                  from posting. Will also emit errors if the socket connection fails to send
-     *                                  through error messages. See the GitHub documentation for code meaning. This
-     *                                  param does nothing if useAsyncSending is set to true.
+     * @param TransportInterface $transport
      * @param bool $disableUserTracking
      */
-    public function __construct(TransportInterface $transport, $debug = false, $disableUserTracking = false)
+    public function __construct(TransportInterface $transport, $disableUserTracking = false)
     {
-        $this->debug = $debug;
         $this->transport = $transport;
 
         if (!$disableUserTracking) {
@@ -462,18 +452,6 @@ class RaygunClient
     }
 
     /**
-     * Use a proxy for sending HTTP requests to Raygun.
-     *
-     * @param string $proxy URL including protocol and an optional port, e.g. http://myproxy:8080
-     * @return self
-     */
-    public function setProxy($proxy)
-    {
-        $this->proxy = $proxy;
-        return $this;
-    }
-
-    /**
      * Sets the given cookie options
      *
      * Existing values will be overridden. Values that are missing from the array being set will keep their current
@@ -487,20 +465,5 @@ class RaygunClient
     public function SetCookieOptions($options)
     {
         $this->cookieOptions = array_merge($this->cookieOptions, $options);
-    }
-
-    /**
-     * @return string
-     */
-    public function getProxy()
-    {
-        return $this->proxy;
-    }
-
-    public function __destruct()
-    {
-        if ($this->httpData) {
-            curl_close($this->httpData);
-        }
     }
 }
