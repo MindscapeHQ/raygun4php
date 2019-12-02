@@ -38,7 +38,6 @@ class RaygunClientTest extends TestCase
                                     ->setMethods(['transmit'])
                                     ->getMock();
 
-
         $this->client = new RaygunClient($this->transportMock);
         $this->jsonSchema = file_get_contents('./tests/misc/RaygunSchema.json');
     }

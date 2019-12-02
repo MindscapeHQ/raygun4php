@@ -27,7 +27,7 @@ class GuzzleSync implements TransportInterface
      * Synchronously transmits the message to the raygun API.
      *
      * @param RaygunMessageInterface $message
-     * @return boolean False if request fails or of the response status code is not 202.
+     * @return boolean False if request fails or if the response status code is not 202.
      */
     public function transmit(RaygunMessageInterface $message): bool
     {
