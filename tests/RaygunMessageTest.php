@@ -44,7 +44,7 @@ class RaygunMessageTest extends TestCase
     {
         $msg = new RaygunMessage();
 
-        $msg->Build(new \Exception('test'));
+        $msg->build(new \Exception('test'));
 
         $this->assertEquals($msg->Details->Error->Message, 'Exception: test');
     }
@@ -53,7 +53,7 @@ class RaygunMessageTest extends TestCase
     {
         $msg = new RaygunMessage();
 
-        $msg->Build(new Exception('outer', 0, new Exception('inner')));
+        $msg->build(new Exception('outer', 0, new Exception('inner')));
 
         $this->assertEquals($msg->Details->Error->Message, 'Exception: outer');
         $this->assertEquals($msg->Details->Error->InnerError->Message, 'Exception: inner');
@@ -62,7 +62,7 @@ class RaygunMessageTest extends TestCase
     public function testMessageToJsonSchema()
     {
         $msg = new RaygunMessage();
-        $msg->Build(new Exception('Test'));
+        $msg->build(new Exception('Test'));
 
         $msgJson = $msg->toJson();
         $this->assertJsonMatchesSchemaString($this->jsonSchema, json_decode($msgJson));

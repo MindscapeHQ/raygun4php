@@ -166,3 +166,4 @@ pip-log.txt
 .idea
 vendor/
 composer.lock
+.vscode

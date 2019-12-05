@@ -7,23 +7,45 @@ use PHPUnit\Framework\TestCase;
 use Raygun4php\RaygunClient;
 use Raygun4php\RaygunMessage;
 use Raygun4php\RaygunRequestMessage;
+use Raygun4php\Interfaces\TransportInterface;
+use Raygun4php\Tests\Stubs\TransportGetMessageStub;
+use EnricoStahn\JsonAssert\Assert as JsonAssert;
 
 class RaygunClientTest extends TestCase
 {
+    use JsonAssert;
+
     /**
-     * @expectedException \Raygun4php\Raygun4PhpException
-     * @expectedExceptionMessage API not valid, cannot send message to Raygun
+     * @var RaygunClient
      */
-    public function testSendReturns403WithInvalidApiKey()
+    protected $client;
+
+    /**
+     * @var TransportInterface&MockObject
+     */
+    protected $transportMock;
+
+    /**
+     * json schema used to validate message json.
+     *
+     * @var string
+     */
+    protected $jsonSchema;
+
+    protected function setUp()
     {
-        $client = new RaygunClient("", true);
-        $client->SendException(new \Exception(''));
+        $this->transportMock = $this->getMockBuilder(TransportInterface::class)
+                                    ->setMethods(['transmit'])
+                                    ->getMock();
+
+        $this->client = new RaygunClient($this->transportMock);
+        $this->jsonSchema = file_get_contents('./tests/misc/RaygunSchema.json');
     }
+   
 
     public function testGetFilteredParamsRemovesByKey()
     {
-        $client = new RaygunClient("some-api-key", true);
-        $client->setFilterParams(array(
+        $this->client->setFilterParams(array(
             'MyParam' => true
         ));
         $message = $this->getEmptyMessage();
@@ -37,7 +59,7 @@ class RaygunClientTest extends TestCase
             'MyParam' => 'secret',
         );
 
-        $filteredMessage = $client->filterParamsFromMessage($message);
+        $filteredMessage = $this->client->filterParamsFromMessage($message);
         $this->assertEquals(
             $filteredMessage->Details->Request->Form,
             array('MyParam' => '[filtered]',)
@@ -54,12 +76,11 @@ class RaygunClientTest extends TestCase
 
     public function testGetFilteredParamsIgnoresCase()
     {
-        $client = new RaygunClient("some-api-key", true);
-        $client->setFilterParams(array('myparam' => true));
+        $this->client->setFilterParams(array('myparam' => true));
         $message = $this->getEmptyMessage();
         $message->Details->Request->Form = array('MyParam' => 'secret',);
 
-        $filteredMessage = $client->filterParamsFromMessage($message);
+        $filteredMessage = $this->client->filterParamsFromMessage($message);
         $this->assertEquals(
             $filteredMessage->Details->Request->Form,
             array('MyParam' => '[filtered]',)
@@ -68,8 +89,7 @@ class RaygunClientTest extends TestCase
 
     public function testGetFilteredParamsAcceptsCustomFunctions()
     {
-        $client = new RaygunClient("some-api-key", true);
-        $client->setFilterParams(array(
+        $this->client->setFilterParams(array(
             'MyParam' => function ($key, $val) {
                 return strrev($val);
             },
@@ -79,7 +99,7 @@ class RaygunClientTest extends TestCase
             'MyParam' => 'secret',
         );
 
-        $filteredMessage = $client->filterParamsFromMessage($message);
+        $filteredMessage = $this->client->filterParamsFromMessage($message);
         $this->assertEquals(
             $filteredMessage->Details->Request->Form,
             array(
@@ -90,29 +110,27 @@ class RaygunClientTest extends TestCase
 
     public function testGetFilteredParamsRemovesRawData()
     {
-        $client = new RaygunClient("some-api-key", true);
         $message = $this->getEmptyMessage();
         $message->Details->Request->RawData = 'some-data';
 
-        $filteredMessage = $client->filterParamsFromMessage($message);
+        $filteredMessage = $this->client->filterParamsFromMessage($message);
         $this->assertEquals($filteredMessage->Details->Request->RawData, 'some-data');
 
-        $client->setFilterParams(array('MySensitiveParam' => true));
-        $filteredMessage = $client->filterParamsFromMessage($message);
+        $this->client->setFilterParams(array('MySensitiveParam' => true));
+        $filteredMessage = $this->client->filterParamsFromMessage($message);
         $this->assertNull($filteredMessage->Details->Request->RawData);
     }
 
     public function testGetFilteredParamsParsesRegex()
     {
-        $client = new RaygunClient("some-api-key", true);
-        $client->setFilterParams(array('/MyRegex.*/' => true,));
+        $this->client->setFilterParams(array('/MyRegex.*/' => true,));
         $message = $this->getEmptyMessage();
         $message->Details->Request->Form = array(
             'MyParam' => 'some val',
             'MyRegexParam' => 'secret',
         );
 
-        $filteredMessage = $client->filterParamsFromMessage($message);
+        $filteredMessage = $this->client->filterParamsFromMessage($message);
         $this->assertEquals(
             $filteredMessage->Details->Request->Form,
             array(
@@ -142,44 +160,51 @@ class RaygunClientTest extends TestCase
 
     public function testFilterParamsFromMessage()
     {
-        $client = new RaygunClient('foo');
-
         /** @var RaygunMessage&MockObject $message */
         $message = $this->getMockBuilder(RaygunMessage::class)->getMock();
 
         $this->assertSame(
             $message,
-            $client->filterParamsFromMessage($message)
+            $this->client->filterParamsFromMessage($message)
         );
     }
 
     public function testCanSetAndFilterParams()
     {
-        $client = new RaygunClient('foo');
-
         $params = array(
             'bar' => 'baz',
         );
 
-        $client->setFilterParams($params);
+        $this->client->setFilterParams($params);
 
         $this->assertSame(
             $params,
-            $client->getFilterParams()
+            $this->client->getFilterParams()
         );
     }
 
-    public function testCanSetAndGetProxy()
+    public function testSendExceptionInvokesTransportTransmit()
     {
-        $client = new RaygunClient('foo');
+        $this->transportMock->expects($this->once())
+                            ->method('transmit');
+        $this->client->SendException(new \Exception('test'));
+    }
 
-        $proxy = 'bar';
+    public function testSendErrorInvokesTransportTransmit()
+    {
+        $this->transportMock->expects($this->once())
+                            ->method('transmit');
+        $this->client->SendError(0, 'Test', __FILE__, __LINE__);
+    }
 
-        $client->setProxy($proxy);
+    public function testValidateMessageJsonInTransportObj()
+    {
+        $transportStub = new TransportGetMessageStub();
+        $client = new RaygunClient($transportStub);
 
-        $this->assertSame(
-            $proxy,
-            $client->getProxy()
-        );
+        $client->SendException(new \Exception('test'));
+        $raygunMessage = $transportStub->getMessage();
+
+        $this->assertJsonMatchesSchemaString($this->jsonSchema, json_decode($raygunMessage->toJson()));
     }
 }

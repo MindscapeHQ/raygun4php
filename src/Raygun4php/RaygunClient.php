@@ -3,10 +3,11 @@
 namespace Raygun4php;
 
 use Raygun4php\Rhumsaa\Uuid\Uuid;
+use Raygun4php\Interfaces\TransportInterface;
+use Raygun4php\Interfaces\RaygunMessageInterface;
 
 class RaygunClient
 {
-    protected $apiKey;
     protected $version;
     protected $tags;
     protected $userIdentifier;
@@ -16,11 +17,8 @@ class RaygunClient
     protected $email;
     protected $isAnonymous;
     protected $uuid;
-    protected $httpData;
-    protected $useAsyncSending;
-    protected $debug;
     protected $disableUserTracking;
-    protected $proxy;
+    protected $transport;
 
     protected $groupingKeyCallback;
 
@@ -40,29 +38,15 @@ class RaygunClient
      */
     protected $filterParams = array();
 
-    private $host = 'api.raygun.io';
-    private $path = '/entries';
-    private $transport = 'ssl';
-    private $port = 443;
-
     /**
      * Creates a new RaygunClient instance.
      *
-     * @param bool $useAsyncSending     If true, attempts to post rapidly and asynchronously the script by forking a
-     *                                  cURL process. RaygunClient cannot return the HTTP result when in async mode,
-     *                                  however. If false, sends using a blocking socket connection. This is the only
-     *                                  method available on Windows.
-     * @param bool $debug               If true, and $useAsyncSending is true, this will output the HTTP response code
-     *                                  from posting. Will also emit errors if the socket connection fails to send
-     *                                  through error messages. See the GitHub documentation for code meaning. This
-     *                                  param does nothing if useAsyncSending is set to true.
+     * @param TransportInterface $transport
      * @param bool $disableUserTracking
      */
-    public function __construct($key, $useAsyncSending = true, $debug = false, $disableUserTracking = false)
+    public function __construct(TransportInterface $transport, $disableUserTracking = false)
     {
-        $this->apiKey = $key;
-        $this->useAsyncSending = $useAsyncSending;
-        $this->debug = $debug;
+        $this->transport = $transport;
 
         if (!$disableUserTracking) {
             $this->SetUser();
@@ -296,7 +280,7 @@ class RaygunClient
     private function BuildMessage($errorException, $timestamp = null)
     {
         $message = new RaygunMessage($timestamp);
-        $message->Build($errorException);
+        $message->build($errorException);
         $message->Details->Version = $this->version;
         $message->Details->Context = new RaygunIdentifier(session_id());
 
@@ -372,103 +356,17 @@ class RaygunClient
     }
 
     /**
-     * Transmits a RaygunMessage to the Raygun.io API. The default attempts to transmit asynchronously.
-     * To disable this and transmit sync (blocking), pass false in as the 2nd parameter in RaygunClient's
-     * constructor. This may be necessary on some Windows installations where the implementation is broken.
+     * Transmits a RaygunMessage to the Raygun.io API.
      * This is a lower level function used by SendException and SendError and one of those should be used preferably.
      *
      * @param \Raygun4php\RaygunMessage $message A populated message to be posted to the Raygun API
-     * @return int|null The HTTP status code of the result after transmitting the message to Raygun.io
-     *                                          202 if accepted, 403 if invalid JSON payload
-     * @throws Raygun4PhpException
+     * @return bool Returns true if the transmission attempt is successful.
+     *              However, this does not guarantee that the message is delivered.
      */
     public function Send($message)
     {
-        if (empty($this->apiKey)) {
-            throw new \Raygun4php\Raygun4PhpException("API not valid, cannot send message to Raygun");
-        }
-
         $message = $this->filterParamsFromMessage($message);
-        $message = $message->toJson();
-
-        if (strlen($message) <= 0) {
-            return null;
-        }
-
-        return $this->post($message, realpath(__DIR__ . '/cacert.crt'));
-    }
-
-    private function post($data_to_send, $cert_path)
-    {
-        if ($this->useAsyncSending && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
-            $curlOpts = array(
-            "-X POST",
-            "-H 'Content-Type: application/json'",
-            "-H 'X-ApiKey: " . $this->apiKey . "'",
-            "-d " . escapeshellarg($data_to_send),
-            "--cacert '" . realpath(__DIR__ . '/cacert.crt') . "'"
-            );
-            if ($this->proxy) {
-                $curlOpts[] = "--proxy '" . $this->proxy . "'";
-            }
-            $cmd = "curl " . implode(' ', $curlOpts)
-                . " 'https://{$this->host}:{$this->port}{$this->path}' > /dev/null 2>&1 &";
-            $output = array();
-            $exit = 0;
-            exec($cmd, $output, $exit);
-            return $exit;
-        }
-
-        $remote = $this->transport . '://' . $this->host . ':' . $this->port;
-        $context = stream_context_create();
-        $result = stream_context_set_option($context, 'ssl', 'verify_host', true);
-
-        if (!empty($cert_path)) {
-            $result = stream_context_set_option($context, 'ssl', 'cafile', $cert_path);
-            $result = stream_context_set_option($context, 'ssl', 'verify_peer', true);
-        } else {
-            $result = stream_context_set_option($context, 'ssl', 'allow_self_signed', true);
-        }
-
-        if ($this->proxy) {
-            $result = stream_context_set_option($context, 'http', 'proxy', $this->proxy);
-        }
-
-        $fp = stream_socket_client($remote, $errno, $errstr, 10, STREAM_CLIENT_CONNECT, $context);
-
-        if ($fp) {
-            $req = '';
-            $req .= "POST $this->path HTTP/1.1\r\n";
-            $req .= "Host: $this->host\r\n";
-            $req .= "X-ApiKey: " . $this->apiKey . "\r\n";
-            $req .= 'Content-length: ' . strlen($data_to_send) . "\r\n";
-            $req .= "Content-type: application/json\r\n";
-            $req .= "Connection: close\r\n\r\n";
-            fwrite($fp, $req);
-            fwrite($fp, $data_to_send);
-
-            $response = "";
-            if ($this->debug) {
-                while (!preg_match("/^HTTP\/[\d\.]* (\d{3})/", $response)) {
-                    $response .= fgets($fp, 128);
-                }
-
-                fclose($fp);
-                return $response;
-            }
-
-            fclose($fp);
-            return 0;
-        }
-
-        if ($this->debug) {
-            $errMsg = "<br/><br/>" . "<strong>Raygun Warning:</strong> Couldn't send error. ";
-            $errMsg .= "Error number: " . $errno . "<br/><br/>";
-            $errMsg .= "Error string: " . $errstr . "<br/><br/>";
-            echo $errMsg;
-        }
-        trigger_error('httpPost error: ' . $errstr);
-        return null;
+        return $this->transport->transmit($message);
     }
 
     /**
@@ -554,18 +452,6 @@ class RaygunClient
     }
 
     /**
-     * Use a proxy for sending HTTP requests to Raygun.
-     *
-     * @param string $proxy URL including protocol and an optional port, e.g. http://myproxy:8080
-     * @return self
-     */
-    public function setProxy($proxy)
-    {
-        $this->proxy = $proxy;
-        return $this;
-    }
-
-    /**
      * Sets the given cookie options
      *
      * Existing values will be overridden. Values that are missing from the array being set will keep their current
@@ -579,20 +465,5 @@ class RaygunClient
     public function SetCookieOptions($options)
     {
         $this->cookieOptions = array_merge($this->cookieOptions, $options);
-    }
-
-    /**
-     * @return string
-     */
-    public function getProxy()
-    {
-        return $this->proxy;
-    }
-
-    public function __destruct()
-    {
-        if ($this->httpData) {
-            curl_close($this->httpData);
-        }
     }
 }
