@@ -32,7 +32,7 @@ class GuzzleAsyncTest extends TestCase
         $transport->setLogger($logger);
 
         $transport->transmit($message);
-        $transport->__destruct();
+        $transport->wait();
 
         $this->assertTrue($logger->hasErrorRecords());
     }
@@ -53,7 +53,7 @@ class GuzzleAsyncTest extends TestCase
         $transport->setLogger($logger);
 
         $transport->transmit($message);
-        $transport->__destruct();
+        $transport->wait();
 
         $this->assertTrue($logger->hasWarningRecords());
     }
@@ -74,7 +74,7 @@ class GuzzleAsyncTest extends TestCase
         $transport->setLogger($logger);
 
         $transport->transmit($message);
-        $transport->__destruct();
+        $transport->wait();
 
         $this->assertTrue($logger->hasErrorRecords());
     }

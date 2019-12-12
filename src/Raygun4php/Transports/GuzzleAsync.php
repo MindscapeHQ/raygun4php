@@ -82,7 +82,7 @@ class GuzzleAsync implements TransportInterface, LoggerAwareInterface
         $this->logger = $logger;
     }
 
-    public function __destruct()
+    public function wait()
     {
         Promise\settle($this->httpPromises)->wait(false);
     }
