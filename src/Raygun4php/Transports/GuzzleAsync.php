@@ -11,6 +11,7 @@ use GuzzleHttp\Promise;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class GuzzleAsync implements TransportInterface, LoggerAwareInterface
 {
@@ -36,6 +37,7 @@ class GuzzleAsync implements TransportInterface, LoggerAwareInterface
     public function __construct(ClientInterface $httpClient)
     {
         $this->httpClient = $httpClient;
+        $this->logger = new NullLogger();
     }
 
     /**
@@ -82,6 +84,6 @@ class GuzzleAsync implements TransportInterface, LoggerAwareInterface
 
     public function __destruct()
     {
-        Promise\settle($this->httpPromises)->wait();
+        Promise\settle($this->httpPromises)->wait(false);
     }
 }
