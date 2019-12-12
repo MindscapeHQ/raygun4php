@@ -6,9 +6,17 @@ use Raygun4php\Interfaces\RaygunMessageInterface;
 use Raygun4php\Interfaces\TransportInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\TransferException;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
-class GuzzleSync implements TransportInterface
+class GuzzleSync implements TransportInterface, LoggerAwareInterface
 {
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
     /**
      * @var ClientInterface
      */
@@ -21,6 +29,7 @@ class GuzzleSync implements TransportInterface
     public function __construct(ClientInterface $httpClient)
     {
         $this->httpClient = $httpClient;
+        $this->logger = new NullLogger();
     }
 
     /**
@@ -37,10 +46,29 @@ class GuzzleSync implements TransportInterface
             $httpResponse = $this->httpClient
                                  ->request('POST', '/entries', ['body' => $messageJson]);
         } catch (TransferException $th) {
+            $this->logger->error($th->getMessage(), json_decode($messageJson, true));
             return false;
         }
 
         $responseCode = $httpResponse->getStatusCode();
-        return $responseCode === 202;
+
+        if ($responseCode !== 202) {
+            $logMsg = "Expected response code 202 but got {$responseCode}";
+            if ($responseCode < 400) {
+                $this->logger->warning($logMsg, json_decode($messageJson, true));
+            } else {
+                $this->logger->error($logMsg, json_decode($messageJson, true));
+            }
+            return false;
+        }
+        return true;
     }
+
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+
+    
 }
