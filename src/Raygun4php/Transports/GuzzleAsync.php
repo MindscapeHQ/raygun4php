@@ -42,7 +42,7 @@ class GuzzleAsync implements TransportInterface, LoggerAwareInterface
 
     /**
      * Asynchronously transmits the message to the raygun API.
-     * Relies on the destructor of this object to settle any pending requests.
+     * Relies on the wait() method of this object being called to settle any pending requests.
      *
      * @param RaygunMessageInterface $message
      * @return boolean
@@ -77,11 +77,22 @@ class GuzzleAsync implements TransportInterface, LoggerAwareInterface
         return true;
     }
 
-    public function setLogger(LoggerInterface $logger)
+    /**
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
 
+    /**
+     * Calling this method will settle any pending request.
+     * Calling this method should typically handled by a function registered as a shutdown function.
+     * @see https://www.php.net/manual/en/function.register-shutdown-function.php
+     *
+     * @return void
+     */
     public function wait(): void
     {
         Promise\settle($this->httpPromises)->wait(false);
