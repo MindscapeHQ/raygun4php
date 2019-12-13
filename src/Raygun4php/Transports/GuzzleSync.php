@@ -68,7 +68,4 @@ class GuzzleSync implements TransportInterface, LoggerAwareInterface
     {
         $this->logger = $logger;
     }
-
-
-    
 }
