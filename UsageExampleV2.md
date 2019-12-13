@@ -16,9 +16,7 @@ $httpClient = new GuzzleHttp\Client([
 
 // If synchronous message delivery is wanted use Raygun4php\Transports\GuzzleSync
 $transport = new Raygun4php\Transports\GuzzleAsync($httpClient);
-
 $client = new Raygun4php\RaygunClient($transport);
-
 
 // Create and register error handlers
 function error_handler($errno, $errstr, $errfile, $errline )
@@ -47,9 +45,17 @@ function fatal_error()
     }
 }
 
-    set_exception_handler('exception_handler');
-    set_error_handler("error_handler");
-    register_shutdown_function("fatal_error");
+function flush_on_shutdown()
+{
+    global $transport;
+    $transport->wait();
+}
 
+set_exception_handler('exception_handler');
+set_error_handler("error_handler");
+register_shutdown_function("fatal_error");
+
+// This is needed to if guzzleAsync is used as transport to make sure all request are resolved.
+register_shutdown_function("flush_on_shutdown");
 
 ```
