@@ -64,7 +64,11 @@ class GuzzleSync implements TransportInterface, LoggerAwareInterface
         return true;
     }
 
-    public function setLogger(LoggerInterface $logger)
+    /**
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
