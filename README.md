@@ -3,6 +3,8 @@ Raygun4PHP
 
 [Raygun.com](http://raygun.com) provider for PHP 7.1+
 
+_See [v1.8 documentation](https://github.com/MindscapeHQ/raygun4php/blob/1.8/README.md) for support for legacy versions of PHP_
+
 [![Build
 Status](https://secure.travis-ci.org/MindscapeHQ/raygun4php.png?branch=master)](http://travis-ci.org/MindscapeHQ/raygun4php)
 
@@ -19,12 +21,12 @@ Composer is a package management tool for PHP which automatically fetches depend
 2. Inside your project's root directory create a composer.json file, containing:
 ```json
 {
-        "require": {
-            "mindscape/raygun4php": "^1.0"
-        }
+    "require": {
+        "mindscape/raygun4php": "^2.0"
+    }
 }
 ```
-3. From your shell run `php composer.phar install` (*nix) or `composer install` (Windows). This will download Raygun4Php and create the appropriate autoload data.
+3. From your shell run `php composer.phar install` (*nix) or `composer install` (Windows). This will download Raygun4PHP and create the appropriate autoload data.
 
 4. Then in a PHP file just add:
 ```php
@@ -41,19 +43,19 @@ Then, create handlers that look something like this:
 ```php
 namespace
 {
-	// paste your 'requires' statement
+    // paste your 'requires' statement
 
-	$client = new \Raygun4php\RaygunClient("apikey for your application");
+    $client = new \Raygun4php\RaygunClient("APIKEY_FOR_YOUR_APPLICATION");
 
-	function error_handler($errno, $errstr, $errfile, $errline ) {
-		global $client;
-  		$client->SendError($errno, $errstr, $errfile, $errline);
-	}
+    function error_handler($errno, $errstr, $errfile, $errline ) {
+        global $client;
+        $client->SendError($errno, $errstr, $errfile, $errline);
+    }
 
-	function exception_handler($exception)
-	{
-		global $client;
-		$client->SendException($exception);
+    function exception_handler($exception)
+    {
+        global $client;
+        $client->SendException($exception);
     }
 
     function fatal_error()
@@ -62,11 +64,11 @@ namespace
         $last_error = error_get_last();
 
         if (!is_null($last_error)) {
-          $errno = $last_error['type'];
-          $errstr = $last_error['message'];
-          $errfile = $last_error['file'];
-          $errline = $last_error['line'];
-          $client->SendError($errno, $errstr, $errfile, $errline);
+            $errno = $last_error['type'];
+            $errstr = $last_error['message'];
+            $errfile = $last_error['file'];
+            $errline = $last_error['line'];
+            $client->SendError($errno, $errstr, $errfile, $errline);
         }
     }
 
@@ -78,43 +80,15 @@ namespace
 
 Note that if you are placing in inside a file with a namespace of your choosing, the above code should be declared to be within the global namespace (thus the `namespace { }` is required). You will also need whichever `requires` statement as above (autoload or manual) before the `$client` instantiation.
 
-Copy your application's API key from the Raygun.io dashboard, and place it in the constructor call as above (do not include the curly brackets).
+Copy your application's API key from the Raygun dashboard, and place it in the constructor call as above (do not include the curly brackets).
 
-If the handlers reside in their own file, just import it in every file where you'd like exceptions and errors to be sent, and they will be delivered to Raygun.io.
+If the handlers reside in their own file, just import it in every file where you'd like exceptions and errors to be sent, and they will be delivered to Raygun.com.
 
-## Configuration
-
-### Sending method - async/sync
-
-Raygun4PHP has two algorithms which it can use to send your errors:
-
-* **Asynchronous**: POSTs the message and returns to your script immediately without waiting for the response from the Raygun API.
-
-* **Synchronous**: POSTs the message, blocks and receives the HTTP response from the Raygun API. This uses a socket connection which is still reasonably fast. This also allows the use of the debug mode to receive the HTTP response code; see below.
-
-
-This can be set by passing in a boolean as the 2nd parameter to the constructor:
-
-```php
-$client = new \Raygun4php\RaygunClient("apiKey", $useAsyncSending);
-```
-#### $useAsyncSending options
-
-Type: *boolean*
-
-Linux/OS X default: *true*
-
-Windows default: *false*
-
-* If **$useAsyncSending** is *true*, and the script is running on a *nix platform, the message will be delivered asynchronously. SendError() and SendException() will return 0 if all went well.
-
-* If **$useAsyncSending** is *false*, the script will block and receive the HTTP response.
-
-*false* is the only effective option on Windows due to platform and library limitations within the supported versions.
+## Configuration (v1)
 
 ### Proxies
 
-A HTTP proxy can be set if your environment can't connect out through PHP or the `curl` binrary natively:
+A HTTP proxy can be set if your environment can't connect out through PHP or the `curl` binary natively:
 
 ```php
 $client = new \Raygun4php\RaygunClient("apiKey");
@@ -201,7 +175,7 @@ This feature can be used in CLI mode by calling SetUser() at the start of your s
 
 ### Custom error grouping
 
-Control of how error instances are grouped together can achieved by passing a callback to the `SetGroupingKey` method on the client. If the callback returns a string, ideally 100 characters or less, errors matching that key will grouped together. Overriding the default automatic grouping. If the callback returns a non-string value then that error will be grouped automatically.  
+Control of how error instances are grouped together can achieved by passing a callback to the `SetGroupingKey` method on the client. If the callback returns a string, ideally 100 characters or less, errors matching that key will grouped together. Overriding the default automatic grouping. If the callback returns a non-string value then that error will be grouped automatically.
 
 ```php
 $client = new \Raygun4php\RaygunClient("apiKey");
@@ -254,7 +228,7 @@ Note that when any filters are defined, the Raygun error will no longer contain 
 
 ### Updating Cookie options
 
-Cookies are used for the user tracking functionality of the Raygun4Php provider. In version 1.8 of the provider, the options passed to the `setcookie` method can now be customized to your needs.
+Cookies are used for the user tracking functionality of the Raygun4PHP provider. In version 1.8 of the provider, the options passed to the `setcookie` method can now be customized to your needs.
 
 ```php
 $client = new \Raygun4php\RaygunClient("apiKey");
@@ -296,10 +270,10 @@ function error_handler($errno, $errstr, $errfile, $errline ) {
 }
 ```
 
-See the [Error Control Operators section on PHP.net](http://php.net/manual/en/language.operators.errorcontrol.php) for more information  
+See the [Error Control Operators section on PHP.net](http://php.net/manual/en/language.operators.errorcontrol.php) for more information
 
 ## Changelog
-- 2.0.0 (unreleased): New major version
+- 2.0.0: New major version
   - Increased minimum PHP version to 7.1
   - Added PSR-4 autoloader
   - Removes `toJsonRemoveUnicodeSequences()` and `removeNullBytes()` methods from the RaygunClient class - use `toJson()` instead
