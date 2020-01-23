@@ -23,7 +23,7 @@ class ViewData
     /**
      * @return int
      */
-    public function getTime()
+    public function getTime(): int
     {
         return $this->time;
     }
@@ -31,7 +31,7 @@ class ViewData
     /**
      * @return float
      */
-    public function getDistance()
+    public function getDistance(): float
     {
         return $this->distance;
     }
@@ -39,7 +39,7 @@ class ViewData
     /**
      * @return bool
      */
-    public function hasSentData()
+    public function hasSentData(): bool
     {
         return isset($this->time) && isset($this->distance);
     }
@@ -47,7 +47,7 @@ class ViewData
     /**
      * @return string
      */
-    public function getAveragePace()
+    public function getAveragePace(): string
     {
         return $this->decimalToMinuteString($this->time / $this->distance);
     }
@@ -55,7 +55,7 @@ class ViewData
     /**
      * @return string
      */
-    public function getAverageSpeed()
+    public function getAverageSpeed(): string
     {
         return round($this->distance / ($this->time / 60), self::SPEED_PRECISION);
     }
@@ -64,7 +64,7 @@ class ViewData
      * @param float $timeAsDecimal
      * @return string
      */
-    private function decimalToMinuteString(float $timeAsDecimal)
+    private function decimalToMinuteString(float $timeAsDecimal): string
     {
         $whole = floor($timeAsDecimal);
         $decimal = $timeAsDecimal - $whole;

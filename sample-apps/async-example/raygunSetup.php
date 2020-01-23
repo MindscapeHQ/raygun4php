@@ -23,7 +23,7 @@ namespace {
         const LOG_FILE_PATH = __DIR__ . '/debug.log';
 
         /**
-         * @var GuzzleSync
+         * @var GuzzleAsync|GuzzleSync
          */
         private $transport;
 
@@ -76,47 +76,26 @@ namespace {
 
             $raygunClient = new RaygunClient($this->transport);
 
-            // Get logged in user info to track affected user
+            // Get the logged-in user info to track affected user
             $raygunClient->SetUser("test@example.com", "Test", "Test User", "test@example.com");
 
             $this->raygunClient = $raygunClient;
         }
 
-        /**
-         * @param int $errno
-         * @param string $errstr
-         * @param string $errfile
-         * @param int $errline
-         * @param array $tags
-         * @param array $customData
-         * @param int $timestamp
-         */
-        public function sendError($errno, $errstr, $errfile, $errline, $tags = null, $customData = null, $timestamp = null)
-        {
-            $this->raygunClient->SendError($errno, $errstr, $errfile, $errline, $tags, $customData, $timestamp);
+        public function getRaygunClient(): RaygunClient {
+            return $this->raygunClient;
         }
 
-        /**
-         * @param Throwable $exception
-         * @param array $tags
-         * @param array $customData
-         * @param int $timestamp
-         */
-        public function sendException($exception, $tags = null, $customData = null, $timestamp = null)
-        {
-            $this->raygunClient->SendException($exception, $tags, $customData, $timestamp);
-        }
-
-        public function handleLastError()
+        public function handleLastError(): void
         {
             $last_error = error_get_last();
 
             if (!is_null($last_error)) {
-                $this->sendError($last_error['type'], $last_error['message'], $last_error['file'], $last_error['line']);
+                $this->raygunClient->SendError($last_error['type'], $last_error['message'], $last_error['file'], $last_error['line']);
             }
         }
 
-        public function flushAsyncPromises()
+        public function flushAsyncPromises(): void
         {
             if ($this->useAsync) {
                 $this->transport->wait();
@@ -124,10 +103,11 @@ namespace {
         }
     }
 
-    $setup = new RaygunSetup();
+    $raygunSetup = new RaygunSetup();
+    $raygunClient = $raygunSetup->getRaygunClient();
 
-    set_error_handler([$setup, 'sendError']);
-    set_exception_handler([$setup, 'sendException']);
-    register_shutdown_function([$setup, 'handleLastError']);
-    register_shutdown_function([$setup, 'flushAsyncPromises']);
+    set_error_handler([$raygunClient, 'SendError']);
+    set_exception_handler([$raygunClient, 'SendException']);
+    register_shutdown_function([$raygunSetup, 'handleLastError']);
+    register_shutdown_function([$raygunSetup, 'flushAsyncPromises']);
 }
