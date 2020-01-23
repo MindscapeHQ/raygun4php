@@ -18,7 +18,9 @@ namespace {
     {
         const RAYGUN_BASE_URI = 'https://api.raygun.io';
         const HTTP_CLIENT_TIMEOUT = 2.0;
-        const API_KEY = 'INSERT_API_KEY_HERE';
+        const API_KEY = 'sgbs3RocyWEnR2ar5q6W6Q';
+        const LOGGER_NAME = 'example_logger';
+        const LOG_FILE_PATH = __DIR__ . '/debug.log';
 
         /**
          * @var GuzzleSync
@@ -52,8 +54,8 @@ namespace {
         public function __construct($useAsync = true)
         {
             $this->useAsync = $useAsync;
-            $this->logger = new Logger('example_logger');
-            $this->logger->pushHandler(new StreamHandler(__DIR__ . '/debug.log'));
+            $this->logger = new Logger(self::LOGGER_NAME);
+            $this->logger->pushHandler(new StreamHandler(self::LOG_FILE_PATH));
             $this->logger->pushHandler(new FirePHPHandler());
 
             $this->httpClient = new Client([
@@ -80,22 +82,29 @@ namespace {
             $this->raygunClient = $raygunClient;
         }
 
-        public function SendError($errno,
-                                  $errstr,
-                                  $errfile,
-                                  $errline)
+        /**
+         * @param int $errno
+         * @param string $errstr
+         * @param string $errfile
+         * @param int $errline
+         * @param array $tags
+         * @param array $customData
+         * @param int $timestamp
+         */
+        public function sendError($errno, $errstr, $errfile, $errline, $tags = null, $customData = null, $timestamp = null)
         {
-            $this->raygunClient->SendError($errno,
-                $errstr,
-                $errfile,
-                $errline,
-                ['useAsync' => $this->useAsync]
-            );
+            $this->raygunClient->SendError($errno, $errstr, $errfile, $errline, $tags, $customData, $timestamp);
         }
 
-        public function SendException($exception)
+        /**
+         * @param Throwable $exception
+         * @param array $tags
+         * @param array $customData
+         * @param int $timestamp
+         */
+        public function sendException($exception, $tags = null, $customData = null, $timestamp = null)
         {
-            $this->raygunClient->SendException($exception);
+            $this->raygunClient->SendException($exception, $tags, $customData, $timestamp);
         }
 
         public function handleLastError()
@@ -103,7 +112,7 @@ namespace {
             $last_error = error_get_last();
 
             if (!is_null($last_error)) {
-                $this->SendError($last_error['type'], $last_error['message'], $last_error['file'], $last_error['line']);
+                $this->sendError($last_error['type'], $last_error['message'], $last_error['file'], $last_error['line']);
             }
         }
 
@@ -117,8 +126,8 @@ namespace {
 
     $setup = new RaygunSetup();
 
-    set_error_handler([$setup, 'SendError']);
-    set_exception_handler([$setup, 'SendException']);
+    set_error_handler([$setup, 'sendError']);
+    set_exception_handler([$setup, 'sendException']);
     register_shutdown_function([$setup, 'handleLastError']);
     register_shutdown_function([$setup, 'flushAsyncPromises']);
 }
