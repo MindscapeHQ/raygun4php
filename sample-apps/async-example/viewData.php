@@ -69,7 +69,8 @@ class ViewData
         $whole = floor($timeAsDecimal);
         $decimal = $timeAsDecimal - $whole;
         $roundedMinutes = round($decimal * 60, 0);
-        $minutes = str_pad($roundedMinutes, 2, "0");
+        $minutes = str_pad($roundedMinutes, 2, "0", STR_PAD_LEFT);
+
         return "{$whole}:{$minutes}";
     }
 }
