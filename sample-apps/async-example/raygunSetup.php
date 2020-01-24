@@ -2,6 +2,7 @@
 
 namespace {
     require_once 'vendor/autoload.php';
+    require_once 'config.php';
 
     use GuzzleHttp\Client;
     use Monolog\Logger;
@@ -16,9 +17,8 @@ namespace {
      */
     class RaygunSetup
     {
-        const RAYGUN_BASE_URI = 'https://api.raygun.io';
+        const RAYGUN_BASE_URI = 'https://api.raygun.com';
         const HTTP_CLIENT_TIMEOUT = 2.0;
-        const API_KEY = 'sgbs3RocyWEnR2ar5q6W6Q';
         const LOGGER_NAME = 'example_logger';
         const LOG_FILE_PATH = __DIR__ . '/debug.log';
 
@@ -62,7 +62,7 @@ namespace {
                 'base_uri' => self::RAYGUN_BASE_URI,
                 'timeout' => self::HTTP_CLIENT_TIMEOUT,
                 'headers' => [
-                    'X-ApiKey' => self::API_KEY
+                    'X-ApiKey' => API_KEY
                 ]
             ]);
 
@@ -86,12 +86,12 @@ namespace {
             return $this->raygunClient;
         }
 
-        public function handleLastError(): void
+        public function handleFatalError(): void
         {
-            $last_error = error_get_last();
+            $lastError = error_get_last();
 
-            if (!is_null($last_error)) {
-                $this->raygunClient->SendError($last_error['type'], $last_error['message'], $last_error['file'], $last_error['line']);
+            if (!is_null($lastError)) {
+                $this->raygunClient->SendError($lastError['type'], $lastError['message'], $lastError['file'], $lastError['line']);
             }
         }
 
@@ -108,6 +108,6 @@ namespace {
 
     set_error_handler([$raygunClient, 'SendError']);
     set_exception_handler([$raygunClient, 'SendException']);
-    register_shutdown_function([$raygunSetup, 'handleLastError']);
+    register_shutdown_function([$raygunSetup, 'handleFatalError']);
     register_shutdown_function([$raygunSetup, 'flushAsyncPromises']);
 }
