@@ -108,7 +108,7 @@ Remove this line:
 register_shutdown_function([$transport, 'wait']);
 ```
 
-Note that if you are placing it inside a file with a namespace of your choosing, the above code should be declared to be within the global namespace (thus the `namespace { }` is required). You will also need whichever `requires` statement as above (autoload or manual) before the `$raygunClient` instantiation.
+Note that if you are placing it inside a file with a namespace of your choosing, the above code should be declared to be within the global namespace (thus the `namespace { }` is required). You will also need whichever `require` statement as above (autoload or manual) before the `$raygunClient` instantiation.
 
 Copy your application's API key from the [Raygun app](https://app.raygun.com), and paste it into the `X-ApiKey` header field of the HTTP client.
 
@@ -121,7 +121,8 @@ If the handlers reside in their own file, just import it in every file where you
 An HTTP proxy can be set as the `base_uri` property on the HTTP Client:
 
 ```php
-<?php
+// ...
+
 $httpClient = new Client([
     'base_uri' => 'http://someproxy:8080',
     'headers' => [
@@ -134,7 +135,7 @@ $httpClient = new Client([
 
 We recommend using a logger which is compatible with the [PSR-3 LoggerInterface](https://www.php-fig.org/psr/psr-3/) (e.g. [Monolog](https://github.com/Seldaek/monolog)).
 
-Expanding on the example above, you can set a logger to be used by the transport like so:
+Expanding on the _Asynchronous transport_ example above, you can set a logger to be used by the transport like so:
 
 ```php
 // ...
@@ -255,34 +256,34 @@ $raygunClient->SetGroupingKey(function($payload, $stackTrace) {
 Some error data will be too sensitive to transmit to an external service, such as credit card details or passwords. Since this data is very application specific, Raygun doesn't filter out anything by default. You can configure to either replace or otherwise transform specific values based on their keys. These transformations apply to form data (`$_POST`), custom user data, HTTP headers, and environment data (`$_SERVER`). It does not filter the URL or its `$_GET` parameters, or custom message strings. Since Raygun doesn't log method arguments in stack traces, those don't need filtering. All key comparisons are case insensitive.
 
 ```php
-$raygunClient->setFilterParams(array(
+$raygunClient->setFilterParams([
 	'password' => true,
 	'creditcardnumber' => true,
 	'ccv' => true,
 	'php_auth_pw' => true, // filters basic auth from $_SERVER
-));
-// Example input: array('Username' => 'myuser','Password' => 'secret')
-// Example output: array('Username' => 'myuser','Password' => '[filtered]')
+]);
+// Example input: ['Username' => 'myuser','Password' => 'secret']
+// Example output: ['Username' => 'myuser','Password' => '[filtered]']
 ```
 
 You can also define keys as regular expressions:
 
 ```php
-$raygunClient->setFilterParams(array(
+$raygunClient->setFilterParams([
 	'/^credit/i' => true,
-));
-// Example input: array('CreditCardNumber' => '4111111111111111','CreditCardCcv' => '123')
-// Example output: array('CreditCardNumber' => '[filtered]','CreditCardCcv' => '[filtered]')
+]);
+// Example input: ['CreditCardNumber' => '4111111111111111','CreditCardCcv' => '123']
+// Example output: ['CreditCardNumber' => '[filtered]','CreditCardCcv' => '[filtered]']
 ```
 
 In case you want to retain some hints on the data rather than removing it completely, you can also apply custom transformations through PHP's anonymous functions. The following example truncates all keys starting with "address".
 
 ```php
-$raygunClient->setFilterParams(array(
+$raygunClient->setFilterParams([
 	'Email' => function($key, $val) {return substr($val, 0, 5) . '...';}
-));
-// Example input: array('Email' => 'test@test.com')
-// Example output: array('Email' => 'test@...')
+]);
+// Example input: ['Email' => 'test@test.com']
+// Example output: ['Email' => 'test@...']
 ```
 
 Note that when any filters are defined, the Raygun error will no longer contain the raw HTTP data, since there's no effective way to filter it.
@@ -292,13 +293,13 @@ Note that when any filters are defined, the Raygun error will no longer contain 
 Cookies are used for the user tracking functionality of the Raygun4PHP provider. In version 1.8 of the provider, the options passed to the `setcookie` method can now be customized to your needs.
 
 ```php
-$raygunClient->SetCookieOptions(array(
+$raygunClient->SetCookieOptions([
     'expire'   => 2592000, // 30 * 24 * 60 * 60
     'path'     => '/',
     'domain'   => '',
     'secure'   => false,
     'httponly' => false
-));
+]);
 ```
 
 ## Troubleshooting
