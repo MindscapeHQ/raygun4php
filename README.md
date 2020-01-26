@@ -38,7 +38,7 @@ and the library will be imported ready for use.
 
 ## Usage
 
-You can automatically send both PHP errors and object-oriented exceptions to Raygun. The RaygunClient requires an HTTP transport (e.g. [Guzzle](http://docs.guzzlephp.org/), [UniRest](http://unirest.io/php.html), etc.).
+You can automatically send both PHP errors and object-oriented exceptions to Raygun. The RaygunClient requires an HTTP transport (e.g. [Guzzle](http://docs.guzzlephp.org/) or other [PSR-7](https://www.php-fig.org/psr/psr-7/) compatible interface).
 
 There are Guzzle-based asynchronous and synchronous transport classes in the provider, or you can use your own.
 
