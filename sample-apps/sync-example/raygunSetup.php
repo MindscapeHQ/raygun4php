@@ -32,39 +32,24 @@ namespace {
     $transport->setLogger($logger);
 
     $raygunClient = new RaygunClient($transport, false, $logger);
+    $tags = ['local-environment', 'machine-4'];
 
-    class HandlerUtilities {
-        private $raygunClient;
-        private $tags;
+    set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($raygunClient, $tags) {
+        $raygunClient->SendError($errno, $errstr, $errfile, $errline, $tags);
+    });
 
-        public function __construct($raygunClient, $tags)
-        {
-            $this->raygunClient = $raygunClient;
-            $this->tags = $tags;
+    set_exception_handler(function ($exception) use ($raygunClient, $tags) {
+        $raygunClient->SendException($exception, $tags);
+    });
+
+    register_shutdown_function(function () use ($raygunClient, $tags) {
+        $lastError = error_get_last();
+
+        if (!is_null($lastError)) {
+            [$type, $message, $file, $line] = $lastError;
+            $_tags = array_merge($tags, ['fatal-error']);
+            $raygunClient->SendError($type, $message, $file, $line, $_tags);
         }
-
-        public function errorHandler($errno, $errstr, $errfile, $errline) {
-            $this->raygunClient->SendError($errno, $errstr, $errfile, $errline, $this->tags);
-        }
-
-        public function exceptionHandler($exception) {
-            $this->raygunClient->SendException($exception, $this->tags);
-        }
-
-        public function fatalErrorHandler() {
-            $lastError = error_get_last();
-
-            if (!is_null($lastError)) {
-                $this->raygunClient->SendError($lastError['type'], $lastError['message'], $lastError['file'], $lastError['line']);
-            }
-        }
-    }
-
-    $tags = ['staging-environment', 'machine-4'];
-    $handlers = new HandlerUtilities($raygunClient, $tags);
-
-    set_error_handler([$handlers, 'errorHandler']);
-    set_exception_handler([$handlers, 'exceptionHandler']);
-    register_shutdown_function([$handlers, 'fatalErrorHandler']);
+    });
 }
 
