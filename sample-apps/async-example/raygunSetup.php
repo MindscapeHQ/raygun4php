@@ -48,10 +48,16 @@ namespace {
         private $raygunClient;
 
         /**
+         * @var array
+         */
+        private $tags;
+
+        /**
          * RaygunSetup constructor.
+         * @param array $tags
          * @param bool $useAsync
          */
-        public function __construct($useAsync = true)
+        public function __construct($tags = [], $useAsync = true)
         {
             $this->useAsync = $useAsync;
             $this->logger = new Logger(self::LOGGER_NAME);
@@ -79,11 +85,22 @@ namespace {
             // Get the logged-in user info to track affected user
             $raygunClient->SetUser("test@example.com", "Test", "Test User", "test@example.com");
 
+            $this->tags = $tags;
+
             $this->raygunClient = $raygunClient;
         }
 
-        public function getRaygunClient(): RaygunClient {
+        public function getRaygunClient(): RaygunClient
+        {
             return $this->raygunClient;
+        }
+
+        public function sendError($errno, $errstr, $errfile, $errline): void {
+            $this->raygunClient->SendError($errno, $errstr, $errfile, $errline, $this->tags);
+        }
+
+        public function sendException($exception): void {
+            $this->raygunClient->SendException($exception, $this->tags);
         }
 
         public function handleFatalError(): void
@@ -91,7 +108,10 @@ namespace {
             $lastError = error_get_last();
 
             if (!is_null($lastError)) {
-                $this->raygunClient->SendError($lastError['type'], $lastError['message'], $lastError['file'], $lastError['line']);
+                [$type, $message, $file, $line] = $lastError;
+
+                $tags = array_merge($this->tags, ['fatal-error']);
+                $this->raygunClient->SendError($type, $message, $file, $line, $tags);
             }
         }
 
@@ -103,11 +123,10 @@ namespace {
         }
     }
 
-    $raygunSetup = new RaygunSetup();
-    $raygunClient = $raygunSetup->getRaygunClient();
+    $raygunSetup = new RaygunSetup(['local']);
 
-    set_error_handler([$raygunClient, 'SendError']);
-    set_exception_handler([$raygunClient, 'SendException']);
+    set_error_handler([$raygunSetup, 'sendError']);
+    set_exception_handler([$raygunSetup, 'sendException']);
     register_shutdown_function([$raygunSetup, 'handleFatalError']);
     register_shutdown_function([$raygunSetup, 'flushAsyncPromises']);
 }
