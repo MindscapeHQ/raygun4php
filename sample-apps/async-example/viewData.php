@@ -23,7 +23,7 @@ class ViewData
     /**
      * @return int
      */
-    public function getTime(): int
+    public function getTime(): ?int
     {
         return $this->time;
     }
@@ -31,7 +31,7 @@ class ViewData
     /**
      * @return float
      */
-    public function getDistance(): float
+    public function getDistance(): ?float
     {
         return $this->distance;
     }
