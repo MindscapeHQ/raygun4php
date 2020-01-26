@@ -3,7 +3,7 @@ Raygun4PHP
 
 [Raygun.com](http://raygun.com) provider for PHP 7.1+
 
-_See [v1.8 documentation](https://github.com/MindscapeHQ/raygun4php/blob/1.8/README.md) for support for legacy versions of PHP_
+_See [v1.8 documentation](https://github.com/MindscapeHQ/raygun4php/blob/1.8/README.md) for PHP v5.3+ support_
 
 [![Build
 Status](https://secure.travis-ci.org/MindscapeHQ/raygun4php.png?branch=master)](http://travis-ci.org/MindscapeHQ/raygun4php)
@@ -16,9 +16,10 @@ Firstly, ensure that **curl** is installed and enabled in your server's php.ini 
 
 Composer is a package management tool for PHP which automatically fetches dependencies and also supports autoloading - this is a low-impact way to get Raygun4PHP into your site.
 
-1. If you use a *nix environment, [follow the instructions](http://getcomposer.org/doc/01-basic-usage.md#installation) to install Composer. Windows users can run [this installer](https://github.com/johnstevenson/composer-setup) to automatically add it to the Path.
+1\. If you use a *nix environment, [follow the instructions](http://getcomposer.org/doc/01-basic-usage.md#installation) to install Composer. Windows users can run [this installer](https://github.com/johnstevenson/composer-setup) to automatically add it to the Path.
 
-2. Inside your project's root directory create a composer.json file, containing:
+2\. Inside your project's root directory create a composer.json file, containing:
+
 ```json
 {
     "require": {
@@ -26,9 +27,10 @@ Composer is a package management tool for PHP which automatically fetches depend
     }
 }
 ```
-3. From your shell run `php composer.phar install` (*nix) or `composer install` (Windows). This will download Raygun4PHP and create the appropriate autoload data.
 
-4. Then in a PHP file just add:
+3\. From your shell run `php composer.phar install` (*nix) or `composer install` (Windows). This will download Raygun4PHP and create the appropriate autoload data.
+
+4\. Then in a PHP file just add:
 ```php
 require_once 'vendor/autoload.php';
 ```
@@ -36,7 +38,11 @@ and the library will be imported ready for use.
 
 ## Usage
 
-You can automatically send both PHP errors and object-oriented exceptions to Raygun.
+You can automatically send both PHP errors and object-oriented exceptions to Raygun. The RaygunClient requires an HTTP transport (e.g. [Guzzle](http://docs.guzzlephp.org/), [UniRest](http://unirest.io/php.html), etc.).
+
+There are Guzzle-based asynchronous and synchronous transport classes in the provider, or you can use your own.
+
+### Asynchronous transport
 
 This is an example of basic usage for asynchronous sending of errors and exceptions:
 
@@ -49,33 +55,62 @@ namespace {
     use Raygun4php\RaygunClient;
     use Raygun4php\Transports\GuzzleAsync;
 
-    const RAYGUN_BASE_URI = 'http://api.raygun.com';
-    const HTTP_CLIENT_TIMEOUT = 2.0;
-    const API_KEY = 'INSERT_API_KEY_HERE';
-
     $httpClient = new Client([
-        'base_uri' => RAYGUN_BASE_URI,
-        'timeout' => HTTP_CLIENT_TIMEOUT,
+        'base_uri' => 'https://api.raygun.com',
+        'timeout' => 2.0,
         'headers' => [
-            'X-ApiKey' => API_KEY
+            'X-ApiKey' => 'INSERT_API_KEY_HERE'
         ]
     ]);
 
     $transport = new GuzzleAsync($httpClient);
-    // For synchronous transmission of data, change this to:
-    // `$transport = new GuzzleSync($httpClient);`
 
     $raygunClient = new RaygunClient($transport);
 
-    set_error_handler([$raygunClient, 'SendError']);
-    set_exception_handler([$raygunClient, 'SendException']);
-    register_shutdown_function([$transport, 'wait']); // Note: You'll need to omit this line if using synchronous transport
+    set_error_handler(function($errno, $errstr, $errfile, $errline) use ($raygunClient) {
+        $raygunClient->SendError($errno, $errstr, $errfile, $errline);
+    });
+
+    set_exception_handler(function($exception) use ($raygunClient) {
+        $raygunClient->SendException($exception);
+    });
+
+    register_shutdown_function(function() use ($raygunClient) {
+        $lastError = error_get_last();
+
+        if (!is_null($lastError)) {
+            [$type, $message, $file, $line] = $lastError;
+            $raygunClient->SendError($type, $message, $file, $line);
+        }
+    });
+
+    register_shutdown_function([$transport, 'wait']);
 }
 ```
 
-Note that if you are placing in inside a file with a namespace of your choosing, the above code should be declared to be within the global namespace (thus the `namespace { }` is required). You will also need whichever `requires` statement as above (autoload or manual) before the `$client` instantiation.
+### Synchronous transport
 
-Copy your application's API key from the Raygun setup instructions, and place it in the constructor call as above (do not include the curly brackets).
+For synchronous transport, use the snippet above but replace `use Raygun4php\Transports\GuzzleAsync;` with:
+
+```php
+use Raygun4php\Transports\GuzzleSync;
+```
+
+And replace `$transport = new GuzzleAsync($httpClient);` with:
+
+```php
+$transport = new GuzzleSync($httpClient);
+```
+
+Remove this line:
+
+```php
+register_shutdown_function([$transport, 'wait']);
+```
+
+Note that if you are placing it inside a file with a namespace of your choosing, the above code should be declared to be within the global namespace (thus the `namespace { }` is required). You will also need whichever `requires` statement as above (autoload or manual) before the `$raygunClient` instantiation.
+
+Copy your application's API key from the [Raygun app](https://app.raygun.com), and paste it into the `X-ApiKey` header field of the HTTP client.
 
 If the handlers reside in their own file, just import it in every file where you'd like exceptions and errors to be sent, and they will be delivered to Raygun.
 
@@ -97,7 +132,7 @@ $httpClient = new Client([
 
 ### Debugging with a logger
 
-We recommend using a logger which is compatible with the PSR-3 LoggerInterface (e.g. Monolog).
+We recommend using a logger which is compatible with the [PSR-3 LoggerInterface](https://www.php-fig.org/psr/psr-3/) (e.g. [Monolog](https://github.com/Seldaek/monolog)).
 
 Expanding on the example above, you can set a logger to be used by the transport like so:
 
@@ -120,12 +155,14 @@ $transport = new GuzzleAsync($httpClient);
 $transport->setLogger($logger);
 
 $raygunClient = new RaygunClient($transport, false, $logger);
+
+// ...
 ```
 
 #### Response codes
 
 * **202**: Message received by Raygun API correctly
-* **403**: Invalid API key. Copy it from your Raygun Setup Instructions or Application Settings
+* **403**: Invalid API key. Copy the API key from the [Raygun app](https://app.raygun.com) setup instructions or application settings
 
 ### Version numbers
 
@@ -141,54 +178,43 @@ $raygunClient->SetVersion('1.0.0.0');
 Tags can be added to error data to provide extra information and to help filtering errors within Raygun.
 They are provided as an array of strings or numbers passed as the `5th argument to the SendError function` and as the `2nd argument to the SendException function`.
 
-The declaration of the exception and error handlers adding tags to each payload could look something like this:
+The declaration of the exception and error handlers for adding tags to each payload could look something like this:
 
 ```php
 <?php
-class HandlerUtilities {
-    private $raygunClient;
-    private $tags;
+// ...
 
-    public function __construct($raygunClient, $tags)
-    {
-        $this->raygunClient = $raygunClient;
-        $this->tags = $tags;
-    }
-
-    public function errorHandler($errno, $errstr, $errfile, $errline) {
-        $this->raygunClient->SendError($errno, $errstr, $errfile, $errline, $this->tags);
-    }
-
-    public function exceptionHandler($exception) {
-        $this->raygunClient->SendException($exception, $this->tags);
-    }
-
-    public function fatalErrorHandler() {
-        $lastError = error_get_last();
-
-        if (!is_null($lastError)) {
-            $this->raygunClient->SendError($lastError['type'], $lastError['message'], $lastError['file'], $lastError['line']);
-        }
-    }
-}
-
-// ... Setup Raygun client, etc. ...
+$raygunClient = new RaygunClient($transport);
 
 $tags = ['staging-environment', 'machine-4'];
-$handlers = new HandlerUtilities($raygunClient, $tags);
 
-set_error_handler([$handlers, 'errorHandler']);
-set_exception_handler([$handlers, 'exceptionHandler']);
-register_shutdown_function([$handlers, 'fatalErrorHandler']);
+set_error_handler(function($errno, $errstr, $errfile, $errline) use ($raygunClient, $tags) {
+    $raygunClient->SendError($errno, $errstr, $errfile, $errline, $tags);
+});
+
+set_exception_handler(function($exception) use ($raygunClient, $tags) {
+    $raygunClient->SendException($exception, $tags);
+});
+
+register_shutdown_function(function() use ($raygunClient, $tags) {
+    $lastError = error_get_last();
+
+    if (!is_null($lastError)) {
+        [$type, $message, $file, $line] = $lastError;
+        $raygunClient->SendError($type, $message, $file, $line, $tags);
+    }
+});
+
+// ...
 ```
 
-You can add tags when sending a handled exception like so:
+You can add tags when manually sending a handled exception like so:
 
 ```php
 try {
-  // Do something questionable...
+    // Do something questionable...
 } catch(Exception $exception) {
-  $raygunClient->SendException($exception, ['handled-exception']);
+    $raygunClient->SendException($exception, ['handled-exception']);
 }
 ```
 
@@ -200,9 +226,14 @@ You can call `$raygunClient->SetUser`, passing in some or all of the following d
 $raygunClient->SetUser($user = 'email_or_unique_identifier', $firstName = 'Example', $fullName = 'Example User', $emailAddress = 'test@example.com', $isAnonymous = false, $uuid = 'abc123');
 ```
 
-`$user` should be a unique identifier which is used to identify your users. If you set this to their email address, be sure to also set the $email parameter too.
+`$user` should be a unique identifier which is used to identify your users. If you set this to their email address, be sure to also set the `$email` parameter too.
 
 This feature and values are optional if you wish to disable it for privacy concerns. To do so, pass `true` in as the second parameter to the RaygunClient constructor.
+
+```php
+// Disable user tracking:
+$raygunClient = new RaygunClient($transport, true);
+```
 
 Note that this data is stored as cookies. If you do not call SetUser the default is to store a random UUID to represent the user.
 
@@ -210,7 +241,7 @@ This feature can be used in CLI mode by calling `SetUser()` at the start of your
 
 ### Custom error grouping
 
-Control of how error instances are grouped together can be achieved by passing a callback to the `SetGroupingKey` method on the client. If the callback returns a string, ideally 100 characters or less, errors matching that key will grouped together. Overriding the default automatic grouping. If the callback returns a non-string value then that error will be grouped automatically.
+Control of how error instances are grouped together can be achieved by passing a callback to the `SetGroupingKey` method on the client. If the callback returns a string, ideally 100 characters or less, errors matching that key will be grouped together, overriding the default automatic grouping. If the callback returns a non-string value then that error will be grouped automatically.
 
 ```php
 $raygunClient->SetGroupingKey(function($payload, $stackTrace) {
@@ -272,17 +303,17 @@ $raygunClient->SetCookieOptions(array(
 
 ## Troubleshooting
 
-As above, you can specify a logger to the HTTP transport:
+As mentioned above, you can specify a logger to the HTTP transport:
 
 ```php
 $transport->setLogger($logger);
 ```
 
-This will log out exceptions occurring while transmitting data to Raygun. Create an issue or contact us if you continue to have problems.
+This will log out exceptions occurring while transmitting data to Raygun. [Create an issue](https://raygun.com/forums/forum/3) or [contact us](https://raygun.com/about/contact) if you continue to have problems.
 
 ### 400 from command-line Posix environments
 
-If, when running a PHP script from the command line on *nix operating systems, you receive a '400 Bad Request' error (in your debug log), check to see if you have any LESS_TERMCAP environment variables set. These are not compatible with the current version of Raygun4PHP. As a workaround, unset these variables before your script runs, then reset them afterwards.
+If, when running a PHP script from the command line on *nix operating systems, you receive a '400 Bad Request' error (in your debug log), check to see if you have any `LESS_TERMCAP` environment variables set. These are not compatible with the current version of Raygun4PHP. As a workaround, unset these variables before your script runs, then reset them afterwards.
 
 
 ### Error Control Operators (@)
@@ -291,9 +322,8 @@ If you are using the setup as described above errors will be sent to Raygun rega
 
 _Error handler example:_
 ```php
-function errorHandler($errno, $errstr, $errfile, $errline ) {
-    global $raygunClient;
-    if(error_reporting() !== 0) {
+function ($errno, $errstr, $errfile, $errline) use ($raygunClient) {
+    if (error_reporting() !== 0) {
         $raygunClient->SendError($errno, $errstr, $errfile, $errline);
     }
 }
