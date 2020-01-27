@@ -118,18 +118,21 @@ If the handlers reside in their own file, just import it in every file where you
 
 ### Proxies
 
-An HTTP proxy can be set as the `base_uri` property on the HTTP Client:
+A URL can be set as the `proxy` property on the HTTP Client:
 
 ```php
 // ...
 
 $httpClient = new Client([
-    'base_uri' => 'http://someproxy:8080',
+    'base_uri' => 'https://api.raygun.com',
+    'proxy' => 'http://someproxy:8080',
     'headers' => [
         'X-ApiKey' => 'INSERT_API_KEY_HERE'
     ]
 ]);
 ```
+
+See Guzzle's [proxy documentation](http://docs.guzzlephp.org/en/stable/request-options.html#proxy) for more options.
 
 ### Debugging with a logger
 
