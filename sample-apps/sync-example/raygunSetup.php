@@ -11,7 +11,7 @@ namespace {
     use Raygun4php\RaygunClient;
     use Raygun4php\Transports\GuzzleSync;
 
-    const RAYGUN_BASE_URI = 'http://api.raygun.com';
+    const RAYGUN_BASE_URI = 'https://api.raygun.com';
     const HTTP_CLIENT_TIMEOUT = 2.0;
     const LOGGER_NAME = 'sync_logger';
     const LOG_FILE_PATH = __DIR__ . '/debug.log';
