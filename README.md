@@ -10,7 +10,7 @@ Status](https://secure.travis-ci.org/MindscapeHQ/raygun4php.png?branch=master)](
 
 ## Installation
 
-Firstly, ensure that **curl** is installed and enabled in your server's php.ini file.
+Raygun4PHP uses [Guzzle](http://docs.guzzlephp.org/) to handle the transmission of data to the Raygun API. Having cURL installed is recommended, but is not required, as Guzzle will use a PHP stream wrapper if cURL is not installed.
 
 ### With Composer
 
@@ -38,7 +38,7 @@ and the library will be imported ready for use.
 
 ## Usage
 
-You can automatically send both PHP errors and object-oriented exceptions to Raygun. The RaygunClient requires an HTTP transport (e.g. [Guzzle](http://docs.guzzlephp.org/) or other [PSR-7](https://www.php-fig.org/psr/psr-7/) compatible interface).
+You can automatically send both PHP errors and object-oriented exceptions to Raygun. The RaygunClient requires an HTTP transport (e.g. Guzzle or other [PSR-7](https://www.php-fig.org/psr/psr-7/) compatible interface).
 
 There are Guzzle-based asynchronous and synchronous transport classes in the provider, or you can use your own.
 
@@ -158,14 +158,15 @@ $logger->pushHandler(new FirePHPHandler());
 $transport = new GuzzleAsync($httpClient);
 $transport->setLogger($logger);
 
-$raygunClient = new RaygunClient($transport, false, $logger);
+$raygunClient = new RaygunClient($transport);
 
-// ...
+// Set error handlers ...
 ```
 
 #### Response codes
 
 * **202**: Message received by Raygun API correctly
+* **400**: Bad Request. This may indicate an invalid payload - please [contact Raygun](https://raygun.com/about/contact) if you continue to see this.
 * **403**: Invalid API key. Copy the API key from the [Raygun app](https://app.raygun.com) setup instructions or application settings
 
 ### Version numbers
