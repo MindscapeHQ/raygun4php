@@ -4,7 +4,6 @@ namespace Raygun4php;
 
 use Raygun4php\Rhumsaa\Uuid\Uuid;
 use Raygun4php\Interfaces\TransportInterface;
-use Raygun4php\Interfaces\RaygunMessageInterface;
 
 class RaygunClient
 {
@@ -74,7 +73,7 @@ class RaygunClient
     }
 
     /**
-     * Transmits an error to the Raygun.io API
+     * Transmits an error to the Raygun API
      *
      * @param int    $errno          The error number
      * @param string $errstr         The error string
@@ -84,7 +83,7 @@ class RaygunClient
      * @param array  $userCustomData An optional associative array that can be used to place custom key-value
      * @param int    $timestamp      Current Unix timestamp in the local timezone, used to set when an error occurred.
      *                               data in the message payload
-     * @return int The HTTP status code of the result when transmitting the message to Raygun.io
+     * @return int The HTTP status code of the result when transmitting the message to Raygun
      */
     public function SendError(
         $errno,
@@ -111,7 +110,7 @@ class RaygunClient
     }
 
     /**
-     * Transmits an exception to the Raygun.io API
+     * Transmits an exception to the Raygun API
      *
      * @param \Throwable $throwable      An exception object to transmit
      * @param array      $tags           An optional array of string tags used to provide metadata for the message
@@ -119,7 +118,7 @@ class RaygunClient
      *                                   data in the message payload
      * @param int        $timestamp      Current Unix timestamp in the local timezone, used to set when an exception
      *                                   occurred.
-     * @return int The HTTP status code of the result when transmitting the message to Raygun.io
+     * @return int The HTTP status code of the result when transmitting the message to Raygun
      */
     public function SendException($throwable, $tags = null, $userCustomData = null, $timestamp = null)
     {
@@ -356,7 +355,7 @@ class RaygunClient
     }
 
     /**
-     * Transmits a RaygunMessage to the Raygun.io API.
+     * Transmits a RaygunMessage to the Raygun API.
      * This is a lower level function used by SendException and SendError and one of those should be used preferably.
      *
      * @param \Raygun4php\RaygunMessage $message A populated message to be posted to the Raygun API

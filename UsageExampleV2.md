@@ -1,12 +1,12 @@
 ## Usage
 
 ```php
-
+<?php
 require_once './vendor/autoload.php';
 
-$apiUrl = 'https://api.raygun.io';
+$apiUrl = 'https://api.raygun.com';
 $proxy = 'some://proxy';
-$apiKey = 'your-api-key';
+$apiKey = 'INSERT_API_KEY_HERE';
 
 $httpClient = new GuzzleHttp\Client([
     'base_uri' => $apiUrl,
