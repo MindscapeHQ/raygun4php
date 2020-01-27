@@ -249,8 +249,8 @@ Control of how error instances are grouped together can be achieved by passing a
 
 ```php
 $raygunClient->SetGroupingKey(function($payload, $stackTrace) {
-  // Inspect the above parameters and return a hash from the properties ...
-  return $payload->Details->Error->Message; // Naive message-based grouping only
+    // Inspect the above parameters and return a hash from the properties ...
+    return $payload->Details->Error->Message; // Naive message-based grouping only
 });
 ```
 
@@ -260,10 +260,10 @@ Some error data will be too sensitive to transmit to an external service, such a
 
 ```php
 $raygunClient->setFilterParams([
-	'password' => true,
-	'creditcardnumber' => true,
-	'ccv' => true,
-	'php_auth_pw' => true, // filters basic auth from $_SERVER
+    'password' => true,
+    'creditcardnumber' => true,
+    'ccv' => true,
+    'php_auth_pw' => true, // filters basic auth from $_SERVER
 ]);
 // Example input: ['Username' => 'myuser','Password' => 'secret']
 // Example output: ['Username' => 'myuser','Password' => '[filtered]']
@@ -273,7 +273,7 @@ You can also define keys as regular expressions:
 
 ```php
 $raygunClient->setFilterParams([
-	'/^credit/i' => true,
+    '/^credit/i' => true,
 ]);
 // Example input: ['CreditCardNumber' => '4111111111111111','CreditCardCcv' => '123']
 // Example output: ['CreditCardNumber' => '[filtered]','CreditCardCcv' => '[filtered]']
@@ -283,7 +283,7 @@ In case you want to retain some hints on the data rather than removing it comple
 
 ```php
 $raygunClient->setFilterParams([
-	'Email' => function($key, $val) {return substr($val, 0, 5) . '...';}
+    'Email' => function($key, $val) {return substr($val, 0, 5) . '...';}
 ]);
 // Example input: ['Email' => 'test@test.com']
 // Example output: ['Email' => 'test@...']
