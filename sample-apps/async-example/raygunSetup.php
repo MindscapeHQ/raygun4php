@@ -4,43 +4,33 @@ namespace {
     require_once 'vendor/autoload.php';
     require_once 'config.php';
 
-    use GuzzleHttp\Client;
+    // Needed during development
+    require_once '../../src/Raygun4php/Factories/Interfaces/TransportFactoryInterface.php';
+    require_once '../../src/Raygun4php/Factories/Interfaces/HttpClientFactoryInterface.php';
+    require_once '../../src/Raygun4php/Factories/Interfaces/RaygunClientFactoryInterface.php';
+    require_once '../../src/Raygun4php/Factories/TransportFactory.php';
+    require_once '../../src/Raygun4php/Factories/HttpClientFactory.php';
+    require_once '../../src/Raygun4php/Factories/RaygunClientFactory.php';
+
     use Monolog\Logger;
     use Monolog\Handler\StreamHandler;
     use Monolog\Handler\FirePHPHandler;
+    use Psr\Log\LoggerInterface;
+    use Raygun4php\Factories\RaygunClientFactory;
     use Raygun4php\RaygunClient;
-    use Raygun4php\Transports\GuzzleAsync;
-    use Raygun4php\Transports\GuzzleSync;
 
     /**
      * Class RaygunSetup
      */
     class RaygunSetup
     {
-        const RAYGUN_BASE_URI = 'https://api.raygun.com';
-        const HTTP_CLIENT_TIMEOUT = 2.0;
-        const LOGGER_NAME = 'example_logger';
-        const LOG_FILE_PATH = __DIR__ . '/debug.log';
-
-        /**
-         * @var GuzzleAsync|GuzzleSync
-         */
-        private $transport;
-
-        /**
-         * @var bool
-         */
-        private $useAsync;
+        const LOGGER_NAME = 'raygun_logger';
+        const LOG_FILE_PATH = __DIR__ . '/logs/debug.log';
 
         /**
          * @var Logger
          */
         private $logger;
-
-        /**
-         * @var Client
-         */
-        private $httpClient;
 
         /**
          * @var RaygunClient
@@ -59,67 +49,51 @@ namespace {
          */
         public function __construct($tags = [], $useAsync = true)
         {
-            $this->useAsync = $useAsync;
-            $this->logger = new Logger(self::LOGGER_NAME);
-            $this->logger->pushHandler(new StreamHandler(self::LOG_FILE_PATH));
-            $this->logger->pushHandler(new FirePHPHandler());
+            $this->logger = $this->createLogger();
 
-            $this->httpClient = new Client([
-                'base_uri' => self::RAYGUN_BASE_URI,
-                'timeout' => self::HTTP_CLIENT_TIMEOUT,
-                'headers' => [
-                    'X-ApiKey' => API_KEY
-                ]
-            ]);
-
-            if ($this->useAsync) {
-                $this->transport = new GuzzleAsync($this->httpClient);
-            } else {
-                $this->transport = new GuzzleSync($this->httpClient);
-            }
-
-            $this->transport->setLogger($this->logger);
-
-            $raygunClient = new RaygunClient($this->transport);
+            $raygunClientFactory = new RaygunClientFactory(API_KEY, false, $useAsync);
+            $raygunClient = $raygunClientFactory->setLogger($this->logger)->build();
 
             // Get the logged-in user info to track affected user
             $raygunClient->SetUser("test@example.com", "Test", "Test User", "test@example.com");
 
             $this->tags = $tags;
-
             $this->raygunClient = $raygunClient;
         }
 
-        public function getRaygunClient(): RaygunClient
+        public function sendError($errno, $errstr, $errfile, $errline): void
         {
-            return $this->raygunClient;
-        }
-
-        public function sendError($errno, $errstr, $errfile, $errline): void {
+            $this->logger->info('Send error', [$errno, $errstr]);
             $this->raygunClient->SendError($errno, $errstr, $errfile, $errline, $this->tags);
         }
 
-        public function sendException($exception): void {
+        public function sendException($exception): void
+        {
+            $this->logger->info('Send exception', [$exception]);
             $this->raygunClient->SendException($exception, $this->tags);
         }
 
         public function handleFatalError(): void
         {
+            $this->logger->info('Shutdown occurred');
             $lastError = error_get_last();
 
             if (!is_null($lastError)) {
                 [$type, $message, $file, $line] = $lastError;
+                $this->logger->info('Fatal error', [$type, $message]);
 
                 $tags = array_merge($this->tags, ['fatal-error']);
                 $this->raygunClient->SendError($type, $message, $file, $line, $tags);
             }
         }
 
-        public function flushAsyncPromises(): void
+        private function createLogger(): LoggerInterface
         {
-            if ($this->useAsync) {
-                $this->transport->wait();
-            }
+            $logger = new Logger(self::LOGGER_NAME);
+            $logger->pushHandler(new StreamHandler(self::LOG_FILE_PATH));
+            $logger->pushHandler(new FirePHPHandler());
+
+            return $logger;
         }
     }
 
@@ -128,5 +102,4 @@ namespace {
     set_error_handler([$raygunSetup, 'sendError']);
     set_exception_handler([$raygunSetup, 'sendException']);
     register_shutdown_function([$raygunSetup, 'handleFatalError']);
-    register_shutdown_function([$raygunSetup, 'flushAsyncPromises']);
 }

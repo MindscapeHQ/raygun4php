@@ -4,34 +4,29 @@ namespace {
     require_once 'vendor/autoload.php';
     require_once 'config.php';
 
-    use GuzzleHttp\Client;
+    // Needed during development
+    require_once '../../src/Raygun4php/Factories/Interfaces/TransportFactoryInterface.php';
+    require_once '../../src/Raygun4php/Factories/Interfaces/HttpClientFactoryInterface.php';
+    require_once '../../src/Raygun4php/Factories/Interfaces/RaygunClientFactoryInterface.php';
+    require_once '../../src/Raygun4php/Factories/TransportFactory.php';
+    require_once '../../src/Raygun4php/Factories/HttpClientFactory.php';
+    require_once '../../src/Raygun4php/Factories/RaygunClientFactory.php';
+
     use Monolog\Handler\FirePHPHandler;
     use Monolog\Handler\StreamHandler;
     use Monolog\Logger;
-    use Raygun4php\RaygunClient;
-    use Raygun4php\Transports\GuzzleSync;
+    use Raygun4php\Factories\RaygunClientFactory;
 
-    const RAYGUN_BASE_URI = 'https://api.raygun.com';
-    const HTTP_CLIENT_TIMEOUT = 2.0;
-    const LOGGER_NAME = 'sync_logger';
-    const LOG_FILE_PATH = __DIR__ . '/debug.log';
+    const LOGGER_NAME = 'raygun_logger';
+    const LOG_FILE_PATH = __DIR__ . '/logs/debug.log';
 
     $logger = new Logger(LOGGER_NAME);
     $logger->pushHandler(new StreamHandler(LOG_FILE_PATH));
     $logger->pushHandler(new FirePHPHandler());
 
-    $httpClient = new Client([
-        'base_uri' => RAYGUN_BASE_URI,
-        'timeout' => HTTP_CLIENT_TIMEOUT,
-        'headers' => [
-            'X-ApiKey' => API_KEY
-        ]
-    ]);
+    $raygunClientFactory = new RaygunClientFactory(API_KEY, false, false);
+    $raygunClient = $raygunClientFactory->setLogger($logger)->build();
 
-    $transport = new GuzzleSync($httpClient);
-    $transport->setLogger($logger);
-
-    $raygunClient = new RaygunClient($transport, false, $logger);
     $tags = ['local-environment', 'machine-4'];
 
     set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($raygunClient, $tags) {
