@@ -42,7 +42,7 @@ class HttpClientFactory implements HttpClientFactoryInterface
      * @param string|null $proxy
      * @return ClientInterface
      */
-    private function buildInternal(float $timeout = self::DEFAULT_TIMEOUT, string $proxy = null): ClientInterface
+    private function buildInternal(?float $timeout = self::DEFAULT_TIMEOUT, string $proxy = null): ClientInterface
     {
         $httpClient = new Client([
             'base_uri' => self::BASE_URI,
