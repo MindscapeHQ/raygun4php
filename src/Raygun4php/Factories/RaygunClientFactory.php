@@ -25,6 +25,8 @@ class RaygunClientFactory implements RaygunClientFactoryInterface
      * @var bool
      */
     private $disableUserTracking;
+    private $proxy;
+    private $timeout;
 
     /**
      * RaygunClientFactory
@@ -53,6 +55,18 @@ class RaygunClientFactory implements RaygunClientFactoryInterface
         return $this;
     }
 
+    public function setProxy(string $proxy): RaygunClientFactory {
+        $this->proxy = $proxy;
+
+        return $this;
+    }
+
+    public function setTimeout(float $timeout): RaygunClientFactory {
+        $this->timeout = $timeout;
+
+        return $this;
+    }
+
     /**
      * @return RaygunClient
      */
@@ -69,7 +83,7 @@ class RaygunClientFactory implements RaygunClientFactoryInterface
     private function createTransport(): TransportInterface
     {
         $transportFactory = new TransportFactory($this->apiKey, $this->logger, $this->useAsync);
-        $transport = $transportFactory->build();
+        $transport = $transportFactory->build($this->timeout, $this->proxy);
 
         if ($this->useAsync) {
             register_shutdown_function([$transport, 'wait']);

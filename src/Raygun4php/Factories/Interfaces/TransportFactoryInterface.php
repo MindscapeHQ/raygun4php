@@ -6,5 +6,5 @@ use Raygun4php\Interfaces\TransportInterface;
 
 interface TransportFactoryInterface
 {
-    public function build(): TransportInterface;
+    public function build(?float $timeout, $proxy): TransportInterface;
 }

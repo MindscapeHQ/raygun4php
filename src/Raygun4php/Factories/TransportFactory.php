@@ -48,10 +48,10 @@ class TransportFactory implements TransportFactoryInterface
     /**
      * @return TransportInterface
      */
-    public function build(): TransportInterface
+    public function build(?float $timeout = null, $proxy = null): TransportInterface
     {
         $httpClientFactory = new HttpClientFactory($this->apiKey);
-        $httpClient = $httpClientFactory->build();
+        $httpClient = $httpClientFactory->build($timeout, $proxy);
 
         $transport = new GuzzleAsync($httpClient);
 
