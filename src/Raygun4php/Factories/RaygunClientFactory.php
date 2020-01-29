@@ -25,7 +25,13 @@ class RaygunClientFactory implements RaygunClientFactoryInterface
      * @var bool
      */
     private $disableUserTracking;
+    /**
+     * @var string
+     */
     private $proxy;
+    /**
+     * @var float
+     */
     private $timeout;
 
     /**
@@ -55,12 +61,20 @@ class RaygunClientFactory implements RaygunClientFactoryInterface
         return $this;
     }
 
+    /**
+     * @param string $proxy
+     * @return RaygunClientFactory
+     */
     public function setProxy(string $proxy): RaygunClientFactory {
         $this->proxy = $proxy;
 
         return $this;
     }
 
+    /**
+     * @param float $timeout
+     * @return RaygunClientFactory
+     */
     public function setTimeout(float $timeout): RaygunClientFactory {
         $this->timeout = $timeout;
 
