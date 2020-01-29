@@ -80,7 +80,7 @@ namespace {
 
             if (!is_null($lastError)) {
                 [$type, $message, $file, $line] = $lastError;
-                $this->logger->info('Fatal error', [$type, $message]);
+                $this->logger->error('Fatal error', [$type, $message]);
 
                 $tags = array_merge($this->tags, ['fatal-error']);
                 $this->raygunClient->SendError($type, $message, $file, $line, $tags);
