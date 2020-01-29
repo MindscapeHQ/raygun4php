@@ -65,7 +65,8 @@ class RaygunClientFactory implements RaygunClientFactoryInterface
      * @param string $proxy
      * @return RaygunClientFactory
      */
-    public function setProxy(string $proxy): RaygunClientFactory {
+    public function setProxy(string $proxy): RaygunClientFactory
+    {
         $this->proxy = $proxy;
 
         return $this;
@@ -75,7 +76,8 @@ class RaygunClientFactory implements RaygunClientFactoryInterface
      * @param float $timeout
      * @return RaygunClientFactory
      */
-    public function setTimeout(float $timeout): RaygunClientFactory {
+    public function setTimeout(float $timeout): RaygunClientFactory
+    {
         $this->timeout = $timeout;
 
         return $this;
