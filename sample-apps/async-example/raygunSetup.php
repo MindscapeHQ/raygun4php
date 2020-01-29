@@ -2,15 +2,8 @@
 
 namespace {
     require_once 'vendor/autoload.php';
+    require_once '../../vendor/autoload.php';
     require_once 'config.php';
-
-    // Needed during development
-    require_once '../../src/Raygun4php/Factories/Interfaces/TransportFactoryInterface.php';
-    require_once '../../src/Raygun4php/Factories/Interfaces/HttpClientFactoryInterface.php';
-    require_once '../../src/Raygun4php/Factories/Interfaces/RaygunClientFactoryInterface.php';
-    require_once '../../src/Raygun4php/Factories/TransportFactory.php';
-    require_once '../../src/Raygun4php/Factories/HttpClientFactory.php';
-    require_once '../../src/Raygun4php/Factories/RaygunClientFactory.php';
 
     use Monolog\Logger;
     use Monolog\Handler\StreamHandler;
