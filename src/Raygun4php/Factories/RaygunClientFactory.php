@@ -37,7 +37,8 @@ class RaygunClientFactory implements RaygunClientFactoryInterface
     /**
      * RaygunClientFactory
      *
-     * Builds a RaygunClient object with the HTTP client and transport built with default configurable values to simplify setup
+     * Builds a RaygunClient object with the HTTP client and transport built with default configurable values to
+     * simplify setup
      *
      * @param string $apiKey
      * @param bool $disableUserTracking

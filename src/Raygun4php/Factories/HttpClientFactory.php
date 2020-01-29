@@ -13,8 +13,8 @@ class HttpClientFactory implements HttpClientFactoryInterface
      */
     private $apiKey;
 
-    const BASE_URI = 'https://api.raygun.com';
-    const DEFAULT_TIMEOUT = 2.0;
+    private const BASE_URI = 'https://api.raygun.com';
+    private const DEFAULT_TIMEOUT = 2.0;
 
     /**
      * HttpClientFactory
