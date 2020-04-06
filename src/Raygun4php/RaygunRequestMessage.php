@@ -58,7 +58,7 @@ class RaygunRequestMessage
             }
 
             if (
-                $_SERVER['REQUEST_METHOD'] !== 'GET' &&
+                $this->HttpMethod !== 'GET' &&
                 $contentType != null &&
                 $contentType !== 'application/x-www-form-urlencoded' &&
                 $contentType !== 'multipart/form-data' &&
