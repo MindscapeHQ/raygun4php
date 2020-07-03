@@ -2,8 +2,8 @@
 
 namespace Raygun4php;
 
-use Raygun4php\Rhumsaa\Uuid\Uuid;
 use Raygun4php\Interfaces\TransportInterface;
+use Raygun4php\Rhumsaa\Uuid\Uuid;
 
 class RaygunClient
 {
@@ -327,7 +327,7 @@ class RaygunClient
         if ($this->is_assoc($userCustomData)) {
             $message->Details->UserCustomData = $userCustomData;
         } else {
-            throw new \Raygun4php\Raygun4PhpException("UserCustomData must be an associative array");
+            throw new Raygun4PhpException("UserCustomData must be an associative array");
         }
     }
 
@@ -358,7 +358,7 @@ class RaygunClient
      * Transmits a RaygunMessage to the Raygun API.
      * This is a lower level function used by SendException and SendError and one of those should be used preferably.
      *
-     * @param \Raygun4php\RaygunMessage $message A populated message to be posted to the Raygun API
+     * @param RaygunMessage $message A populated message to be posted to the Raygun API
      * @return bool Returns true if the transmission attempt is successful.
      *              However, this does not guarantee that the message is delivered.
      */

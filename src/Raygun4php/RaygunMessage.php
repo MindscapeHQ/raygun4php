@@ -33,7 +33,12 @@ class RaygunMessage implements RaygunMessageInterface
     private function toJsonRemoveUnicodeSequences($struct)
     {
         return preg_replace_callback("/\\\\u([a-f0-9]{4})/", function ($matches) {
-            return iconv('UCS-4LE', 'UTF-8', pack('V', hexdec("U$matches[1]")));
+            $hex = 'U' . $matches[1];
+            if (!ctype_xdigit($hex)) {
+                // Candidate is not a hexadecimal string, skip
+                return null;
+            }
+            return iconv('UCS-4LE', 'UTF-8', pack('V', hexdec($hex)));
         }, json_encode($struct));
     }
 
