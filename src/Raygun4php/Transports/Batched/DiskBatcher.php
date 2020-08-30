@@ -2,6 +2,7 @@
 
 namespace Raygun4php\Transports\Batched;
 
+use Exception;
 use FileSystemIterator;
 use Raygun4php\Transports\Batched\Interfaces\BatcherInterface;
 use Psr\Log\LoggerInterface;
@@ -54,11 +55,17 @@ class DiskBatcher implements BatcherInterface
         $this->logger = $logger;
     }
 
+    /**
+     * Attempt to create the base directory where the JSON files will be stored
+     *
+     * @return bool
+     * @throws Exception
+     */
     private function ensureBaseDirectoryExists(): bool
     {
         if (!file_exists($this->baseDirectory)) {
             if (!mkdir($this->baseDirectory, 0700, true)) {
-                throw new Error("Directory: [{$this->baseDirectory}] needs to be writable for disk-based batched transport to work");
+                throw new Exception("Directory: [{$this->baseDirectory}] needs to be writable for disk-based batched transport to work");
             }
         }
 

@@ -48,8 +48,12 @@ class GuzzleBatch implements TransportInterface, LoggerAwareInterface
      * @param string $storeDirectoryPath - a directory (e.g. /tmp) where files can be safely stored on disk
      * @param int $maxBatchSize - Maximum number of files which will be stored on disk, defaults to 100
      */
-    public function __construct(ClientInterface $httpClient, string $appIdentifier, string $storeDirectoryPath, int $maxBatchSize = 100)
-    {
+    public function __construct(
+        ClientInterface $httpClient,
+        string $appIdentifier,
+        string $storeDirectoryPath,
+        int $maxBatchSize = 100
+    ) {
         $this->httpClient = $httpClient;
         $this->logger = new NullLogger();
         $this->maxBatchSize = $maxBatchSize;
