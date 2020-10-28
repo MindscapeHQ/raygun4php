@@ -3,7 +3,7 @@
 namespace Raygun4php\Tests\Transports;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
@@ -61,13 +61,14 @@ class GuzzleAsyncTest extends TestCase
     public function testTransmitLogsErrorIfHttpClientThrowsException()
     {
         $mock = new MockHandler([
-            new ConnectException('Connection failed', new Request('POST', 'test'))
+            new RequestException('Connection failed', new Request('POST', 'test'))
         ]);
 
         $handler = HandlerStack::create($mock);
         $client = new Client(['handler' => $handler]);
 
         $transport = new GuzzleAsync($client);
+
         $message = new RaygunMessage();
 
         $logger = new TestLogger();

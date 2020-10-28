@@ -95,6 +95,6 @@ class GuzzleAsync implements TransportInterface, LoggerAwareInterface
      */
     public function wait(): void
     {
-        Promise\settle($this->httpPromises)->wait(false);
+        Promise\Utils::settle($this->httpPromises)->wait(false);
     }
 }
