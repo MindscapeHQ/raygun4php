@@ -41,7 +41,7 @@ class RaygunClientTest extends TestCase
         $this->client = new RaygunClient($this->transportMock);
         $this->jsonSchema = file_get_contents('./tests/misc/RaygunSchema.json');
     }
-   
+
 
     public function testGetFilteredParamsRemovesByKey()
     {
