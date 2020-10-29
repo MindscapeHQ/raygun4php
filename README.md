@@ -1,7 +1,7 @@
 Raygun4PHP
 ==========
 
-[Raygun.com](http://raygun.com) provider for PHP 7.1+
+[Raygun.com](http://raygun.com) provider for PHP 7.2+
 
 _See [v1.8 documentation](https://github.com/MindscapeHQ/raygun4php/blob/1.8/README.md) for PHP v5.3+ support_
 

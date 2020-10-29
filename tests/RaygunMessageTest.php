@@ -22,7 +22,7 @@ class RaygunMessageTest extends TestCase
     {
         $this->jsonSchema = file_get_contents('./tests/misc/RaygunSchema.json');
     }
-    
+
 
     public function testDefaultConstructorGeneratesValid8601()
     {
