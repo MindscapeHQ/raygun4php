@@ -32,7 +32,7 @@ class RaygunClientTest extends TestCase
      */
     protected $jsonSchema;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->transportMock = $this->getMockBuilder(TransportInterface::class)
                                     ->setMethods(['transmit'])
