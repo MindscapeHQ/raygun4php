@@ -2,6 +2,7 @@
 
 namespace Raygun4php\Tests;
 
+use JsonSchema\Validator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Raygun4php\RaygunClient;
@@ -9,12 +10,9 @@ use Raygun4php\RaygunMessage;
 use Raygun4php\RaygunRequestMessage;
 use Raygun4php\Interfaces\TransportInterface;
 use Raygun4php\Tests\Stubs\TransportGetMessageStub;
-use EnricoStahn\JsonAssert\Assert as JsonAssert;
 
 class RaygunClientTest extends TestCase
 {
-    use JsonAssert;
-
     /**
      * @var RaygunClient
      */
@@ -205,6 +203,10 @@ class RaygunClientTest extends TestCase
         $client->SendException(new \Exception('test'));
         $raygunMessage = $transportStub->getMessage();
 
-        $this->assertJsonMatchesSchemaString($this->jsonSchema, json_decode($raygunMessage->toJson()));
+        $data = json_decode($raygunMessage->toJson());
+
+        $schemaValidator = new Validator();
+        $schemaValidator->validate($data, $this->jsonSchema);
+        $this->assertTrue($schemaValidator->isValid());
     }
 }

@@ -3,14 +3,12 @@
 namespace Raygun4php\Tests;
 
 use Exception;
+use JsonSchema\Validator;
 use PHPUnit\Framework\TestCase;
 use Raygun4php\RaygunMessage;
-use EnricoStahn\JsonAssert\Assert as JsonAssert;
 
 class RaygunMessageTest extends TestCase
 {
-    use JsonAssert;
-
     /**
      * json schema used to validate message json.
      *
@@ -65,6 +63,10 @@ class RaygunMessageTest extends TestCase
         $msg->build(new Exception('Test'));
 
         $msgJson = $msg->toJson();
-        $this->assertJsonMatchesSchemaString($this->jsonSchema, json_decode($msgJson));
+        $data = json_decode($msgJson);
+
+        $schemaValidator = new Validator();
+        $schemaValidator->validate($data, $this->jsonSchema);
+        $this->assertTrue($schemaValidator->isValid());
     }
 }
