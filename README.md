@@ -223,7 +223,7 @@ try {
 }
 ```
 
-### Affected user tracking
+### Customers
 
 You can call `$raygunClient->SetUser`, passing in some or all of the following data, which will be used to provide an affected user count and reports:
 
@@ -236,7 +236,7 @@ $raygunClient->SetUser($user = 'email_or_unique_identifier', $firstName = 'Examp
 This feature and values are optional if you wish to disable it for privacy concerns. To do so, pass `true` in as the second parameter to the RaygunClient constructor.
 
 ```php
-// Disable user tracking:
+// Disable Customers:
 $raygunClient = new RaygunClient($transport, true);
 ```
 
@@ -294,7 +294,7 @@ Note that when any filters are defined, the Raygun error will no longer contain 
 
 ### Updating Cookie options
 
-Cookies are used for the user tracking functionality of the Raygun4PHP provider. In version 1.8 of the provider, the options passed to the `setcookie` method can now be customized to your needs.
+Cookies are used for the Customers functionality of the Raygun4PHP provider. In version 1.8 of the provider, the options passed to the `setcookie` method can now be customized to your needs.
 
 ```php
 $raygunClient->SetCookieOptions([
@@ -353,7 +353,7 @@ See the [Error Control Operators section on PHP.net](http://php.net/manual/en/la
 - 1.6.0: Added HTTP proxy support, support X-Forwarded-For, null server var guards
 - 1.5.3: Unify property casing (internal change)
 - 1.5.2: Prevent error when query_string isn't present in $_SERVER
-- 1.5.1: Guard against intermittent user id cookie being null; overload for disabling user tracking
+- 1.5.1: Guard against intermittent user id cookie being null; overload for disabling user tracking/Customers
 - 1.5.0: Add enhanced user data support; fix null backtrace frames that could occur in 1.4
 - 1.4.0: Added Sensitive Data Filtering; improved Error backtraces; Travis CI enabled
 - 1.3.6: Move included Rhumsaa\Uuid lib into this namespace to prevent collisions if already included
@@ -368,7 +368,7 @@ See the [Error Control Operators section on PHP.net](http://php.net/manual/en/la
 - 1.2.4: Merged in unit tests
 - 1.2.3: Fixed a bug where OccurredOn wasn't in correct ISO 8601 representation
 - 1.2.2: Minor formatting refactor
-- 1.2.1: Several bugfixes for user tracking and request processing
+- 1.2.1: Several bugfixes for user tracking/Customers and request processing
 - 1.2: Added new async sending function; removed cURL dependency
-- 1.1: Added user tracking support; improved experience in CLI mode; add user-specified timestamp support; fixed user data encoding error
+- 1.1: Added user tracking/Customers support; improved experience in CLI mode; add user-specified timestamp support; fixed user data encoding error
 - 1.0: Initial commit
