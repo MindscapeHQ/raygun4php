@@ -337,7 +337,8 @@ function ($errno, $errstr, $errfile, $errline) use ($raygunClient) {
 See the [Error Control Operators section on PHP.net](http://php.net/manual/en/language.operators.errorcontrol.php) for more information.
 
 ## Changelog
-- 2.0.1: Fix fixes for CLI use, PHP 7.4 deprecation warning in RayrunMessage JSON encoding
+- 2.0.2: Remove PHP 7.2 and replace with PHP 8.0 in Travis builds, fix JSON match assertion issue in unit tests
+- 2.0.1: Fixes for CLI use, PHP 7.4 deprecation warning in RaygunMessage JSON encoding
 - 2.0.0: New major version
   - Increased minimum PHP version to 7.1
   - Added PSR-4 autoloader
