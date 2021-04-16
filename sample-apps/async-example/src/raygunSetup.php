@@ -17,10 +17,10 @@ namespace {
      */
     class RaygunSetup
     {
-        const RAYGUN_BASE_URI = 'https://api.raygun.com';
-        const HTTP_CLIENT_TIMEOUT = 2.0;
-        const LOGGER_NAME = 'example_logger';
-        const LOG_FILE_PATH = __DIR__ . '/debug.log';
+        private const RAYGUN_BASE_URI = 'https://api.raygun.com';
+        private const HTTP_CLIENT_TIMEOUT = 2.0;
+        private const LOGGER_NAME = 'example_logger';
+        private const LOG_FILE_PATH = __DIR__ . '/debug.log';
 
         /**
          * @var GuzzleAsync|GuzzleSync
@@ -95,11 +95,13 @@ namespace {
             return $this->raygunClient;
         }
 
-        public function sendError($errno, $errstr, $errfile, $errline): void {
+        public function sendError($errno, $errstr, $errfile, $errline): void
+        {
             $this->raygunClient->SendError($errno, $errstr, $errfile, $errline, $this->tags);
         }
 
-        public function sendException($exception): void {
+        public function sendException($exception): void
+        {
             $this->raygunClient->SendException($exception, $this->tags);
         }
 
