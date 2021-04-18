@@ -12,7 +12,7 @@ class ViewData
      */
     private $distance;
 
-    const SPEED_PRECISION = 2;
+    private const SPEED_PRECISION = 2;
 
     public function __construct()
     {
