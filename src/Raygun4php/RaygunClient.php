@@ -420,6 +420,10 @@ class RaygunClient
             array_walk_recursive($message->Details->Request->Data, $walkFn);
         }
 
+        if ($message->Details->Request->IpAddress) {
+            $walkFn($message->Details->Request->IpAddress, 'IpAddress');
+        }
+
         if ($message->Details->UserCustomData) {
             array_walk_recursive($message->Details->UserCustomData, $walkFn);
         }
