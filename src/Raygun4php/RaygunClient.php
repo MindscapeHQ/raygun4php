@@ -38,6 +38,11 @@ class RaygunClient
     protected $filterParams = array();
 
     /**
+     * @var boolean If true, all values from the $_POST array will be filtered out.
+     */
+    protected $filterAllFormValues = false;
+
+    /**
      * Creates a new RaygunClient instance.
      *
      * @param TransportInterface $transport
@@ -383,17 +388,18 @@ class RaygunClient
     {
         $filterParams = $this->getFilterParams();
 
-      // Skip checks if none are defined
-        if (!$filterParams) {
+        // Skip checks if none are defined
+        if (!$filterParams && !$this->getFilterAllFormValues()) {
             return $message;
         }
 
-      // Ensure all filters are callable
+        // Ensure all filters are callable
+        $defaultFn = function ($key, $val) use ($replace) {
+            return $replace;
+        };
         foreach ($filterParams as $filterKey => $filterFn) {
             if (!is_callable($filterFn)) {
-                $filterParams[$filterKey] = function ($key, $val) use ($replace) {
-                    return $replace;
-                };
+                $filterParams[$filterKey] = $defaultFn;
             }
         }
 
@@ -408,8 +414,18 @@ class RaygunClient
             }
         };
 
+        // Filter form values
         if ($message->Details->Request->Form) {
-            array_walk_recursive($message->Details->Request->Form, $walkFn);
+            if ($this->getFilterAllFormValues()) {
+                // Filter out ALL form values.
+                $filterAllDataFn = function (&$val, $key) use ($defaultFn) {
+                    $val = $defaultFn($key, $val);
+                };
+                array_walk_recursive($message->Details->Request->Form, $filterAllDataFn);
+            } else {
+                // Filter only form values that match a filter param.
+                array_walk_recursive($message->Details->Request->Form, $walkFn);
+            }
         }
 
         if ($message->Details->Request->Headers) {
@@ -424,7 +440,7 @@ class RaygunClient
             array_walk_recursive($message->Details->UserCustomData, $walkFn);
         }
 
-      // Unset raw HTTP data since we can't accurately filter it
+        // Unset raw HTTP data since we can't accurately filter it
         if ($message->Details->Request->RawData) {
             $message->Details->Request->RawData = null;
         }
@@ -448,6 +464,24 @@ class RaygunClient
     public function getFilterParams()
     {
         return $this->filterParams;
+    }
+
+    /**
+     * @param boolean $filterAll
+     * @return $this
+     */
+    public function setFilterAllFormValues(bool $filterAll)
+    {
+        $this->filterAllFormValues = $filterAll;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getFilterAllFormValues()
+    {
+        return $this->filterAllFormValues;
     }
 
     /**

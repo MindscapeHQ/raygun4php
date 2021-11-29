@@ -290,6 +290,11 @@ $raygunClient->setFilterParams([
 // Example output: ['Email' => 'test@...']
 ```
 
+If you want to ensure all form submission data is filtered out irrespective of field names for situations where there are a lot of forms that might request private information, you can do that too. The field names will still be transmitted, but the values will be filtered out.
+```php
+$raygunClient->setFilterAllFormValues(true);
+```
+
 Note that when any filters are defined, the Raygun error will no longer contain the raw HTTP data, since there's no effective way to filter it.
 
 ### Updating Cookie options
