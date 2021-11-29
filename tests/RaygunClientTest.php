@@ -156,6 +156,31 @@ class RaygunClientTest extends TestCase
         return $message;
     }
 
+    public function testFilterIpAddress()
+    {
+        // Ensure IP is not filtered by default.
+        $this->client->setFilterParams(array('SomethingElse' => true,));
+        $message = $this->getEmptyMessage();
+        $message->Details->Request->IpAddress = '0.0.0.0';
+
+        $filteredMessage = $this->client->filterParamsFromMessage($message);
+        $this->assertEquals(
+            $filteredMessage->Details->Request->IpAddress,
+            '0.0.0.0'
+        );
+
+        // Ensure IP can be filtered.
+        $this->client->setFilterParams(array('IpAddress' => true,));
+        $message = $this->getEmptyMessage();
+        $message->Details->Request->IpAddress = '0.0.0.0';
+
+        $filteredMessage = $this->client->filterParamsFromMessage($message);
+        $this->assertEquals(
+            $filteredMessage->Details->Request->IpAddress,
+            '[filtered]'
+        );
+    }
+
     public function testFilterParamsFromMessage()
     {
         /** @var RaygunMessage&MockObject $message */
