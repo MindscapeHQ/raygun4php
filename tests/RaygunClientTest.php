@@ -138,6 +138,49 @@ class RaygunClientTest extends TestCase
         );
     }
 
+    public function testFilterAllFormValues()
+    {
+        $this->client->setFilterParams(array());
+        $this->client->setFilterAllFormValues(true);
+        $message = $this->getEmptyMessage();
+        $message->Details->Request->Form = array(
+            'MyParam' => 'some val',
+            'MyRegexParam' => 'secret',
+        );
+
+        $filteredMessage = $this->client->filterParamsFromMessage($message);
+        $this->assertEquals(
+            $filteredMessage->Details->Request->Form,
+            array(
+                'MyParam' => '[filtered]',
+                'MyRegexParam' => '[filtered]',
+            )
+        );
+    }
+
+    public function testFilterFormValuesDoesntFilterOtherValues()
+    {
+        $this->client->setFilterParams(array());
+        $this->client->setFilterAllFormValues(true);
+        $message = $this->getEmptyMessage();
+        $message->Details->Request->Headers = array(
+            'MyParam' => 'secret',
+        );
+        $message->Details->Request->Data = array(
+            'MyParam' => 'secret',
+        );
+
+        $filteredMessage = $this->client->filterParamsFromMessage($message);
+        $this->assertEquals(
+            $filteredMessage->Details->Request->Headers,
+            array('MyParam' => 'secret',)
+        );
+        $this->assertEquals(
+            $filteredMessage->Details->Request->Data,
+            array('MyParam' => 'secret',)
+        );
+    }
+
     protected function getEmptyMessage()
     {
         $requestMessage = new RaygunRequestMessage();
