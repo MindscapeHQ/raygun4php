@@ -11,7 +11,7 @@ class RaygunClientMessage
     public function __construct()
     {
         $this->Name = "Raygun4php";
-        $this->Version = "2.0.2";
+        $this->Version = "2.1.0";
         $this->ClientUrl = "https://github.com/MindscapeHQ/raygun4php";
     }
 }
