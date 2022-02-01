@@ -11,7 +11,7 @@
  */
 
 /** phpcs:disable */
-namespace Raygun4Php\Rhumsaa\Uuid;
+namespace Raygun4php\Rhumsaa\Uuid;
 
 use InvalidArgumentException;
 
