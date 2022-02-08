@@ -342,6 +342,7 @@ function ($errno, $errstr, $errfile, $errline) use ($raygunClient) {
 See the [Error Control Operators section on PHP.net](http://php.net/manual/en/language.operators.errorcontrol.php) for more information.
 
 ## Changelog
+- 2.1.1: Fix namespace in Uuid library to prevent composer errors with mixed case package names
 - 2.1.0: Allow client IP address to be filtered out, add configuration to filter out all POSTed form data
 - 2.0.2: Remove PHP 7.2 and replace with PHP 8.0 in Travis builds, fix JSON match assertion issue in unit tests
 - 2.0.1: Fixes for CLI use, PHP 7.4 deprecation warning in RaygunMessage JSON encoding
