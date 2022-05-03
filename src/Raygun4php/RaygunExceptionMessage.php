@@ -39,6 +39,11 @@ class RaygunExceptionMessage
         $traces = $error->getTrace();
         $lines = array();
 
+        $line = new RaygunExceptionTraceLineMessage();
+        $line->FileName = $exception->getFile();
+        $line->LineNumber = $exception->getLine();
+        $lines[] = $line;
+
         foreach ($traces as $trace) {
             $line = new RaygunExceptionTraceLineMessage();
 
