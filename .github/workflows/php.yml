@@ -1,4 +1,4 @@
-name: PHP Composer
+name: Composer test on push and pull
 
 on:
   push:
