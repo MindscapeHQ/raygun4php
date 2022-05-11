@@ -47,6 +47,19 @@ class RaygunMessageTest extends TestCase
         $this->assertEquals($msg->Details->Error->Message, 'Exception: test');
     }
 
+    public function testFirstStackTraceLineIsNotNull()
+    {
+        $msg = new RaygunMessage();
+
+        $msg->build(new \Exception('test'));
+        $line = __LINE__ - 1;
+        $file = __FILE__;
+
+        $this->assertNotNull( $msg->Details->Error->StackTrace[0] );
+        $this->assertEquals( $msg->Details->Error->StackTrace[0]->LineNumber, $line );
+        $this->assertEquals( $msg->Details->Error->StackTrace[0]->FileName, $file );
+    }
+
     public function testBuildMessageWithNestedException()
     {
         $msg = new RaygunMessage();
