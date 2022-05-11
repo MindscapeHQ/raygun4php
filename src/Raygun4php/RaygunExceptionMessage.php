@@ -39,7 +39,7 @@ class RaygunExceptionMessage
         $line = new RaygunExceptionTraceLineMessage();
         $line->FileName = $exceptionOrErrorException->getFile();
         $line->LineNumber = $exceptionOrErrorException->getLine();
-        $lines[] = $line;
+        return $line;
     }
 
     private function BuildErrorTrace($error)
