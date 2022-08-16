@@ -193,7 +193,7 @@ class RaygunClient
         $isAnonymousCookie = $this->StoreOrRetrieveUserCookie('rgisanonymous', $isAnonymous ? 'true' : 'false');
         $this->isAnonymous = ($isAnonymousCookie === 'true');
 
-        if (isset($user) && !$isAnonymous) {
+        if ((is_string($user) || is_numeric($user)) && !$isAnonymous) {
             $this->user = $user;
             $this->firstName = $this->StoreOrRetrieveUserCookie('rgfirstname', $firstName);
             $this->fullName = $this->StoreOrRetrieveUserCookie('rgfullname', $fullName);
