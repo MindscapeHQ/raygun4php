@@ -193,12 +193,12 @@ class RaygunClient
         $this->firstName = $this->StoreOrRetrieveUserCookie('rgfirstname', $firstName);
         $this->fullName = $this->StoreOrRetrieveUserCookie('rgfullname', $fullName);
         $this->email = $this->StoreOrRetrieveUserCookie('rgemail', $email);
-
         $this->uuid = $this->StoreOrRetrieveUserCookie('rguuidvalue', $uuid);
+
         $isAnonymousCookie = $this->StoreOrRetrieveUserCookie('rgisanonymous', $isAnonymous ? 'true' : 'false');
         $this->isAnonymous = ($isAnonymousCookie === 'true');
 
-        if (is_string($user)) {
+        if ((is_string($user) || is_numeric($user)) && !$isAnonymous) {
             $this->user = $user;
 
             if (php_sapi_name() != 'cli' && !headers_sent()) {
