@@ -177,12 +177,14 @@ class RaygunClient
      * Stores the current user of the calling application. This will be added to any messages sent
      * by this provider. It is used in the dashboard to provide unique user tracking.
      *
-     * @param string|int $user String or numeric type, identifier for the current user, a username, email address or other unique identifier
-     * @param string $firstName
-     * @param string $fullName
-     * @param string $email
-     * @param boolean $isAnonymous
-     * @param string $uuid
+     * @param string|int $user        String or numeric type, identifier for the current user, a username,
+     *                                email address or other unique identifier, if not supplied user is set to anonymous
+     *                                and a unique identifier is generated
+     * @param string     $firstName
+     * @param string     $fullName
+     * @param string     $email
+     * @param boolean    $isAnonymous Indicates whether the user is anonymous or not
+     * @param string     $uuid        Optional device identifier
      */
     public function SetUser(
         $user = null,
