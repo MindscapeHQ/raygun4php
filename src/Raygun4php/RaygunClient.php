@@ -176,11 +176,13 @@ class RaygunClient
     /**
      * Stores the current user of the calling application. This will be added to any messages sent
      * by this provider. It is used in the dashboard to provide unique user tracking.
-     * If it is an email address, the user's Gravatar can be displayed. This method is optional,
-     * if it is not used a random identifier will be assigned to the current user.
      *
-     * @param string $user A username, email address or other identifier for the current user
-     *                     of the calling application.
+     * @param string|int $user String or numeric type, identifier for the current user, a username, email address or other unique identifier
+     * @param string $firstName
+     * @param string $fullName
+     * @param string $email
+     * @param boolean $isAnonymous
+     * @param string $uuid
      */
     public function SetUser(
         $user = null,
