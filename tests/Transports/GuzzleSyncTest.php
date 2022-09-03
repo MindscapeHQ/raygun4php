@@ -2,6 +2,7 @@
 
 namespace Raygun4php\Tests\Transports;
 
+use ColinODell\PsrTestLogger\TestLogger;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use PHPUnit\Framework\TestCase;
@@ -9,7 +10,6 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use Psr\Log\Test\TestLogger;
 use Raygun4php\RaygunMessage;
 use Raygun4php\Transports\GuzzleSync;
 
