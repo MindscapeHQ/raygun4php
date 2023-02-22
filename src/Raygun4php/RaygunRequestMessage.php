@@ -42,7 +42,7 @@ class RaygunRequestMessage
         $utf8_convert_server = function ($value) use (&$utf8_convert_server) {
             return is_array($value) ?
             array_map($utf8_convert_server, $value) :
-            iconv('UTF-8', 'UTF-8', utf8_encode($value));
+            iconv('ISO-8859-1', 'UTF-8', $value);
         };
 
         $this->Form = array_map($utf8_convert, $_POST);

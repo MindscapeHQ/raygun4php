@@ -277,4 +277,19 @@ class RaygunClientTest extends TestCase
         $schemaValidator->validate($data, $this->jsonSchema);
         $this->assertTrue($schemaValidator->isValid());
     }
+
+    /**
+     * @backupGlobals enabled
+     */
+    public function testServerUtf8Conversion()
+    {
+        $_SERVER = [
+            'a' => 'hello',
+            'b' => "\xc0\xde",
+        ];
+        $requestMessage = new RaygunRequestMessage();
+
+        $this->assertSame('hello', $requestMessage->Data['a']);
+        $this->assertSame('ÀÞ', $requestMessage->Data['b']);
+    }
 }
