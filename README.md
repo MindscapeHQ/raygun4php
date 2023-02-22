@@ -342,6 +342,8 @@ function ($errno, $errstr, $errfile, $errline) use ($raygunClient) {
 See the [Error Control Operators section on PHP.net](http://php.net/manual/en/language.operators.errorcontrol.php) for more information.
 
 ## Changelog
+- 2.3.1: Use iconv to convert from ISO-8859-1 instead of utf8_encode
+- 2.3.0: Support newer versions of psr/log
 - 2.2.1: SetUser method now supports numeric data types for 'user' parameter
 - 2.2.0: Capture the file and line number where the exception itself is thrown
 - 2.1.1: Fix namespace in Uuid library to prevent composer errors with mixed case package names
