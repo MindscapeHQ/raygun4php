@@ -243,14 +243,14 @@ class RaygunClient
     {
         if (is_string($value)) {
             if (php_sapi_name() != 'cli' && !headers_sent()) {
-                $this->setCookie($key, $value);
+                $this->setCookie($key, $value ?? '');
             }
 
             return $value;
         } else {
             if (array_key_exists($key, $_COOKIE)) {
                 if ($_COOKIE[$key] != $value && php_sapi_name() != 'cli' && !headers_sent()) {
-                    $this->setCookie($key, $value);
+                    $this->setCookie($key, $value ?? '');
                 }
                 return $_COOKIE[$key];
             }
