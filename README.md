@@ -342,6 +342,7 @@ function ($errno, $errstr, $errfile, $errline) use ($raygunClient) {
 See the [Error Control Operators section on PHP.net](http://php.net/manual/en/language.operators.errorcontrol.php) for more information.
 
 ## Changelog
+- 2.3.2: Fix Don't save a null value with setcookie()
 - 2.3.1: Use iconv to convert from ISO-8859-1 instead of utf8_encode
 - 2.3.0: Support newer versions of psr/log
 - 2.2.1: SetUser method now supports numeric data types for 'user' parameter
