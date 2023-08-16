@@ -8,13 +8,13 @@
         "exceptions",
         "logging"
     ],
-    "homepage": "http://raygun.com",
+    "homepage": "https://raygun.com",
     "license": "MIT",
     "authors": [
         {
-            "name": "Mindscape",
-            "email": "contact@mindscape.co.nz",
-            "homepage": "http://www.mindscapehq.com"
+            "name": "Raygun",
+            "email": "contact@raygun.com",
+            "homepage": "https://raygun.com"
         }
     ],
     "require": {
