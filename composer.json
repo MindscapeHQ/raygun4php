@@ -13,15 +13,14 @@
     "authors": [
         {
             "name": "Raygun",
-            "email": "support@raygun.com",
             "homepage": "https://raygun.com"
         }
     ],
     "support": {
-        "email": "support@raygun.com",
         "issues": "https://github.com/MindscapeHQ/raygun4php/issues",
         "source": "https://github.com/MindscapeHQ/raygun4php",
-        "docs": "https://raygun.com/documentation/language-guides/php/crash-reporting/"
+        "docs": "https://raygun.com/documentation/language-guides/php/crash-reporting/",
+        "chat": "https://raygun.com/about/contact"
     },
     "require": {
         "php": "^7.2|^8.0",
