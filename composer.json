@@ -17,6 +17,12 @@
             "homepage": "https://raygun.com"
         }
     ],
+    "support": {
+        "email": "support@raygun.com",
+        "issues": "https://github.com/MindscapeHQ/raygun4php/issues",
+        "source": "https://github.com/MindscapeHQ/raygun4php",
+        "docs": "https://raygun.com/documentation/language-guides/php/crash-reporting/"
+    },
     "require": {
         "php": "^7.2|^8.0",
         "ext-json": "*",
@@ -46,6 +52,8 @@
         "preferred-install": "dist"
     },
     "scripts": {
-        "test": ["phpunit"]
+        "test": [
+            "phpunit"
+        ]
     }
 }
