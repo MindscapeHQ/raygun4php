@@ -1,8 +1,10 @@
 ## Raygun4PHP Symfony installation instructions
 
-### Step 1: Install Raygun4PHP with Composer (see README.md)
+### Step 1: Install Raygun4PHP with Composer (see [README.md](README.md))
 
-### Step 2: Create the file: `src/AppBundle/EventListener/RaygunExceptionListener` with the following content:
+### Step 2: Create the file: `src/AppBundle/EventListener/RaygunExceptionListener`
+
+Populate with the following:
 
 ```php
 <?php
@@ -32,15 +34,18 @@ class RaygunExceptionListener
 
 ?>
 ```
+
 **Important:** Make sure you change *apiKey* to your Raygun API key.
 
 ### Step 3: Register the hook service in `app/config/services.yml`
-```
+
+```yaml
 app.exception_listener:
     class: AppBundle\EventListener\RaygunExceptionListener
     tags:
         - { name: kernel.event_listener, event: kernel.exception }
 ```
 
-## Further Information:
+## Further Information
+
 Information about the [Symfony Event Listeners can be located here](http://symfony.com/doc/current/cookbook/event_dispatcher/event_listener.html).

@@ -21,8 +21,8 @@ $client = new Raygun4php\RaygunClient($transport);
 // Create and register error handlers
 function error_handler($errno, $errstr, $errfile, $errline )
 {
-	global $client;
-	$client->SendError($errno, $errstr, $errfile, $errline);
+   global $client;
+   $client->SendError($errno, $errstr, $errfile, $errline);
 }
 
 function exception_handler($exception)

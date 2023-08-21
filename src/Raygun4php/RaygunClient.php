@@ -81,7 +81,7 @@ class RaygunClient
      * Transmits an error to the Raygun API
      *
      * @param int    $errno          The error number
-     * @param string $errstr         The error string
+     * @param string $errstr         The error string (Used for error grouping. So don't include identifiers in $errstr. Use $userCustomData for, per instance, unique values)
      * @param string $errfile        The file the error occurred in
      * @param int    $errline        The line the error occurred on
      * @param array  $tags           An optional array of string tags used to provide metadata for the message
