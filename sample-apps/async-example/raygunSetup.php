@@ -82,7 +82,7 @@ namespace {
 
             $raygunClient = new RaygunClient($this->transport);
 
-            // Get the logged-in user info to track affected user
+            // Get the logged-in user info to track Customers
             $raygunClient->SetUser("test@example.com", "Test", "Test User", "test@example.com");
 
             $this->tags = $tags;
