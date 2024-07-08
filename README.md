@@ -5,8 +5,7 @@ Raygun4PHP
 
 _See [v1.8 documentation](https://github.com/MindscapeHQ/raygun4php/blob/1.8/README.md) for PHP v5.3+ support_
 
-[![Build
-Status](https://secure.travis-ci.org/MindscapeHQ/raygun4php.png?branch=master)](http://travis-ci.org/MindscapeHQ/raygun4php)
+[![Build status](https://github.com/MindscapeHQ/raygun4php/actions/workflows/php.yml/badge.svg)](https://github.com/MindscapeHQ/raygun4php/actions/workflows/php.yml)
 
 ## Installation
 
