@@ -23,7 +23,7 @@
         "chat": "https://raygun.com/about/contact"
     },
     "require": {
-        "php": "^7.2|^8.0",
+        "php": "^8.2",
         "ext-json": "*",
         "guzzlehttp/guzzle": "~7.0",
         "psr/log": "^1.1 || ^2.0 || ^3.0"
