@@ -34,7 +34,7 @@ class RaygunExceptionMessage
         }
     }
 
-    private function getExceptionLine( $exceptionOrErrorException )
+    private function getExceptionLine($exceptionOrErrorException)
     {
         $line = new RaygunExceptionTraceLineMessage();
         $line->FileName = $exceptionOrErrorException->getFile();
@@ -47,7 +47,7 @@ class RaygunExceptionMessage
         $traces = $error->getTrace();
         $lines = array();
 
-        $lines[] = $this->getExceptionLine( $error );
+        $lines[] = $this->getExceptionLine($error);
 
         foreach ($traces as $trace) {
             $line = new RaygunExceptionTraceLineMessage();
@@ -89,7 +89,7 @@ class RaygunExceptionMessage
         $traces = $exception->getTrace();
         $lines = array();
 
-        $lines[] = $this->getExceptionLine( $exception );
+        $lines[] = $this->getExceptionLine($exception);
 
         foreach ($traces as $trace) {
             $lines[] = $this->BuildLine($trace);

@@ -55,9 +55,9 @@ class RaygunMessageTest extends TestCase
         $line = __LINE__ - 1;
         $file = __FILE__;
 
-        $this->assertNotNull( $msg->Details->Error->StackTrace[0] );
-        $this->assertEquals( $msg->Details->Error->StackTrace[0]->LineNumber, $line );
-        $this->assertEquals( $msg->Details->Error->StackTrace[0]->FileName, $file );
+        $this->assertNotNull($msg->Details->Error->StackTrace[0]);
+        $this->assertEquals($msg->Details->Error->StackTrace[0]->LineNumber, $line);
+        $this->assertEquals($msg->Details->Error->StackTrace[0]->FileName, $file);
     }
 
     public function testBuildMessageWithNestedException()

@@ -15,7 +15,6 @@ use Raygun4php\Transports\GuzzleAsync;
 
 class GuzzleAsyncTest extends TestCase
 {
-
     public function testTransmitLogsErrorIfResponseCodeIs400()
     {
         $mock = new MockHandler([
