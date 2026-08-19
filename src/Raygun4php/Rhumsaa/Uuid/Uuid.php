@@ -1065,9 +1065,9 @@ final class Uuid
     {
         // If we're on Windows, use ipconfig; otherwise use ifconfig
         if (strtoupper(substr(php_uname('a'), 0, 3)) == 'WIN') {
-            $ifconfig = `ipconfig /all 2>&1`;
+            $ifconfig = shell_exec('ipconfig /all 2>&1');
         } else {
-            $ifconfig = `ifconfig 2>&1`;
+            $ifconfig = shell_exec('ifconfig 2>&1');
         }
 
         $node = null;
