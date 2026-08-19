@@ -45,3 +45,6 @@ jobs:
 
     - name: Run test suite
       run: composer test
+
+    - name: Run code style check
+      run: composer phpcs

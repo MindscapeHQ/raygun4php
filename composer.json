@@ -53,6 +53,9 @@
     "scripts": {
         "test": [
             "phpunit"
+        ],
+        "phpcs": [
+            "phpcs"
         ]
     }
 }
