@@ -167,3 +167,4 @@ pip-log.txt
 vendor/
 composer.lock
 .vscode
+.phpunit.cache

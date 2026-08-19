@@ -2,12 +2,13 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
   backupGlobals="false"
-  backupStaticAttributes="false"
+  backupStaticProperties="false"
   bootstrap="vendor/autoload.php"
-  colors="true">
+  colors="true"
+  cacheDirectory=".phpunit.cache">
   <testsuites>
     <testsuite name="Tests">
-      <directory suffix=".php">tests</directory>
+      <directory suffix="Test.php">tests</directory>
     </testsuite>
   </testsuites>
 </phpunit>

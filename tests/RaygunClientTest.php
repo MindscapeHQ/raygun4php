@@ -3,6 +3,7 @@
 namespace Raygun4php\Tests;
 
 use JsonSchema\Validator;
+use PHPUnit\Framework\Attributes\BackupGlobals;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Raygun4php\RaygunClient;
@@ -33,7 +34,7 @@ class RaygunClientTest extends TestCase
     protected function setUp(): void
     {
         $this->transportMock = $this->getMockBuilder(TransportInterface::class)
-                                    ->setMethods(['transmit'])
+                                    ->onlyMethods(['transmit'])
                                     ->getMock();
 
         $this->client = new RaygunClient($this->transportMock);
@@ -278,9 +279,7 @@ class RaygunClientTest extends TestCase
         $this->assertTrue($schemaValidator->isValid());
     }
 
-    /**
-     * @backupGlobals enabled
-     */
+    #[BackupGlobals(true)]
     public function testServerUtf8Conversion()
     {
         $_SERVER = [
