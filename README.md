@@ -341,6 +341,7 @@ function ($errno, $errstr, $errfile, $errline) use ($raygunClient) {
 See the [Error Control Operators section on PHP.net](http://php.net/manual/en/language.operators.errorcontrol.php) for more information.
 
 ## Changelog
+- 2.4.1: Correct the reported SDK version; allow PHP 8-compatible Monolog releases in both sample apps
 - 2.4.0: Drop support for PHP 7.x, 8.0 and 8.1 (all EOL); add CI coverage for PHP 8.4 and 8.5, minimum supported version is now PHP 8.2
 - 2.3.2: Fix Don't save a null value with setcookie()
 - 2.3.1: Use iconv to convert from ISO-8859-1 instead of utf8_encode
